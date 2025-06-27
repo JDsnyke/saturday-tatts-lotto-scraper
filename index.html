@@ -283,6 +283,13 @@
             font-weight: 500;
         }
 
+        .stats-update-info {
+            text-align: center;
+            margin-top: 2rem;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
         /* Footer */
         .footer {
             background: var(--text-primary);
@@ -320,6 +327,16 @@
             padding-top: 2rem;
             text-align: center;
             color: #9ca3af;
+        }
+
+        .footer-bottom a {
+            color: #60a5fa;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-bottom a:hover {
+            color: #93c5fd;
         }
 
         /* Responsive Design */
@@ -365,12 +382,50 @@
             }
         }
 
+        @keyframes slideInFromLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        /* Apply animations to elements */
+        .feature-card {
+            animation: fadeInUp 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .stat-card {
+            animation: fadeInUp 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+
         .feature-card:nth-child(1) { animation-delay: 0.1s; }
         .feature-card:nth-child(2) { animation-delay: 0.2s; }
         .feature-card:nth-child(3) { animation-delay: 0.3s; }
         .feature-card:nth-child(4) { animation-delay: 0.4s; }
         .feature-card:nth-child(5) { animation-delay: 0.5s; }
         .feature-card:nth-child(6) { animation-delay: 0.6s; }
+
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+        .stat-card:nth-child(5) { animation-delay: 0.5s; }
+        .stat-card:nth-child(6) { animation-delay: 0.6s; }
 
         /* Interactive Elements */
         .interactive-demo {
@@ -403,6 +458,80 @@
             display: block;
         }
 
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+            margin: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-tertiary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Code Blocks */
+        .code-block {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            overflow-x: auto;
+        }
+
+        .code-block pre {
+            margin: 0;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            color: var(--text-primary);
+        }
+
+        .code-block code {
+            background: none;
+            padding: 0;
+            font-size: inherit;
+            color: inherit;
+        }
+
+        /* Inline code */
+        code {
+            background: var(--bg-tertiary);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.875em;
+            color: var(--text-primary);
+        }
+
         /* Mobile menu toggle */
         .mobile-menu-toggle {
             display: none;
@@ -411,8 +540,16 @@
             font-size: 1.5rem;
             color: var(--text-primary);
             cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: background-color 0.2s;
         }
 
+        .mobile-menu-toggle:hover {
+            background: var(--bg-secondary);
+        }
+
+        /* Enhanced responsive design */
         @media (max-width: 768px) {
             .mobile-menu-toggle {
                 display: block;
@@ -429,11 +566,180 @@
                 padding: 1rem;
                 flex-direction: column;
                 gap: 1rem;
+                box-shadow: var(--shadow-md);
             }
 
             .nav-links.show {
                 display: flex;
             }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .header p {
+                font-size: 1rem;
+            }
+
+            .header-badges {
+                gap: 0.5rem;
+            }
+
+            .badge {
+                font-size: 0.75rem;
+                padding: 0.4rem 0.8rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+
+            .stat-card {
+                padding: 1.5rem;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+
+            .code-block {
+                padding: 1rem;
+                font-size: 0.8rem;
+            }
+
+            .btn {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.8rem;
+                margin: 0.25rem;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 0.75rem;
+            }
+
+            .header {
+                padding: 1.5rem 0;
+            }
+
+            .header h1 {
+                font-size: 1.75rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-card {
+                padding: 1rem;
+            }
+
+            .stat-number {
+                font-size: 1.75rem;
+            }
+        }
+
+        /* Enhanced hover effects */
+        .feature-card:hover .feature-icon {
+            animation: pulse 1s ease-in-out;
+        }
+
+        .stat-card:hover .stat-number {
+            color: var(--secondary-color);
+        }
+
+        /* Loading states */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        /* Focus states for accessibility */
+        .btn:focus,
+        .mobile-menu-toggle:focus,
+        .nav-links a:focus {
+            outline: 2px solid var(--primary-color);
+            outline-offset: 2px;
+        }
+
+        /* Print styles */
+        @media print {
+            .nav,
+            .mobile-menu-toggle,
+            .btn {
+                display: none !important;
+            }
+
+            .header {
+                background: white !important;
+                color: black !important;
+            }
+
+            .feature-card,
+            .stat-card {
+                break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid #ccc;
+            }
+        }
+
+        /* Terminal Simulation */
+        .terminal-simulation {
+            background: #1e1e1e;
+            color: #f8f8f2;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        .terminal-line {
+            margin-bottom: 0.5rem;
+        }
+
+        .terminal-prompt {
+            color: #50fa7b;
+        }
+
+        .terminal-command {
+            color: #f8f8f2;
+        }
+
+        .terminal-output {
+            color: #6272a4;
+            margin-bottom: 0.5rem;
+            white-space: pre-line;
+        }
+
+        .terminal-input {
+            color: #f8f8f2;
+        }
+
+        .terminal-result {
+            color: #6272a4;
+            white-space: pre-line;
+        }
+
+        .interactive-demo h3 {
+            margin-bottom: 1rem;
+            color: var(--text-primary);
         }
     </style>
 </head>
@@ -475,37 +781,37 @@
     <main class="main">
         <div class="container">
             <!-- Live Lotto Stats Section -->
-            <section id="live-stats" class="section" style="background: var(--bg-secondary); padding: 3rem 0 2rem 0;">
+            <section id="live-stats" class="section stats-section">
                 <div class="container">
                     <h2 class="section-title">📈 Live Lotto Stats</h2>
                     <p class="section-subtitle">Up-to-date statistics from <code>winning_numbers.csv</code> and <code>supplementary_numbers.csv</code></p>
-                    <div id="lotto-stats-content" style="display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center; align-items: flex-start; margin-top: 2rem;">
-                        <div class="stat-card" style="min-width:220px;">
+                    <div id="lotto-stats-content" class="stats-grid">
+                        <div class="stat-card">
                             <div class="stat-number" id="stat-total-draws">...</div>
                             <div class="stat-label">Total Draws</div>
                         </div>
-                        <div class="stat-card" style="min-width:220px;">
+                        <div class="stat-card">
                             <div class="stat-number" id="stat-date-range">...</div>
                             <div class="stat-label">Date Range</div>
                         </div>
-                        <div class="stat-card" style="min-width:220px;">
+                        <div class="stat-card">
                             <div class="stat-number" id="stat-most-freq-win">...</div>
                             <div class="stat-label">Most Frequent Winning Number</div>
                         </div>
-                        <div class="stat-card" style="min-width:220px;">
+                        <div class="stat-card">
                             <div class="stat-number" id="stat-least-freq-win">...</div>
                             <div class="stat-label">Least Frequent Winning Number</div>
                         </div>
-                        <div class="stat-card" style="min-width:220px;">
+                        <div class="stat-card">
                             <div class="stat-number" id="stat-most-freq-supp">...</div>
                             <div class="stat-label">Most Frequent Supplementary</div>
                         </div>
-                        <div class="stat-card" style="min-width:220px;">
+                        <div class="stat-card">
                             <div class="stat-number" id="stat-least-freq-supp">...</div>
                             <div class="stat-label">Least Frequent Supplementary</div>
                         </div>
                     </div>
-                    <div style="text-align:center; margin-top:2rem; color:var(--text-secondary); font-size:0.95rem;">
+                    <div class="stats-update-info">
                         <span id="stat-last-updated">Last updated: ...</span>
                     </div>
                 </div>
@@ -607,14 +913,14 @@
                 <h2 class="section-title">💻 Interactive Demo</h2>
                 <p class="section-subtitle">See the tool in action with a simulated terminal interface</p>
                 
-                <div style="background: var(--bg-secondary); padding: 2rem; border-radius: 12px; margin: 2rem 0;">
-                    <h3 style="margin-bottom: 1rem;">Terminal Simulation</h3>
-                    <div style="background: #1e1e1e; color: #f8f8f2; padding: 1.5rem; border-radius: 8px; font-family: 'Monaco', monospace; font-size: 0.875rem;">
-                        <div style="margin-bottom: 0.5rem;">
-                            <span style="color: #50fa7b;">$</span> 
-                            <span style="color: #f8f8f2;">./master_lotto.sh</span>
+                <div class="interactive-demo">
+                    <h3>Terminal Simulation</h3>
+                    <div class="terminal-simulation">
+                        <div class="terminal-line">
+                            <span class="terminal-prompt">$</span> 
+                            <span class="terminal-command">./master_lotto.sh</span>
                         </div>
-                        <div style="color: #6272a4; margin-bottom: 0.5rem;">
+                        <div class="terminal-output">
                             Saturday Tatts Lotto Scraper & Analyzer
                             ======================================
                             
@@ -623,9 +929,9 @@
                             3. Check & Install Requirements
                             4. Exit
                             
-                            Enter your choice: <span style="color: #f8f8f2;">1</span>
+                            Enter your choice: <span class="terminal-input">1</span>
                         </div>
-                        <div style="color: #6272a4;">
+                        <div class="terminal-result">
                             🕷️  Starting Saturday Tatts Lotto scraper...
                             📊 Fetching data from au.lottonumbers.com
                             ✅ Found 2026 draws (1986-2025)
@@ -754,7 +1060,7 @@ chmod +x *.sh
             </div>
             
             <div class="footer-bottom">
-                <p>&copy; 2025 Saturday Tatts Lotto Scraper & Analyzer. Created by <a href="https://github.com/JDsnyke" target="_blank" style="color: #60a5fa;">JDsnyke</a>. For educational purposes only.</p>
+                <p>&copy; 2025 Saturday Tatts Lotto Scraper & Analyzer. Created by <a href="https://github.com/JDsnyke" target="_blank">JDsnyke</a>. For educational purposes only.</p>
             </div>
         </div>
     </footer>
@@ -835,16 +1141,22 @@ chmod +x *.sh
         document.addEventListener('DOMContentLoaded', function() {
             // Observe feature cards
             document.querySelectorAll('.feature-card').forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
                 observer.observe(card);
             });
 
             // Observe stat cards
             document.querySelectorAll('.stat-card').forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
                 observer.observe(card);
             });
 
             // Add hover effects to terminal simulation
-            const terminalSim = document.querySelector('[style*="background: #1e1e1e"]');
+            const terminalSim = document.querySelector('.terminal-simulation');
             if (terminalSim) {
                 terminalSim.addEventListener('mouseenter', function() {
                     this.style.transform = 'scale(1.02)';
