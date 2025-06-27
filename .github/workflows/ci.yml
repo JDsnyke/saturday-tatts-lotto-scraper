@@ -172,13 +172,31 @@ jobs:
 
     - name: Create release archive
       run: |
-        # Create a release archive
+        # Create a release archive with better error handling
+        echo "Creating release archive..."
+        
+        # Ensure we're in the right directory
+        pwd
+        ls -la
+        
+        # Create archive with explicit exclusions
         tar -czf saturday-tatts-lotto-scraper.tar.gz \
           --exclude='.git' \
           --exclude='*.tar.gz' \
           --exclude='*.zip' \
+          --exclude='node_modules' \
+          --exclude='.DS_Store' \
+          --exclude='Thumbs.db' \
           .
-        echo "Release archive created: saturday-tatts-lotto-scraper.tar.gz"
+        
+        # Verify the archive was created
+        if [ -f "saturday-tatts-lotto-scraper.tar.gz" ]; then
+          echo "✓ Release archive created successfully"
+          ls -lh saturday-tatts-lotto-scraper.tar.gz
+        else
+          echo "✗ Failed to create release archive"
+          exit 1
+        fi
 
     - name: Upload build artifact
       uses: actions/upload-artifact@v4

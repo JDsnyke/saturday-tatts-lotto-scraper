@@ -22,7 +22,14 @@ jobs:
 
     - name: Create release archive
       run: |
-        # Create a clean release archive
+        # Create a clean release archive with better error handling
+        echo "Creating release archive for version ${{ steps.version.outputs.version }}..."
+        
+        # Ensure we're in the right directory
+        pwd
+        ls -la
+        
+        # Create archive with explicit exclusions
         tar -czf saturday-tatts-lotto-scraper-${{ steps.version.outputs.version }}.tar.gz \
           --exclude='.git' \
           --exclude='*.tar.gz' \
@@ -30,8 +37,19 @@ jobs:
           --exclude='.github' \
           --exclude='winning_numbers.csv' \
           --exclude='supplementary_numbers.csv' \
+          --exclude='node_modules' \
+          --exclude='.DS_Store' \
+          --exclude='Thumbs.db' \
           .
-        echo "Release archive created: saturday-tatts-lotto-scraper-${{ steps.version.outputs.version }}.tar.gz"
+        
+        # Verify the archive was created
+        if [ -f "saturday-tatts-lotto-scraper-${{ steps.version.outputs.version }}.tar.gz" ]; then
+          echo "✓ Release archive created successfully"
+          ls -lh saturday-tatts-lotto-scraper-${{ steps.version.outputs.version }}.tar.gz
+        else
+          echo "✗ Failed to create release archive"
+          exit 1
+        fi
 
     - name: Create release
       uses: softprops/action-gh-release@v2
