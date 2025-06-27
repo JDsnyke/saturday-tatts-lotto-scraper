@@ -24,6 +24,11 @@
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+    <link rel="manifest" href="assets/site.webmanifest">
+    <meta name="theme-color" content="#2563eb">
     
     <!-- CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -100,6 +105,23 @@
             background-clip: text;
         }
 
+        .title-icon {
+            display: inline-block;
+            margin-right: 0.5rem;
+            font-size: 1.1em;
+            vertical-align: middle;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+
+        /* Fallback for browsers that don't support emoji */
+        @supports not (background-clip: text) {
+            .header h1 {
+                color: white;
+                background: none;
+                -webkit-text-fill-color: initial;
+            }
+        }
+
         .header p {
             font-size: 1.25rem;
             opacity: 0.9;
@@ -148,6 +170,13 @@
             color: var(--primary-color);
         }
 
+        .nav-icon {
+            display: inline-block;
+            margin-right: 0.5rem;
+            font-size: 1.1em;
+            vertical-align: middle;
+        }
+
         .nav-links {
             display: flex;
             gap: 2rem;
@@ -180,6 +209,13 @@
             margin-bottom: 1rem;
             text-align: center;
             color: var(--text-primary);
+        }
+
+        .section-title-icon {
+            display: inline-block;
+            margin-right: 0.5rem;
+            font-size: 1.1em;
+            vertical-align: middle;
         }
 
         .section-subtitle {
@@ -250,19 +286,22 @@
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
+            grid-template-columns: 1fr;
+            gap: 1rem;
             margin-top: 3rem;
         }
 
         .stat-card {
-            text-align: center;
-            padding: 2rem;
+            text-align: left;
+            padding: 1.5rem;
             background: var(--bg-primary);
             border-radius: 12px;
             border: 1px solid var(--border-color);
             box-shadow: var(--shadow-sm);
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
         .stat-card:hover {
@@ -270,16 +309,23 @@
             box-shadow: var(--shadow-lg);
         }
 
+        .stat-content {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
         .stat-number {
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: 700;
             color: var(--primary-color);
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.25rem;
         }
 
         .stat-label {
             color: var(--text-secondary);
             font-weight: 500;
+            font-size: 0.95rem;
         }
 
         .stats-update-info {
@@ -340,32 +386,122 @@
 
         /* Responsive Design */
         @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--bg-primary);
+                border-top: 1px solid var(--border-color);
+                padding: 1rem;
+                flex-direction: column;
+                gap: 1rem;
+                box-shadow: var(--shadow-md);
+            }
+
+            .nav-links.show {
+                display: flex;
+            }
+
             .header h1 {
                 font-size: 2rem;
+            }
+
+            .title-icon {
+                font-size: 1em;
+                margin-right: 0.4rem;
             }
 
             .header p {
                 font-size: 1rem;
             }
 
-            .nav-links {
-                display: none;
+            .header-badges {
+                gap: 0.5rem;
             }
 
-            .demo-container {
-                grid-template-columns: 1fr;
+            .badge {
+                font-size: 0.75rem;
+                padding: 0.4rem 0.8rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .section-title-icon {
+                font-size: 1em;
+                margin-right: 0.4rem;
+            }
+
+            .nav-icon {
+                font-size: 1em;
+                margin-right: 0.4rem;
             }
 
             .features-grid {
                 grid-template-columns: 1fr;
-            }
-
-            .installation-steps {
-                grid-template-columns: 1fr;
+                gap: 1.5rem;
             }
 
             .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+
+            .stat-card {
+                padding: 1.25rem;
+            }
+
+            .stat-number {
+                font-size: 1.75rem;
+            }
+
+            .code-block {
+                padding: 1rem;
+                font-size: 0.8rem;
+            }
+
+            .btn {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.8rem;
+                margin: 0.25rem;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 0.75rem;
+            }
+
+            .header {
+                padding: 1.5rem 0;
+            }
+
+            .header h1 {
+                font-size: 1.75rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-card {
+                padding: 1rem;
+            }
+
+            .stat-number {
+                font-size: 1.5rem;
             }
         }
 
@@ -548,112 +684,6 @@
             background: var(--bg-secondary);
         }
 
-        /* Enhanced responsive design */
-        @media (max-width: 768px) {
-            .mobile-menu-toggle {
-                display: block;
-            }
-
-            .nav-links {
-                display: none;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                background: var(--bg-primary);
-                border-top: 1px solid var(--border-color);
-                padding: 1rem;
-                flex-direction: column;
-                gap: 1rem;
-                box-shadow: var(--shadow-md);
-            }
-
-            .nav-links.show {
-                display: flex;
-            }
-
-            .header h1 {
-                font-size: 2rem;
-            }
-
-            .header p {
-                font-size: 1rem;
-            }
-
-            .header-badges {
-                gap: 0.5rem;
-            }
-
-            .badge {
-                font-size: 0.75rem;
-                padding: 0.4rem 0.8rem;
-            }
-
-            .section-title {
-                font-size: 2rem;
-            }
-
-            .features-grid {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 1rem;
-            }
-
-            .stat-card {
-                padding: 1.5rem;
-            }
-
-            .stat-number {
-                font-size: 2rem;
-            }
-
-            .code-block {
-                padding: 1rem;
-                font-size: 0.8rem;
-            }
-
-            .btn {
-                padding: 0.6rem 1.2rem;
-                font-size: 0.8rem;
-                margin: 0.25rem;
-            }
-
-            .footer-content {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 0 0.75rem;
-            }
-
-            .header {
-                padding: 1.5rem 0;
-            }
-
-            .header h1 {
-                font-size: 1.75rem;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .stat-card {
-                padding: 1rem;
-            }
-
-            .stat-number {
-                font-size: 1.75rem;
-            }
-        }
-
         /* Enhanced hover effects */
         .feature-card:hover .feature-icon {
             animation: pulse 1s ease-in-out;
@@ -746,7 +776,7 @@
     <!-- Header -->
     <header class="header">
         <div class="container">
-            <h1>🎯 Saturday Tatts Lotto Scraper &amp; Analyzer</h1>
+            <h1><span class="title-icon">🎯</span> Saturday Tatts Lotto Scraper &amp; Analyzer</h1>
             <p>A comprehensive bash-based tool for scraping Saturday Tatts Lotto results from Australia and providing statistical analysis for number recommendations.</p>
             <div class="header-badges">
                 <span class="badge"><i class="fas fa-code"></i> Bash</span>
@@ -761,7 +791,7 @@
     <nav class="nav">
         <div class="container">
             <div class="nav-content">
-                <div class="nav-logo">🎲 Lotto Scraper</div>
+                <div class="nav-logo"><span class="nav-icon">🎲</span> Lotto Scraper</div>
                 <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
                     <i class="fas fa-bars"></i>
                 </button>
@@ -782,32 +812,44 @@
             <!-- Live Lotto Stats Section -->
             <section id="live-stats" class="section stats-section">
                 <div class="container">
-                    <h2 class="section-title">📈 Live Lotto Stats</h2>
+                    <h2 class="section-title"><span class="section-title-icon">📈</span> Live Lotto Stats</h2>
                     <p class="section-subtitle">Up-to-date statistics from <code>winning_numbers.csv</code> and <code>supplementary_numbers.csv</code></p>
                     <div id="lotto-stats-content" class="stats-grid">
                         <div class="stat-card">
-                            <div class="stat-number" id="stat-total-draws">...</div>
-                            <div class="stat-label">Total Draws</div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="stat-total-draws">...</div>
+                                <div class="stat-label">Total Draws</div>
+                            </div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-number" id="stat-date-range">...</div>
-                            <div class="stat-label">Date Range</div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="stat-date-range">...</div>
+                                <div class="stat-label">Date Range</div>
+                            </div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-number" id="stat-most-freq-win">...</div>
-                            <div class="stat-label">Most Frequent Winning Number</div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="stat-most-freq-win">...</div>
+                                <div class="stat-label">Most Frequent Winning Number</div>
+                            </div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-number" id="stat-least-freq-win">...</div>
-                            <div class="stat-label">Least Frequent Winning Number</div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="stat-least-freq-win">...</div>
+                                <div class="stat-label">Least Frequent Winning Number</div>
+                            </div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-number" id="stat-most-freq-supp">...</div>
-                            <div class="stat-label">Most Frequent Supplementary</div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="stat-most-freq-supp">...</div>
+                                <div class="stat-label">Most Frequent Supplementary</div>
+                            </div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-number" id="stat-least-freq-supp">...</div>
-                            <div class="stat-label">Least Frequent Supplementary</div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="stat-least-freq-supp">...</div>
+                                <div class="stat-label">Least Frequent Supplementary</div>
+                            </div>
                         </div>
                     </div>
                     <div class="stats-update-info">
@@ -818,7 +860,7 @@
 
             <!-- Features Section -->
             <section id="features" class="section">
-                <h2 class="section-title">🚀 Key Features</h2>
+                <h2 class="section-title"><span class="section-title-icon">🚀</span> Key Features</h2>
                 <p class="section-subtitle">Discover what makes this tool powerful and unique for lottery analysis</p>
                 
                 <div class="features-grid">
@@ -875,7 +917,7 @@
             <!-- Stats Section -->
             <section class="stats-section">
                 <div class="container">
-                    <h2 class="section-title">📊 Project Statistics</h2>
+                    <h2 class="section-title"><span class="section-title-icon">📊</span> Project Statistics</h2>
                     <p class="section-subtitle">Key metrics and capabilities of the Saturday Tatts Lotto Scraper</p>
                     
                     <div class="stats-grid">
@@ -909,7 +951,7 @@
 
             <!-- Demo Section -->
             <section id="demo" class="section">
-                <h2 class="section-title">💻 Interactive Demo</h2>
+                <h2 class="section-title"><span class="section-title-icon">💻</span> Interactive Demo</h2>
                 <p class="section-subtitle">See the tool in action with a simulated terminal interface</p>
                 
                 <div class="interactive-demo">
@@ -943,7 +985,7 @@
 
             <!-- Installation Section -->
             <section id="installation" class="section">
-                <h2 class="section-title">⚙️ Installation</h2>
+                <h2 class="section-title"><span class="section-title-icon">⚙️</span> Installation</h2>
                 <p class="section-subtitle">Get started in minutes with our simple installation process</p>
                 
                 <div class="code-block">
@@ -970,7 +1012,7 @@ chmod +x *.sh
 
             <!-- Usage Section -->
             <section id="usage" class="section">
-                <h2 class="section-title">📖 Usage Guide</h2>
+                <h2 class="section-title"><span class="section-title-icon">📖</span> Usage Guide</h2>
                 <p class="section-subtitle">Learn how to effectively use the tool for lottery analysis</p>
                 
                 <div class="features-grid">
@@ -1002,7 +1044,7 @@ chmod +x *.sh
 
             <!-- Architecture Section -->
             <section class="section">
-                <h2 class="section-title">🏗️ Architecture</h2>
+                <h2 class="section-title"><span class="section-title-icon">🏗️</span> Architecture</h2>
                 <p class="section-subtitle">Understanding the project structure and components</p>
                 
                 <div class="code-block">

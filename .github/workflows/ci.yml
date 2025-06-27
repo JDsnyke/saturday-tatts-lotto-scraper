@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ main ]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
     strategy:
@@ -170,6 +174,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y rsync
+
     - name: Create release archive
       run: |
         # Create a release archive with better error handling
@@ -179,15 +188,40 @@ jobs:
         pwd
         ls -la
         
-        # Create archive with explicit exclusions
-        tar -czf saturday-tatts-lotto-scraper.tar.gz \
-          --exclude='.git' \
-          --exclude='*.tar.gz' \
-          --exclude='*.zip' \
-          --exclude='node_modules' \
-          --exclude='.DS_Store' \
-          --exclude='Thumbs.db' \
-          .
+        # Try rsync first, fallback to cp if it fails
+        if command -v rsync &> /dev/null; then
+          echo "Using rsync for archive creation..."
+          # Create a temporary directory for the archive contents
+          mkdir -p temp_archive
+          
+          # Copy files to temp directory, excluding what we don't want
+          rsync -av --exclude='.git' \
+                    --exclude='*.tar.gz' \
+                    --exclude='*.zip' \
+                    --exclude='node_modules' \
+                    --exclude='.DS_Store' \
+                    --exclude='Thumbs.db' \
+                    --exclude='temp_archive' \
+                    . temp_archive/
+          
+          # Create archive from the temp directory
+          tar -czf saturday-tatts-lotto-scraper.tar.gz -C temp_archive .
+          
+          # Clean up temp directory
+          rm -rf temp_archive
+        else
+          echo "rsync not available, using fallback method..."
+          # Fallback: use tar with exclusions directly
+          tar -czf saturday-tatts-lotto-scraper.tar.gz \
+            --exclude='.git' \
+            --exclude='*.tar.gz' \
+            --exclude='*.zip' \
+            --exclude='node_modules' \
+            --exclude='.DS_Store' \
+            --exclude='Thumbs.db' \
+            --exclude='temp_archive' \
+            .
+        fi
         
         # Verify the archive was created
         if [ -f "saturday-tatts-lotto-scraper.tar.gz" ]; then
