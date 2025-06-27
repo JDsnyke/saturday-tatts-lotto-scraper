@@ -1,0 +1,132 @@
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Log files
+*.log
+logs/
+log/
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# CSV data files (uncomment if you don't want to track the data)
+# winning_numbers.csv
+# supplementary_numbers.csv
+
+# Cache directories
+.cache/
+cache/
+
+# Package manager files
+node_modules/
+vendor/
+
+# IDE files
+.vscode/
+.idea/
+*.sublime-*
+.atom/
+
+# Shell history
+.bash_history
+.zsh_history
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Test files
+test_*.sh
+*_test.sh
+
+# Documentation build
+docs/_build/
+site/
+
+# Archives
+*.tar.gz
+*.zip
+*.rar
+
+# Compiled files
+*.o
+*.so
+*.dylib
+
+# Python (if any Python scripts are added later)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Node.js (if any Node.js scripts are added later)
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Ruby (if any Ruby scripts are added later)
+*.gem
+*.rbc
+/.config
+/coverage/
+/InstalledFiles
+/pkg/
+/spec/reports/
+/spec/examples.txt
+/test/tmp/
+/test/version_tmp/
+/tmp/
+
+# Java (if any Java scripts are added later)
+*.class
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+hs_err_pid*
+
+# Go (if any Go scripts are added later)
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+go.work 

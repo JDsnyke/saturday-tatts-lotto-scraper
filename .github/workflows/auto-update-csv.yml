@@ -1,0 +1,46 @@
+name: Auto Update Lotto CSV and Stats
+
+on:
+  schedule:
+    - cron: '0 6 * * 1' # Every Monday at 6:00 UTC
+  workflow_dispatch:
+
+jobs:
+  update-csv:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Set up bash and dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y curl gawk grep coreutils
+          # Install pup (HTML parser)
+          wget https://github.com/ericchiang/pup/releases/download/v0.4.0/pup_0.4.0_linux_amd64.zip
+          unzip pup_0.4.0_linux_amd64.zip
+          sudo mv pup /usr/local/bin/
+          pup --version
+
+      - name: Make scripts executable
+        run: chmod +x scrape_lotto_results.sh generate_stats.sh
+
+      - name: Scrape latest lotto results
+        run: ./scrape_lotto_results.sh
+
+      - name: Generate stats JSON
+        run: ./generate_stats.sh
+
+      - name: Commit and push if changed
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add winning_numbers.csv supplementary_numbers.csv assets/lotto_stats.json
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: auto-update lotto CSV and stats [skip ci]"
+            git push
+          else
+            echo "No changes to commit."
+          fi 

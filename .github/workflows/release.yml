@@ -1,0 +1,105 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Extract version
+      id: version
+      run: |
+        VERSION=${GITHUB_REF#refs/tags/}
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "Release version: $VERSION"
+
+    - name: Create release archive
+      run: |
+        # Create a clean release archive
+        tar -czf saturday-tatts-lotto-scraper-${{ steps.version.outputs.version }}.tar.gz \
+          --exclude='.git' \
+          --exclude='*.tar.gz' \
+          --exclude='*.zip' \
+          --exclude='.github' \
+          --exclude='winning_numbers.csv' \
+          --exclude='supplementary_numbers.csv' \
+          .
+        echo "Release archive created: saturday-tatts-lotto-scraper-${{ steps.version.outputs.version }}.tar.gz"
+
+    - name: Create release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: saturday-tatts-lotto-scraper-${{ steps.version.outputs.version }}.tar.gz
+        name: Release ${{ steps.version.outputs.version }}
+        body: |
+          ## 🎉 Release ${{ steps.version.outputs.version }}
+          
+          ### What's New
+          - [Add release notes here]
+          
+          ### Installation
+          ```bash
+          # Download and extract
+          wget https://github.com/JDsnyke/saturday-tatts-lotto-scraper/releases/download/${{ steps.version.outputs.version }}/saturday-tatts-lotto-scraper-${{ steps.version.outputs.version }}.tar.gz
+          tar -xzf saturday-tatts-lotto-scraper-${{ steps.version.outputs.version }}.tar.gz
+          cd saturday-tatts-lotto-scraper
+          
+          # Make executable and run
+          chmod +x *.sh
+          ./master_lotto.sh
+          ```
+          
+          ### Changes
+          - [List major changes]
+          
+          ### Bug Fixes
+          - [List bug fixes]
+          
+          ### Documentation
+          - [List documentation updates]
+          
+          ### System Requirements
+          - macOS, Linux, or BSD
+          - curl, pup, awk, grep
+          - bash or zsh shell
+          
+          ### Support
+          - Report issues: https://github.com/JDsnyke/saturday-tatts-lotto-scraper/issues
+          - Documentation: https://github.com/JDsnyke/saturday-tatts-lotto-scraper#readme
+          
+          ---
+          
+          **Download**: [saturday-tatts-lotto-scraper-${{ steps.version.outputs.version }}.tar.gz](https://github.com/JDsnyke/saturday-tatts-lotto-scraper/releases/download/${{ steps.version.outputs.version }}/saturday-tatts-lotto-scraper-${{ steps.version.outputs.version }}.tar.gz)
+          
+          **Checksum**: `sha256sum saturday-tatts-lotto-scraper-${{ steps.version.outputs.version }}.tar.gz`
+        draft: false
+        prerelease: false
+        generate_release_notes: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Generate checksum
+      run: |
+        sha256sum saturday-tatts-lotto-scraper-${{ steps.version.outputs.version }}.tar.gz > saturday-tatts-lotto-scraper-${{ steps.version.outputs.version }}.tar.gz.sha256
+        echo "Checksum generated:"
+        cat saturday-tatts-lotto-scraper-${{ steps.version.outputs.version }}.tar.gz.sha256
+
+    - name: Upload checksum
+      uses: softprops/action-gh-release@v2
+      with:
+        files: saturday-tatts-lotto-scraper-${{ steps.version.outputs.version }}.tar.gz.sha256
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Update CHANGELOG
+      run: |
+        # This step could be automated to update CHANGELOG.md
+        echo "Release ${{ steps.version.outputs.version }} completed successfully!"
+        echo "Remember to update CHANGELOG.md with release notes." 

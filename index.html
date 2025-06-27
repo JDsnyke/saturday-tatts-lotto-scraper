@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saturday Tatts Lotto Scraper & Analyzer</title>
+    <meta name="description" content="A comprehensive bash-based tool for scraping Saturday Tatts Lotto results and providing statistical analysis for number recommendations.">
+    <meta name="keywords" content="lotto, tatts, australia, scraper, analyzer, statistics, bash, shell">
+    <meta name="author" content="JDsnyke">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://jdsnyke.github.io/saturday-tatts-lotto-scraper/">
+    <meta property="og:title" content="Saturday Tatts Lotto Scraper & Analyzer">
+    <meta property="og:description" content="A comprehensive bash-based tool for scraping Saturday Tatts Lotto results and providing statistical analysis for number recommendations.">
+    <meta property="og:image" content="https://jdsnyke.github.io/saturday-tatts-lotto-scraper/assets/og-image.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://jdsnyke.github.io/saturday-tatts-lotto-scraper/">
+    <meta property="twitter:title" content="Saturday Tatts Lotto Scraper & Analyzer">
+    <meta property="twitter:description" content="A comprehensive bash-based tool for scraping Saturday Tatts Lotto results and providing statistical analysis for number recommendations.">
+    <meta property="twitter:image" content="https://jdsnyke.github.io/saturday-tatts-lotto-scraper/assets/og-image.png">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    
+    <!-- CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary-color: #10b981;
+            --accent-color: #f59e0b;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f9fafb;
+            --bg-tertiary: #f3f4f6;
+            --border-color: #e5e7eb;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 50%, #1e40af 100%);
+            color: white;
+            padding: 2rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #ffffff, #e0e7ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .header-badges {
+            margin-top: 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* Navigation */
+        .nav {
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .nav-logo {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--primary-color);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        /* Main Content */
+        .main {
+            padding: 4rem 0;
+        }
+
+        .section {
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-align: center;
+            color: var(--text-primary);
+        }
+
+        .section-subtitle {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-bottom: 3rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .feature-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 10px 10px -5px rgb(0 0 0 / 0.04);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .feature-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .feature-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Stats Section */
+        .stats-section {
+            background: var(--bg-secondary);
+            padding: 4rem 0;
+            margin: 4rem 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 2rem;
+            background: var(--bg-primary);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--text-primary);
+            color: white;
+            padding: 3rem 0 2rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h4 {
+            margin-bottom: 1rem;
+            color: #f3f4f6;
+        }
+
+        .footer-section a {
+            color: #d1d5db;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 0.5rem;
+            transition: color 0.2s;
+        }
+
+        .footer-section a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #374151;
+            padding-top: 2rem;
+            text-align: center;
+            color: #9ca3af;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .header p {
+                font-size: 1rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .demo-container {
+                grid-template-columns: 1fr;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .installation-steps {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .feature-card:nth-child(1) { animation-delay: 0.1s; }
+        .feature-card:nth-child(2) { animation-delay: 0.2s; }
+        .feature-card:nth-child(3) { animation-delay: 0.3s; }
+        .feature-card:nth-child(4) { animation-delay: 0.4s; }
+        .feature-card:nth-child(5) { animation-delay: 0.5s; }
+        .feature-card:nth-child(6) { animation-delay: 0.6s; }
+
+        /* Interactive Elements */
+        .interactive-demo {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .demo-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .demo-result {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.875rem;
+            display: none;
+        }
+
+        .demo-result.show {
+            display: block;
+        }
+
+        /* Mobile menu toggle */
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--bg-primary);
+                border-top: 1px solid var(--border-color);
+                padding: 1rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links.show {
+                display: flex;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <h1>🎯 Saturday Tatts Lotto Scraper & Analyzer</h1>
+            <p>A comprehensive bash-based tool for scraping Saturday Tatts Lotto results from Australia and providing statistical analysis for number recommendations.</p>
+            <div class="header-badges">
+                <span class="badge"><i class="fas fa-code"></i> Bash</span>
+                <span class="badge"><i class="fas fa-chart-line"></i> Statistics</span>
+                <span class="badge"><i class="fas fa-globe"></i> Australia</span>
+                <span class="badge"><i class="fas fa-graduation-cap"></i> Educational</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="container">
+            <div class="nav-content">
+                <div class="nav-logo">🎲 Lotto Scraper</div>
+                <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <ul class="nav-links" id="nav-links">
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#demo">Demo</a></li>
+                    <li><a href="#installation">Installation</a></li>
+                    <li><a href="#usage">Usage</a></li>
+                    <li><a href="https://github.com/JDsnyke/saturday-tatts-lotto-scraper" target="_blank">GitHub</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Live Lotto Stats Section -->
+            <section id="live-stats" class="section" style="background: var(--bg-secondary); padding: 3rem 0 2rem 0;">
+                <div class="container">
+                    <h2 class="section-title">📈 Live Lotto Stats</h2>
+                    <p class="section-subtitle">Up-to-date statistics from <code>winning_numbers.csv</code> and <code>supplementary_numbers.csv</code></p>
+                    <div id="lotto-stats-content" style="display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center; align-items: flex-start; margin-top: 2rem;">
+                        <div class="stat-card" style="min-width:220px;">
+                            <div class="stat-number" id="stat-total-draws">...</div>
+                            <div class="stat-label">Total Draws</div>
+                        </div>
+                        <div class="stat-card" style="min-width:220px;">
+                            <div class="stat-number" id="stat-date-range">...</div>
+                            <div class="stat-label">Date Range</div>
+                        </div>
+                        <div class="stat-card" style="min-width:220px;">
+                            <div class="stat-number" id="stat-most-freq-win">...</div>
+                            <div class="stat-label">Most Frequent Winning Number</div>
+                        </div>
+                        <div class="stat-card" style="min-width:220px;">
+                            <div class="stat-number" id="stat-least-freq-win">...</div>
+                            <div class="stat-label">Least Frequent Winning Number</div>
+                        </div>
+                        <div class="stat-card" style="min-width:220px;">
+                            <div class="stat-number" id="stat-most-freq-supp">...</div>
+                            <div class="stat-label">Most Frequent Supplementary</div>
+                        </div>
+                        <div class="stat-card" style="min-width:220px;">
+                            <div class="stat-number" id="stat-least-freq-supp">...</div>
+                            <div class="stat-label">Least Frequent Supplementary</div>
+                        </div>
+                    </div>
+                    <div style="text-align:center; margin-top:2rem; color:var(--text-secondary); font-size:0.95rem;">
+                        <span id="stat-last-updated">Last updated: ...</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Features Section -->
+            <section id="features" class="section">
+                <h2 class="section-title">🚀 Key Features</h2>
+                <p class="section-subtitle">Discover what makes this tool powerful and unique for lottery analysis</p>
+                
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-spider"></i>
+                        </div>
+                        <h3 class="feature-title">Automated Scraping</h3>
+                        <p class="feature-description">Fetches historical Saturday Tatts Lotto results from 1986-2025 with smart updates that only process new draws and terminate early after 5 consecutive skips.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-broom"></i>
+                        </div>
+                        <h3 class="feature-title">Auto Data Cleaning</h3>
+                        <p class="feature-description">Built-in CSV corruption detection and repair. Automatically removes corrupted data before analysis to ensure reliable results.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-calculator"></i>
+                        </div>
+                        <h3 class="feature-title">Statistical Analysis</h3>
+                        <p class="feature-description">Calculates odds and probabilities for each number using advanced frequency analysis and probability calculations.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <h3 class="feature-title">Smart Recommendations</h3>
+                        <p class="feature-description">Generates 10 diverse number combinations based on historical frequency while ensuring diversity and avoiding past winners.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-desktop"></i>
+                        </div>
+                        <h3 class="feature-title">Cross-Platform</h3>
+                        <p class="feature-description">Works seamlessly on macOS, Linux, and other Unix systems with automatic dependency detection and installation.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3 class="feature-title">Educational Focus</h3>
+                        <p class="feature-description">Designed for educational and research purposes to understand lottery number patterns and statistical concepts.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Stats Section -->
+            <section class="stats-section">
+                <div class="container">
+                    <h2 class="section-title">📊 Project Statistics</h2>
+                    <p class="section-subtitle">Key metrics and capabilities of the Saturday Tatts Lotto Scraper</p>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number">6</div>
+                            <div class="stat-label">Main Numbers</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">45</div>
+                            <div class="stat-label">Number Range</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">2</div>
+                            <div class="stat-label">Supplementary Numbers</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">10</div>
+                            <div class="stat-label">Recommendations Generated</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">2000+</div>
+                            <div class="stat-label">Historical Draws</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">4</div>
+                            <div class="stat-label">Supported Platforms</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Demo Section -->
+            <section id="demo" class="section">
+                <h2 class="section-title">💻 Interactive Demo</h2>
+                <p class="section-subtitle">See the tool in action with a simulated terminal interface</p>
+                
+                <div style="background: var(--bg-secondary); padding: 2rem; border-radius: 12px; margin: 2rem 0;">
+                    <h3 style="margin-bottom: 1rem;">Terminal Simulation</h3>
+                    <div style="background: #1e1e1e; color: #f8f8f2; padding: 1.5rem; border-radius: 8px; font-family: 'Monaco', monospace; font-size: 0.875rem;">
+                        <div style="margin-bottom: 0.5rem;">
+                            <span style="color: #50fa7b;">$</span> 
+                            <span style="color: #f8f8f2;">./master_lotto.sh</span>
+                        </div>
+                        <div style="color: #6272a4; margin-bottom: 0.5rem;">
+                            Saturday Tatts Lotto Scraper & Analyzer
+                            ======================================
+                            
+                            1. Scrape Lotto Results
+                            2. Parse Data & Recommend Entries (with auto-clean)
+                            3. Check & Install Requirements
+                            4. Exit
+                            
+                            Enter your choice: <span style="color: #f8f8f2;">1</span>
+                        </div>
+                        <div style="color: #6272a4;">
+                            🕷️  Starting Saturday Tatts Lotto scraper...
+                            📊 Fetching data from au.lottonumbers.com
+                            ✅ Found 2026 draws (1986-2025)
+                            💾 Saving to winning_numbers.csv
+                            🎉 Scraping completed successfully!
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Installation Section -->
+            <section id="installation" class="section">
+                <h2 class="section-title">⚙️ Installation</h2>
+                <p class="section-subtitle">Get started in minutes with our simple installation process</p>
+                
+                <div class="code-block">
+                    <pre><code># Clone the repository
+git clone https://github.com/JDsnyke/saturday-tatts-lotto-scraper.git
+cd saturday-tatts-lotto-scraper
+
+# Make scripts executable
+chmod +x *.sh
+
+# Run the master script
+./master_lotto.sh</code></pre>
+                </div>
+
+                <div style="text-align: center; margin: 2rem 0;">
+                    <a href="https://github.com/JDsnyke/saturday-tatts-lotto-scraper" class="btn btn-primary" target="_blank">
+                        <i class="fab fa-github"></i> View on GitHub
+                    </a>
+                    <a href="https://github.com/JDsnyke/saturday-tatts-lotto-scraper/archive/refs/heads/main.zip" class="btn btn-secondary">
+                        <i class="fas fa-download"></i> Download ZIP
+                    </a>
+                </div>
+            </section>
+
+            <!-- Usage Section -->
+            <section id="usage" class="section">
+                <h2 class="section-title">📖 Usage Guide</h2>
+                <p class="section-subtitle">Learn how to effectively use the tool for lottery analysis</p>
+                
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <h3 class="feature-title">1. Scrape Lotto Results</h3>
+                        <p class="feature-description">Fetches historical data from au.lottonumbers.com, automatically skipping existing data to avoid duplicates.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h3 class="feature-title">2. Parse Data & Recommend</h3>
+                        <p class="feature-description">Analyzes the scraped data using frequency analysis and generates 10 diverse number combinations. Includes automatic CSV cleaning for data integrity.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h3 class="feature-title">3. Check Requirements</h3>
+                        <p class="feature-description">Ensures all dependencies (curl, pup, awk, grep) are installed on your system.</p>
+                    </div>
+                </div>
+
+                <div class="code-block">
+                    <pre><code>Recommended Entries (with odds and percentages):
+===============================================
+ 1)  6 (1 in 28, 3.46%)  10 (1 in 42, 2.38%)  15 (1 in 36, 2.81%)  
+     22 (1 in 46, 2.16%)  34 (1 in 46, 2.16%)  42 (1 in 27, 3.68%)
+ 2)  1 (1 in 30, 3.25%)   5 (1 in 38, 2.60%)  16 (1 in 42, 2.38%)  
+     26 (1 in 51, 1.95%)  29 (1 in 35, 2.81%)  44 (1 in 42, 2.38%)</code></pre>
+                </div>
+            </section>
+
+            <!-- Architecture Section -->
+            <section class="section">
+                <h2 class="section-title">🏗️ Architecture</h2>
+                <p class="section-subtitle">Understanding the project structure and components</p>
+                
+                <div class="code-block">
+                    <pre><code>Lotto/
+├── master_lotto.sh          # Main menu interface
+├── scrape_lotto_results.sh  # Web scraper for lotto results
+├── parse_and_recommend.sh   # Statistical analysis & recommendations (with auto-clean)
+├── clean_csv.sh            # Manual CSV cleaning utility
+├── requirements.sh          # Dependency checker/installer
+├── generate_stats.sh        # Generate statistics for website
+├── winning_numbers.csv      # Scraped winning numbers
+├── supplementary_numbers.csv # Scraped supplementary numbers
+├── index.html              # GitHub Pages website
+├── assets/
+│   ├── lotto_stats.json    # Live statistics data
+│   └── favicon.svg         # Website favicon
+└── README.md               # Documentation</code></pre>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Project</h4>
+                    <a href="https://github.com/JDsnyke/saturday-tatts-lotto-scraper" target="_blank">GitHub Repository</a>
+                    <a href="https://github.com/JDsnyke/saturday-tatts-lotto-scraper/issues" target="_blank">Report Issues</a>
+                    <a href="https://github.com/JDsnyke/saturday-tatts-lotto-scraper/pulls" target="_blank">Contribute</a>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Documentation</h4>
+                    <a href="https://github.com/JDsnyke/saturday-tatts-lotto-scraper/blob/main/README.md" target="_blank">README</a>
+                    <a href="https://github.com/JDsnyke/saturday-tatts-lotto-scraper/blob/main/CONTRIBUTING.md" target="_blank">Contributing</a>
+                    <a href="https://github.com/JDsnyke/saturday-tatts-lotto-scraper/blob/main/CHANGELOG.md" target="_blank">Changelog</a>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <a href="https://github.com/JDsnyke/saturday-tatts-lotto-scraper/blob/main/LICENSE" target="_blank">License</a>
+                    <a href="#disclaimer">Disclaimer</a>
+                    <a href="#privacy">Privacy</a>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Connect</h4>
+                    <a href="https://github.com/JDsnyke" target="_blank">GitHub Profile</a>
+                    <a href="mailto:contact@example.com">Contact</a>
+                    <a href="https://github.com/JDsnyke/saturday-tatts-lotto-scraper/stargazers" target="_blank">Star Project</a>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 Saturday Tatts Lotto Scraper & Analyzer. Created by <a href="https://github.com/JDsnyke" target="_blank" style="color: #60a5fa;">JDsnyke</a>. For educational purposes only.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const navLinks = document.getElementById('nav-links');
+            navLinks.classList.toggle('show');
+        }
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                const navLinks = document.getElementById('nav-links');
+                navLinks.classList.remove('show');
+            });
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const headerOffset = 80; // Account for fixed header
+                    const elementPosition = target.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Add scroll effect to navigation
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('.nav');
+            if (window.scrollY > 100) {
+                nav.style.background = 'rgba(255, 255, 255, 0.95)';
+                nav.style.backdropFilter = 'blur(10px)';
+                nav.style.boxShadow = '0 1px 3px 0 rgb(0 0 0 / 0.1)';
+            } else {
+                nav.style.background = 'var(--bg-primary)';
+                nav.style.backdropFilter = 'none';
+                nav.style.boxShadow = 'none';
+            }
+        });
+
+        // Add click effects to buttons
+        document.querySelectorAll('.btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+            });
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe elements for animation
+        document.addEventListener('DOMContentLoaded', function() {
+            // Observe feature cards
+            document.querySelectorAll('.feature-card').forEach(card => {
+                observer.observe(card);
+            });
+
+            // Observe stat cards
+            document.querySelectorAll('.stat-card').forEach(card => {
+                observer.observe(card);
+            });
+
+            // Add hover effects to terminal simulation
+            const terminalSim = document.querySelector('[style*="background: #1e1e1e"]');
+            if (terminalSim) {
+                terminalSim.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.02)';
+                    this.style.transition = 'transform 0.3s ease';
+                });
+                
+                terminalSim.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            }
+        });
+
+        // Add loading animation
+        window.addEventListener('load', () => {
+            document.body.style.opacity = '1';
+        });
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', () => {
+            document.body.style.opacity = '0';
+            document.body.style.transition = 'opacity 0.5s ease';
+            
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+            }, 100);
+        });
+
+        // Lotto Stats Fetch and Display
+        async function loadLottoStats() {
+            try {
+                const res = await fetch('assets/lotto_stats.json');
+                if (!res.ok) throw new Error('Stats not found');
+                const stats = await res.json();
+                document.getElementById('stat-total-draws').textContent = stats.summary.totalDraws;
+                document.getElementById('stat-date-range').textContent = `${stats.summary.dateRange.first} to ${stats.summary.dateRange.last}`;
+                document.getElementById('stat-most-freq-win').textContent = `#${stats.frequencies.mostFrequent.winning.number} (${stats.frequencies.mostFrequent.winning.count}x)`;
+                document.getElementById('stat-least-freq-win').textContent = `#${stats.frequencies.leastFrequent.winning.number} (${stats.frequencies.leastFrequent.winning.count}x)`;
+                document.getElementById('stat-most-freq-supp').textContent = `#${stats.frequencies.mostFrequent.supplementary.number} (${stats.frequencies.mostFrequent.supplementary.count}x)`;
+                document.getElementById('stat-least-freq-supp').textContent = `#${stats.frequencies.leastFrequent.supplementary.number} (${stats.frequencies.leastFrequent.supplementary.count}x)`;
+                document.getElementById('stat-last-updated').textContent = `Last updated: ${stats.lastUpdated}`;
+            } catch (e) {
+                document.getElementById('lotto-stats-content').innerHTML = `<div style='color:var(--text-secondary);font-size:1.1rem;'>Unable to load stats.</div>`;
+            }
+        }
+        loadLottoStats();
+    </script>
+</body>
+</html> 

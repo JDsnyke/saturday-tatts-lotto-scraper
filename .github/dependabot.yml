@@ -1,0 +1,52 @@
+version: 2
+updates:
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "JDsnyke"
+    assignees:
+      - "JDsnyke"
+    commit-message:
+      prefix: "ci"
+      prefix-development: "ci-dev"
+      include: "scope"
+
+  # Enable version updates for npm (if any Node.js dependencies are added)
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "JDsnyke"
+    assignees:
+      - "JDsnyke"
+    commit-message:
+      prefix: "npm"
+      prefix-development: "npm-dev"
+      include: "scope"
+
+  # Enable version updates for pip (if any Python dependencies are added)
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "JDsnyke"
+    assignees:
+      - "JDsnyke"
+    commit-message:
+      prefix: "pip"
+      prefix-development: "pip-dev"
+      include: "scope" 
