@@ -779,8 +779,8 @@
             <h1><span class="title-icon">🎯</span> Saturday Tatts Lotto Scraper &amp; Analyzer</h1>
             <p>A comprehensive bash-based tool for scraping Saturday Tatts Lotto results from Australia and providing statistical analysis for number recommendations.</p>
             <div class="header-badges">
-                <span class="badge"><i class="fas fa-code"></i> Bash</span>
-                <span class="badge"><i class="fas fa-chart-line"></i> Statistics</span>
+                <span class="badge"><i class="fas fa-code"></i> Bash + Python 3</span>
+                <span class="badge"><i class="fas fa-balance-scale"></i> Weighted Odds</span>
                 <span class="badge"><i class="fas fa-globe"></i> Australia</span>
                 <span class="badge"><i class="fas fa-graduation-cap"></i> Educational</span>
             </div>
@@ -885,15 +885,15 @@
                             <i class="fas fa-calculator"></i>
                         </div>
                         <h3 class="feature-title">Statistical Analysis</h3>
-                        <p class="feature-description">Calculates odds and probabilities for each number using advanced frequency analysis and probability calculations.</p>
+                        <p class="feature-description">Calculates odds, probabilities, and weighted heat scores that blend main-draw frequency with supplementary momentum.</p>
                     </div>
 
                     <div class="feature-card">
                         <div class="feature-icon">
                             <i class="fas fa-lightbulb"></i>
                         </div>
-                        <h3 class="feature-title">Smart Recommendations</h3>
-                        <p class="feature-description">Generates 10 diverse number combinations based on historical frequency while ensuring diversity and avoiding past winners.</p>
+                        <h3 class="feature-title">Deterministic Recommendations</h3>
+                        <p class="feature-description">Ranks combinations with an embedded Python optimizer to deliver 10 deterministic entries that avoid past winners and overlap.</p>
                     </div>
 
                     <div class="feature-card">
@@ -901,7 +901,7 @@
                             <i class="fas fa-desktop"></i>
                         </div>
                         <h3 class="feature-title">Cross-Platform</h3>
-                        <p class="feature-description">Works seamlessly on macOS, Linux, and other Unix systems with automatic dependency detection and installation.</p>
+                        <p class="feature-description">Runs on macOS, Linux, and other Unix systems with automatic dependency checks, including Python 3 availability.</p>
                     </div>
 
                     <div class="feature-card">
@@ -978,6 +978,9 @@
                             ✅ Found 2026 draws (1986-2025)
                             💾 Saving to winning_numbers.csv
                             🎉 Scraping completed successfully!
+                            🧹  Auto-cleaning CSV files before analysis...
+                            🎯  Running deterministic recommendation engine (Python 3)...
+                            📈  Generated 10 ranked entries with weighted supplementary scoring.
                         </div>
                     </div>
                 </div>
@@ -1023,22 +1026,23 @@ chmod +x *.sh
                     
                     <div class="feature-card">
                         <h3 class="feature-title">2. Parse Data & Recommend</h3>
-                        <p class="feature-description">Analyzes the scraped data using frequency analysis and generates 10 diverse number combinations. Includes automatic CSV cleaning for data integrity.</p>
+                        <p class="feature-description">Runs the deterministic recommendation engine with weighted supplementary numbers and automatic CSV cleaning to produce 10 ranked entries.</p>
                     </div>
-                    
+
                     <div class="feature-card">
                         <h3 class="feature-title">3. Check Requirements</h3>
-                        <p class="feature-description">Ensures all dependencies (curl, pup, awk, grep) are installed on your system.</p>
+                        <p class="feature-description">Confirms curl, pup, awk, grep, and Python 3 are installed before any scraping or recommendation steps run.</p>
                     </div>
                 </div>
 
                 <div class="code-block">
-                    <pre><code>Recommended Entries (with odds and percentages):
-===============================================
- 1)  6 (1 in 28, 3.46%)  10 (1 in 42, 2.38%)  15 (1 in 36, 2.81%)  
-     22 (1 in 46, 2.16%)  34 (1 in 46, 2.16%)  42 (1 in 27, 3.68%)
- 2)  1 (1 in 30, 3.25%)   5 (1 in 38, 2.60%)  16 (1 in 42, 2.38%)  
-     26 (1 in 51, 1.95%)  29 (1 in 35, 2.81%)  44 (1 in 42, 2.38%)</code></pre>
+                    <pre><code>No. | N1 | N2 | N3 | N4 | N5 | N6 | Avg Odds        | Avg %      | Main   | Supp
+-----|----|----|----|----|----|----|---------------|-----------|-------|------
+1   | 1  | 8  | 11 | 18 | 22 | 42 | 1 in 7          | 16.18%     | 1773   | 553
+2   | 1  | 5  | 7  | 11 | 40 | 41 | 1 in 8          | 15.92%     | 1735   | 572
+3   | 1  | 6  | 7  | 8  | 12 | 19 | 1 in 8          | 15.82%     | 1733   | 542
+4   | 1  | 3  | 11 | 12 | 15 | 26 | 1 in 8          | 15.76%     | 1724   | 547
+5   | 5  | 6  | 11 | 15 | 19 | 42 | 1 in 8          | 15.66%     | 1707   | 561</code></pre>
                 </div>
             </section>
 
