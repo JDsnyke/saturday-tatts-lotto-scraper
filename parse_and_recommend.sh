@@ -437,7 +437,10 @@ perform_analysis() {
         sorted_numbers+=($num)
     done
 
-    generate_recommendations sorted_numbers
+    if ! generate_recommendations sorted_numbers; then
+        echo -e "${RED}Error: Failed to generate deterministic recommendations.${RESET}"
+        return 1
+    fi
 
     echo ""
     echo -e "${BLUE}${BOLD}🎯 LOTTERY NUMBER RECOMMENDATIONS${RESET}"
