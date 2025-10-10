@@ -12,7 +12,7 @@ This tool scrapes historical Saturday Tatts Lotto results from [au.lottonumbers.
 - **Smart Updates**: Only processes new draws, skipping existing data with early termination after 5 consecutive skips
 - **Automatic Data Cleaning**: Built-in CSV corruption detection and repair
 - **Statistical Analysis**: Calculates odds and probabilities for each number
-- **Unique Recommendations**: Generates 10 diverse number combinations based on historical frequency
+- **Deterministic Recommendations**: Uses a weighted ranking engine to deliver 10 stable, history-aware combinations
 - **Cross-Platform**: Works on macOS, Linux, and other Unix systems
 - **Requirements Management**: Automatic detection and installation of dependencies
 - **GitHub Pages Website**: Live statistics and project documentation
@@ -45,6 +45,7 @@ The script will automatically check and install these requirements:
 - `pup` - HTML parsing
 - `awk` - Text processing
 - `grep` - Pattern matching
+- `python3` - Deterministic combination ranking
 
 ### Installation
 
@@ -97,10 +98,13 @@ This will remove any lines containing "Processed:" text and keep only valid data
 ### Sample Output
 
 ```
-Recommended Entries (with odds and percentages):
-===============================================
- 1)  6 (1 in 28, 3.46%)  10 (1 in 42, 2.38%)  15 (1 in 36, 2.81%)  22 (1 in 46, 2.16%)  34 (1 in 46, 2.16%)  42 (1 in 27, 3.68%)
- 2)  1 (1 in 30, 3.25%)   5 (1 in 38, 2.60%)  16 (1 in 42, 2.38%)  26 (1 in 51, 1.95%)  29 (1 in 35, 2.81%)  44 (1 in 42, 2.38%)
+No. | N1 | N2 | N3 | N4 | N5 | N6 | Avg Odds        | Avg %      | Main   | Supp
+-----|----|----|----|----|----|----|---------------|-----------|-------|------
+1   | 1  | 8  | 11 | 18 | 22 | 42 | 1 in 7          | 16.18%     | 1773   | 553
+2   | 1  | 5  | 7  | 11 | 40 | 41 | 1 in 8          | 15.92%     | 1735   | 572
+3   | 1  | 6  | 7  | 8  | 12 | 19 | 1 in 8          | 15.82%     | 1733   | 542
+4   | 1  | 3  | 11 | 12 | 15 | 26 | 1 in 8          | 15.76%     | 1724   | 547
+5   | 5  | 6  | 11 | 15 | 19 | 42 | 1 in 8          | 15.66%     | 1707   | 561
 ```
 
 ## 📊 Data Format
@@ -135,9 +139,9 @@ Date,Supplementary Numbers
 
 The recommendation system uses:
 1. **Frequency Analysis**: Counts historical appearance of each number
-2. **Probability Calculation**: Converts frequencies to odds and percentages
-3. **Diversity Filtering**: Ensures recommendations share ≤2 numbers
-4. **Past Exclusion**: Never recommends exact past winning combinations
+2. **Weighted Scoring**: Blends main and supplementary frequencies with a 35% weighting boost for supplementary hits
+3. **Deterministic Ranking**: Runs a Python 3 search to score combinations and avoid historical winners
+4. **Diversity Filtering**: Ensures recommendations share ≤2 numbers before fallback broadening
 5. **Auto-Cleaning**: Automatically removes corrupted data before analysis
 
 ### Statistical Methods
