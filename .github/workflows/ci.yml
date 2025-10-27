@@ -233,7 +233,7 @@ jobs:
         fi
 
     - name: Upload build artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: saturday-tatts-lotto-scraper-${{ github.sha }}
         path: saturday-tatts-lotto-scraper.tar.gz 
