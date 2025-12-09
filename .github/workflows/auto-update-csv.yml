@@ -23,8 +23,10 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y curl gawk grep coreutils
           # Install pup (HTML parser)
-          wget https://github.com/ericchiang/pup/releases/download/v0.4.0/pup_0.4.0_linux_amd64.zip
-          unzip pup_0.4.0_linux_amd64.zip
+          PUP_VERSION="v0.4.0"
+          PUP_ARCHIVE="pup_${PUP_VERSION}_linux_amd64.zip"
+          wget "https://github.com/ericchiang/pup/releases/download/${PUP_VERSION}/${PUP_ARCHIVE}"
+          unzip "${PUP_ARCHIVE}"
           sudo mv pup /usr/local/bin/
           pup --version
 
