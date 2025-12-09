@@ -23,10 +23,28 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+    - name: Ensure zsh is available
+      if: matrix.shell == 'zsh'
+      run: |
+        if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
+          sudo apt-get update
+          sudo apt-get install -y zsh
+        else
+          # macOS runners already include zsh, but install via Homebrew if missing
+          if ! command -v zsh &> /dev/null; then
+            brew install zsh
+          fi
+        fi
+
     - name: Setup shell
       run: |
         if [ "${{ matrix.shell }}" = "zsh" ]; then
-          echo "SHELL=/bin/zsh" >> $GITHUB_ENV
+          shell_path=$(command -v zsh || true)
+          if [ -z "$shell_path" ]; then
+            echo "zsh was requested but is not installed"
+            exit 1
+          fi
+          echo "SHELL=$shell_path" >> $GITHUB_ENV
         else
           echo "SHELL=/bin/bash" >> $GITHUB_ENV
         fi
@@ -35,11 +53,13 @@ jobs:
       if: matrix.os == 'ubuntu-latest'
       run: |
         sudo apt-get update
-        sudo apt-get install -y curl
+        sudo apt-get install -y curl unzip
         # Install pup for HTML parsing
-        curl -L https://github.com/ericchiang/pup/releases/download/v0.4.0/pup_v0.4.0_linux_amd64.tar.gz | tar xz
-        sudo mv pup /usr/local/bin/
-        sudo chmod +x /usr/local/bin/pup
+        tmp_dir=$(mktemp -d)
+        curl -fsSL -o "$tmp_dir/pup.zip" https://github.com/ericchiang/pup/releases/download/v0.4.0/pup_v0.4.0_linux_amd64.zip
+        unzip -q "$tmp_dir/pup.zip" -d "$tmp_dir"
+        sudo install -m 0755 "$tmp_dir"/pup /usr/local/bin/pup
+        rm -rf "$tmp_dir"
 
     - name: Install dependencies (macOS)
       if: matrix.os == 'macos-latest'
@@ -67,8 +87,8 @@ jobs:
 
     - name: Test master script help
       run: |
-        # Test that the master script can be executed without errors
-        echo "4" | $SHELL master_lotto.sh || true
+        # Test that the master script can be executed without errors in non-interactive mode
+        AUTO_CHOICE=4 CI=1 TERM=xterm $SHELL master_lotto.sh
 
     - name: Check file permissions
       run: |
