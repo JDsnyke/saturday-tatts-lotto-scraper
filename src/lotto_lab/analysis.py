@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 from collections import Counter
+from collections.abc import Sequence
 from datetime import UTC, datetime
 from itertools import combinations
-from typing import Sequence
 
-from .domain import BALL_COUNT, DIVISION_ONE_COMBINATIONS, Draw, MAIN_COUNT, SUPPLEMENTARY_COUNT
+from .domain import BALL_COUNT, DIVISION_ONE_COMBINATIONS, MAIN_COUNT, SUPPLEMENTARY_COUNT, Draw
 from .probability import chi_square_uniform, expected_number_count, normalized_entropy, number_z_score
 from .tickets import generate_coverage_tickets, ticket_metrics
 

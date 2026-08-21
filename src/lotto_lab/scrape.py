@@ -94,9 +94,11 @@ def refresh_dataset(
     except FileNotFoundError:
         existing = {}
     except DataValidationError as exc:
-        raise DataValidationError(
-            "Existing dataset is invalid; refusing to overwrite it. Run `lotto-lab validate` and repair the data first."
-        ) from exc
+        message = (
+            "Existing dataset is invalid; refusing to overwrite it. "
+            "Run `lotto-lab validate` and repair the data first."
+        )
+        raise DataValidationError(message) from exc
 
     before = len(existing)
     for year in range(to_year, from_year - 1, -1):

@@ -3,8 +3,8 @@ from __future__ import annotations
 import hashlib
 import random
 from collections import Counter
+from collections.abc import Iterable
 from itertools import combinations
-from typing import Iterable
 
 from .domain import BALL_COUNT, MAIN_COUNT
 from .probability import division_one_probability
@@ -49,7 +49,7 @@ def generate_coverage_tickets(count: int, seed: str | int | None = None) -> list
     seen: set[Ticket] = set()
 
     for _ in range(count):
-        for attempt in range(100):
+        for _attempt in range(100):
             chosen: list[int] = []
             while len(chosen) < MAIN_COUNT:
                 candidates = [number for number in range(1, BALL_COUNT + 1) if number not in chosen]
@@ -58,7 +58,9 @@ def generate_coverage_tickets(count: int, seed: str | int | None = None) -> list
                 def score(number: int) -> tuple[float, float, float]:
                     repeated_pairs = sum(pair_usage[tuple(sorted((number, other)))] for other in chosen)
                     shared_with_existing = sum(
-                        1 for ticket in tickets if number in ticket and any(other in ticket for other in chosen)
+                        1
+                        for ticket in tickets
+                        if number in ticket and any(other in ticket for other in chosen)
                     )
                     return (usage[number], repeated_pairs, shared_with_existing + rng.random() * 0.01)
 

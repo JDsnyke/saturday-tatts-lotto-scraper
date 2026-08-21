@@ -67,7 +67,11 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "tickets":
         generator = generate_coverage_tickets if args.mode == "coverage" else generate_random_tickets
         tickets = generator(args.count, seed=args.seed)
-        payload = {"mode": args.mode, "tickets": [list(ticket) for ticket in tickets], "metrics": ticket_metrics(tickets)}
+        payload = {
+            "mode": args.mode,
+            "tickets": [list(ticket) for ticket in tickets],
+            "metrics": ticket_metrics(tickets),
+        }
         if args.json:
             print(json.dumps(payload, indent=2))
         else:

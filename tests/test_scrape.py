@@ -13,7 +13,10 @@ class ScrapeTests(unittest.TestCase):
 
     def test_parse_draw_page(self):
         balls = "".join(f'<li class="ball">{n}</li>' for n in [2, 6, 8, 12, 22, 43, 13, 28])
-        html = f"<html><head><title>Saturday Lotto Results 25 July 2026</title></head><body>{balls}</body></html>"
+        html = (
+            "<html><head><title>Saturday Lotto Results 25 July 2026</title></head>"
+            f"<body>{balls}</body></html>"
+        )
         draw = parse_draw_page(html)
         self.assertEqual(draw.date.isoformat(), "2026-07-25")
         self.assertEqual(draw.main, (2, 6, 8, 12, 22, 43))

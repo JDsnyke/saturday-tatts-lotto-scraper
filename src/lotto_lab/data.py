@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 import csv
+from collections.abc import Iterable
 from datetime import date
 from pathlib import Path
-from typing import Iterable
 
-from .domain import Draw, MAIN_COUNT, SUPPLEMENTARY_COUNT
+from .domain import MAIN_COUNT, SUPPLEMENTARY_COUNT, Draw
 
 
 class DataValidationError(ValueError):

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+from collections.abc import Iterable
 from math import comb, log, sqrt
-from typing import Iterable
 
 from .domain import BALL_COUNT, MAIN_COUNT
 
