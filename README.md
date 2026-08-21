@@ -1,228 +1,159 @@
-# Saturday Tatts Lotto Scraper & Analyzer
+# Saturday Lotto Lab
 
-A comprehensive bash-based tool for scraping Saturday Tatts Lotto results from Australia and providing statistical analysis for number recommendations.
+A probability-first Saturday Lotto / TattsLotto research project for collecting historical results, validating the dataset, exploring realised statistical variation, and generating **multi-ticket coverage sets without pretending history predicts the next draw**.
 
-## 🎯 Overview
+> **Key fact:** a standard Saturday Lotto entry is 6 numbers selected from 45, so there are `C(45,6) = 8,145,060` possible Division 1 combinations. Every individual combination has the same chance in a fair draw.
 
-This tool scrapes historical Saturday Tatts Lotto results from [au.lottonumbers.com](https://au.lottonumbers.com) and analyzes the data to provide statistically-based number recommendations. It's designed for educational and research purposes to understand lottery number patterns.
+## What changed in v2
 
-## 📊 Features
+The old project ranked “recommended” combinations using historical main/supplementary frequency. That is not a defensible way to increase next-draw probability for an independent random lottery.
 
-- **Automated Scraping**: Fetches historical Saturday Tatts Lotto results (1986-2025)
-- **Smart Updates**: Only processes new draws, skipping existing data with early termination after 5 consecutive skips
-- **Automatic Data Cleaning**: Built-in CSV corruption detection and repair
-- **Statistical Analysis**: Calculates odds and probabilities for each number
-- **Deterministic Recommendations**: Uses a weighted ranking engine to deliver 10 stable, history-aware combinations
-- **Cross-Platform**: Works on macOS, Linux, and other Unix systems
-- **Requirements Management**: Automatic detection and installation of dependencies
-- **GitHub Pages Website**: Live statistics and project documentation
+v2 replaces it with:
 
-## 🏗️ Architecture
+- **exact probability maths** rather than per-number “average odds”;
+- **balanced multi-ticket coverage** that reduces internal overlap across multiple distinct entries;
+- **typed Python data tooling** instead of large shell/awk pipelines;
+- **strict draw validation** and canonical CSV ordering;
+- **historical diagnostics** (z-scores, entropy, χ² distance, pair co-occurrence) clearly labelled descriptive;
+- **a redesigned GitHub Pages dashboard** with responsive UI, light/dark/system themes, animated charts, accessible tabs and an in-browser Ticket Lab;
+- **unit tests + Ruff linting** in CI;
+- **quiet automation**: no automated dependency PR churn and no updater-created branches/PRs.
 
-```
-Lotto/
-├── master_lotto.sh          # Main menu interface
-├── scrape_lotto_results.sh  # Web scraper for lotto results
-├── parse_and_recommend.sh   # Statistical analysis & recommendations (with auto-clean)
-├── clean_csv.sh            # Manual CSV cleaning utility
-├── requirements.sh          # Dependency checker/installer
-├── generate_stats.sh        # Generate statistics for website
-├── winning_numbers.csv      # Scraped winning numbers
-├── supplementary_numbers.csv # Scraped supplementary numbers
-├── index.html              # GitHub Pages website
-├── assets/
-│   ├── lotto_stats.json    # Live statistics data
-│   └── favicon.svg         # Website favicon
-└── README.md               # This file
-```
+## Quick start
 
-## 🚀 Quick Start
-
-### Prerequisites
-
-The script will automatically check and install these requirements:
-- `curl` - HTTP requests
-- `pup` - HTML parsing
-- `awk` - Text processing
-- `grep` - Pattern matching
-- `python3` - Deterministic combination ranking
-
-### Installation
-
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/JDsnyke/saturday-tatts-lotto-scraper.git
-   cd saturday-tatts-lotto-scraper
-   ```
-
-2. **Make scripts executable:**
-   ```bash
-   chmod +x *.sh
-   ```
-
-3. **Run the master script:**
-   ```bash
-   ./master_lotto.sh
-   ```
-
-## 📖 Usage
-
-### Master Menu Options
-
-1. **Scrape Lotto Results** - Fetches and stores historical data
-2. **Parse Data & Recommend Entries (with auto-clean)** - Analyzes data and provides recommendations
-3. **Check & Install Requirements** - Ensures all dependencies are installed
-4. **Exit** - Close the application
-
-### Example Workflow
+Requires Python 3.11+.
 
 ```bash
-# Start the application
-./master_lotto.sh
-
-# Select option 3 to check requirements
-# Select option 1 to scrape results
-# Select option 2 to get recommendations (includes automatic CSV cleaning)
+git clone https://github.com/JDsnyke/saturday-tatts-lotto-scraper.git
+cd saturday-tatts-lotto-scraper
+python3 -m pip install -r requirements.txt
+export PYTHONPATH="$PWD/src"
 ```
 
-### Manual CSV Cleaning
-
-If you need to manually clean corrupted CSV files:
+Validate and canonicalize the existing dataset:
 
 ```bash
-./clean_csv.sh
+python3 -m lotto_lab validate
 ```
 
-This will remove any lines containing "Processed:" text and keep only valid data.
+Refresh the current year's results and rebuild website statistics:
 
-### Sample Output
-
-```
-No. | N1 | N2 | N3 | N4 | N5 | N6 | Avg Odds        | Avg %      | Main   | Supp
------|----|----|----|----|----|----|---------------|-----------|-------|------
-1   | 1  | 8  | 11 | 18 | 22 | 42 | 1 in 7          | 16.18%     | 1773   | 553
-2   | 1  | 5  | 7  | 11 | 40 | 41 | 1 in 8          | 15.92%     | 1735   | 572
-3   | 1  | 6  | 7  | 8  | 12 | 19 | 1 in 8          | 15.82%     | 1733   | 542
-4   | 1  | 3  | 11 | 12 | 15 | 26 | 1 in 8          | 15.76%     | 1724   | 547
-5   | 5  | 6  | 11 | 15 | 19 | 42 | 1 in 8          | 15.66%     | 1707   | 561
+```bash
+python3 -m lotto_lab refresh
 ```
 
-## 📊 Data Format
+Generate 10 balanced-coverage entries:
 
-### CSV Structure
-
-**winning_numbers.csv:**
-```csv
-Date,Winning Numbers
-2025-06-21,7,14,22,28,33,41
-2025-06-14,3,11,19,27,35,44
+```bash
+python3 -m lotto_lab tickets --count 10 --mode coverage
 ```
 
-**supplementary_numbers.csv:**
-```csv
-Date,Supplementary Numbers
-2025-06-21,5,17
-2025-06-14,8,29
+Generate reproducible entries for testing/research:
+
+```bash
+python3 -m lotto_lab tickets --count 10 --mode coverage --seed demo-2026
 ```
 
-## 🎲 Saturday Tatts Lotto Rules
+The legacy shell entry points remain as thin wrappers (`master_lotto.sh`, `scrape_lotto_results.sh`, `generate_stats.sh`, `parse_and_recommend.sh`, `clean_csv.sh`) so existing usage does not abruptly break.
 
-- **Game Type**: 6/45 Lotto
-- **Draw Day**: Every Saturday
-- **Numbers**: 6 main numbers (1-45) + 2 supplementary numbers
-- **Jackpot**: Division 1 prize pool
-- **Draw Time**: 8:30 PM AEST
+## Ticket modes
 
-## 🔧 Technical Details
+### Balanced coverage
 
-### Algorithm
+Coverage mode greedily spreads number usage and avoids repeatedly using the same number pairs across the ticket set. It is designed for **portfolio diversity** when generating multiple distinct entries.
 
-The recommendation system uses:
-1. **Frequency Analysis**: Counts historical appearance of each number
-2. **Weighted Scoring**: Blends main and supplementary frequencies with a 35% weighting boost for supplementary hits
-3. **Deterministic Ranking**: Runs a Python 3 search to score combinations and avoid historical winners
-4. **Diversity Filtering**: Ensures recommendations share ≤2 numbers before fallback broadening
-5. **Auto-Cleaning**: Automatically removes corrupted data before analysis
+It does **not** make a chosen number more likely to be drawn and does not change the per-combination probability.
 
-### Statistical Methods
+### Uniform QuickPick
 
-- **Individual Number Probability**: `frequency / total_draws`
-- **Odds Calculation**: `total_draws / frequency`
-- **Weighted Selection**: Prioritizes high-probability numbers while maintaining diversity
+Random mode samples distinct six-number combinations uniformly. With no seed it uses the operating system's cryptographic random source through Python's `SystemRandom`.
 
-### Data Integrity
+## Probability
 
-- **Automatic Cleaning**: Parse script automatically cleans CSV files before analysis
-- **Corruption Detection**: Removes lines with "Processed:" text or invalid formats
-- **Manual Cleaning**: `clean_csv.sh` utility for manual data repair
-- **Early Termination**: Scraper stops after 5 consecutive skips to prevent infinite loops
+For one standard ticket:
 
-## 🌐 Website & Live Statistics
+```text
+P(Division 1) = 1 / C(45,6)
+              = 1 / 8,145,060
+```
 
-Visit the [GitHub Pages website](https://jdsnyke.github.io/saturday-tatts-lotto-scraper/) for:
-- Live lotto statistics
-- Interactive data visualization
-- Project documentation
-- Usage examples
+For `n` distinct standard tickets:
 
-The website automatically updates with the latest data through GitHub Actions.
+```text
+P(Division 1) = n / 8,145,060
+```
 
-## 🔄 Updates
+Because a draw produces one winning six-number set, these mutually exclusive covered combinations make the multi-ticket Division 1 probability linear in the number of **distinct** entries.
 
-The scraper automatically:
-- Processes draws from newest to oldest
-- Skips existing data to avoid duplicates
-- Terminates early after 5 consecutive skips
-- Updates incrementally for efficiency
-- Cleans corrupted data automatically
+## Historical diagnostics
 
-## 🌐 Supported Systems
+The website and `assets/lotto_stats.json` expose:
 
-- **macOS**: Homebrew, MacPorts
-- **Linux**: apt, yum, dnf, pacman, zypper, emerge
-- **FreeBSD**: pkg, ports
-- **Windows**: Manual installation (WSL recommended)
+- observed main and supplementary counts for each number;
+- marginal binomial z-scores for main-number counts;
+- normalized entropy of the main-number distribution;
+- a χ² distance from equal historical counts (descriptive only, no naive p-value);
+- draws since last main appearance;
+- common historical pairs and lift versus expected pair co-occurrence;
+- a reproducible reference coverage set.
 
-## 📝 License
+See [`docs/METHODOLOGY.md`](docs/METHODOLOGY.md) for the reasoning and formulas.
 
-This project is for educational purposes. Please ensure compliance with local laws and regulations regarding lottery analysis and web scraping.
+## Data pipeline
 
-## ⚠️ Disclaimer
+The scraper still uses the public `au.lottonumbers.com` archive as its collection source, but the implementation is now Python + Beautiful Soup with:
 
-- This tool is for educational and research purposes only
-- Past performance does not guarantee future results
-- Lottery games are games of chance
-- Please gamble responsibly
-- The authors are not responsible for any financial losses
+- a dynamic current year instead of a hard-coded 2025 ceiling;
+- a user agent, timeout and polite request delay;
+- link deduplication;
+- validation before data is accepted;
+- canonical newest-first output;
+- current-year incremental refresh by default.
 
-## 🤝 Contributing
+The scheduled GitHub Action runs once per week after the Saturday draw, rebuilds statistics, and commits directly to `main` **only when tracked draw data changed**. It does not create update branches or pull requests.
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+## Development
 
-### Development Setup
+```bash
+python3 -m pip install -r requirements-dev.txt
+PYTHONPATH=src python3 -m unittest discover -s tests -v
+ruff check src tests
+```
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+CI also compiles all Python modules, validates the tracked historical dataset, and checks that the static web assets referenced by `index.html` exist.
 
-## 📞 Support
+## Repository layout
 
-For issues, questions, or contributions:
-- Create an issue on GitHub
+```text
+src/lotto_lab/
+  analysis.py       # descriptive statistics + website JSON
+  cli.py            # command-line interface
+  data.py           # CSV parsing/validation/canonical writing
+  domain.py         # game constants and Draw model
+  probability.py    # exact combinatorics + diagnostics
+  scrape.py         # public results scraper
+  tickets.py        # random and balanced coverage generators
+assets/
+  app.css
+  app.js
+  lotto_stats.json
+.github/workflows/
+  ci.yml
+  data-refresh.yml
+  deploy.yml
+tests/
+docs/METHODOLOGY.md
+ROADMAP.md
+```
 
-## 📈 Future Enhancements
+## Roadmap
 
-- [ ] Additional lottery games support
-- [ ] Advanced statistical analysis
-- [ ] Web interface
-- [ ] API endpoints
-- [ ] Machine learning predictions
-- [ ] Historical trend analysis
+The living implementation plan is in [`ROADMAP.md`](ROADMAP.md). Future work prioritises provenance, second-source verification, walk-forward/Monte Carlo comparison, and stronger randomness diagnostics—not “AI prediction”.
 
----
+## Responsible use
 
-**Repository Owner**: [JDsnyke](https://github.com/JDsnyke)  
-**Last Updated**: June 2025  
-**Version**: 1.1.0 
+This project is for educational and research purposes. Lottery games are games of chance and involve financial risk. Historical patterns do not guarantee or meaningfully predict future winning numbers in a fair draw. Set a budget and gamble responsibly.
+
+## License
+
+MIT. See [`LICENSE`](LICENSE).
