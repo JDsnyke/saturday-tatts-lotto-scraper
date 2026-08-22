@@ -33,18 +33,18 @@
       <a href="https://github.com/JDsnyke/saturday-tatts-lotto-scraper/blob/main/ROADMAP.md">Roadmap</a>
     </nav>
     <div class="header-actions">
-      <span class="data-pill"><span class="status-dot"></span><span>Multi-seed evidence</span></span>
+      <span class="data-pill"><span class="status-dot"></span><span>Exact + multi-seed evidence</span></span>
     </div>
   </header>
 
   <main id="main">
     <section class="hero section-shell">
       <div class="hero-copy">
-        <div class="eyebrow"><span class="status-dot"></span> Portfolio distributions · exact certificates</div>
+        <div class="eyebrow"><span class="status-dot"></span> Exact portfolio probability · certified bounds · multi-seed evidence</div>
         <h1>Separate what is<br><span>estimated from proved.</span></h1>
-        <p class="hero-lead">Benchmark Lab now combines multi-seed simulation with exact portfolio certificates. Division 1 remains fixed by the number of distinct games; lower-tier portfolio structure can be bounded or, in important cases, solved exactly.</p>
+        <p class="hero-lead">Benchmark Lab combines exact portfolio probability, certified combinatorial bounds and multi-seed simulation. Division 1 remains fixed by the number of distinct games; lower-tier portfolio structure can now be measured without relying on simulation for the any-prize result.</p>
         <div class="hero-actions">
-          <a class="button primary" href="#certificates">View certificates <span aria-hidden="true">→</span></a>
+          <a class="button primary" href="#certificates">View exact evidence <span aria-hidden="true">→</span></a>
           <a class="button secondary" href="#evidence">Open benchmark</a>
           <a class="button secondary" href="index.html">Back to main lab</a>
         </div>
@@ -75,17 +75,22 @@
       <div class="thesis-mark" aria-hidden="true">Δ</div>
       <div>
         <span class="eyebrow">How to read the evidence</span>
-        <h2>A positive lower-division effect is a portfolio result, not a forecasting edge.</h2>
-        <p>Pair, triple and quadruple coverage are exact structural measures. Probability certificates are exact combinatorics. Prize-hit rates are Monte Carlo estimates. Each claim is labelled according to what it can actually prove.</p>
+        <h2>Exact combinatorics overrides a noisy simulation whenever both answer the same question.</h2>
+        <p>Pair, triple and quadruple coverage are exact structural measures. The reference any-prize probability is now computed exactly. Bonferroni remains a rigorous lower bound. Monte Carlo remains useful for exploratory outcomes that have not been solved exactly.</p>
       </div>
     </section>
 
     <section class="section-shell" id="certificates">
       <div class="section-heading">
-        <div><span class="eyebrow">Certified Probability</span><h2>Bounds that do not depend on simulation luck</h2></div>
-        <p>The reference coverage portfolio is analysed using exact two-ticket event intersections. Any-prize receives a rigorous second-order Bonferroni lower bound. Division 4-or-better becomes exact whenever all ≥4-main ticket events are pairwise disjoint.</p>
+        <div><span class="eyebrow">Certified Probability</span><h2>Portfolio probability without simulation luck</h2></div>
+        <p>The 10-game reference Coverage portfolio receives an exact any-prize probability from complement dynamic programming, alongside the older rigorous Bonferroni lower bound. Division 4-or-better is exact whenever all ≥4-main ticket events are pairwise disjoint.</p>
       </div>
       <div class="planner-kpis">
+        <article class="result-card glass accent">
+          <div class="console-head"><span>Exact any-prize probability</span><span class="badge">EXACT</span></div>
+          <strong id="cert-any-exact">Loading…</strong>
+          <small id="cert-any-exact-status">Counting all valid winning-main sets…</small>
+        </article>
         <article class="result-card glass">
           <span>Any-prize certified lower bound</span>
           <strong id="cert-any-lower">Loading…</strong>
@@ -103,9 +108,17 @@
         </article>
       </div>
       <div class="research-note glass" style="margin-top:14px">
+        <div><span class="research-icon" aria-hidden="true">Σ</span></div>
+        <div>
+          <span class="eyebrow">Exact any-prize algorithm</span>
+          <h3>Count the six-ball draws where every ticket stays below three matches, then take the complement.</h3>
+          <p>Each portfolio ticket is represented by a base-3 match counter with surviving states 0, 1 or 2. As the 45 balls are processed, any state that would give any ticket a third main-number match is discarded. The surviving six-ball selection count is the exact no-prize complement; subtracting it from C(45,6) gives the exact probability that at least one ticket wins a prize.</p>
+        </div>
+      </div>
+      <div class="research-note glass" style="margin-top:14px">
         <div><span class="research-icon" aria-hidden="true">✓</span></div>
         <div>
-          <span class="eyebrow">Exact theorem</span>
+          <span class="eyebrow">Exact Division-4 theorem</span>
           <h3>If every pair of games shares at most one number, Division 4-or-better is globally maximised.</h3>
           <p>For two six-number games sharing at most one number to both match at least four winning main numbers, the draw would need at least seven distinct winning numbers. Saturday Lotto draws only six winning main numbers. Their ≥4-main events therefore cannot occur together. The portfolio union equals the sum of its single-game probabilities, which is also the universal union upper bound.</p>
         </div>
@@ -114,27 +127,27 @@
 
     <section class="section-shell" id="evidence">
       <div class="section-heading">
-        <div><span class="eyebrow">Distribution Benchmark</span><h2>Coverage vs QuickPick populations</h2></div>
-        <p>The repository reference benchmark is generated during the validated statistics build. You can also run a smaller exploratory benchmark locally without sending ticket data anywhere.</p>
+        <div><span class="eyebrow">Distribution Benchmark</span><h2>Coverage vs alternative portfolio populations</h2></div>
+        <p>The repository keeps the earlier simulated benchmark for continuity and adds an exact-objective benchmark that evaluates the same deterministic portfolio seeds using true any-prize union probabilities.</p>
       </div>
       <div class="research-note glass">
         <div><span class="research-icon" aria-hidden="true">i</span></div>
         <div>
           <span class="eyebrow">Interpretation guardrail</span>
           <h3>Probability-of-superiority is not “chance this strategy wins the lottery”.</h3>
-          <p>It is the empirical probability that a randomly chosen coverage portfolio scores better than a randomly chosen QuickPick portfolio on the named benchmark metric.</p>
+          <p>It is the empirical probability that a randomly chosen portfolio from one generator scores better than a randomly chosen portfolio from another generator on the named benchmark metric.</p>
         </div>
       </div>
     </section>
 
     <section class="section-shell method-section">
-      <div class="section-heading"><div><span class="eyebrow">Method</span><h2>Exact mathematics first, simulation second</h2></div><p>The evidence hierarchy now distinguishes rigorous probability bounds from Monte Carlo estimates and descriptive structural metrics.</p></div>
+      <div class="section-heading"><div><span class="eyebrow">Method</span><h2>Exact mathematics first, simulation second</h2></div><p>The evidence hierarchy distinguishes exact portfolio unions, rigorous bounds, simulations and descriptive structural metrics.</p></div>
       <div class="method-grid">
-        <article class="method-card"><span class="method-number">01</span><span class="claim exact">Exact</span><h3>Pair intersections</h3><p>Two-ticket ≥3-main and ≥4-main event intersections are counted exactly from the shared, ticket-only and outside ball groups.</p></article>
-        <article class="method-card"><span class="method-number">02</span><span class="claim exact">Certified</span><h3>Bonferroni lower bound</h3><p>S1 − S2 gives a rigorous lower bound for the probability that at least one portfolio game reaches the selected match threshold.</p></article>
-        <article class="method-card"><span class="method-number">03</span><span class="claim exact">Optimal</span><h3>Division 4+ certificate</h3><p>If pairwise ≥4-main intersections are zero, the exact union reaches the universal sum-of-marginals upper bound.</p></article>
-        <article class="method-card"><span class="method-number">04</span><span class="claim simulated">Simulated</span><h3>Shared draws</h3><p>Every benchmark portfolio sees the same draw sample, reducing irrelevant Monte Carlo noise in comparisons.</p></article>
-        <article class="method-card"><span class="method-number">05</span><span class="claim descriptive">Effect</span><h3>Probability-of-superiority</h3><p>Pairwise distribution comparison shows how consistently one strategy beats another on a named benchmark metric.</p></article>
+        <article class="method-card"><span class="method-number">01</span><span class="claim exact">Exact</span><h3>Any-prize portfolio union</h3><p>Complement dynamic programming counts every six-main-number set in which no ticket reaches three matches, then subtracts from C(45,6).</p></article>
+        <article class="method-card"><span class="method-number">02</span><span class="claim exact">Exact</span><h3>Pair intersections</h3><p>Two-ticket ≥3-main and ≥4-main event intersections are counted exactly from the shared, ticket-only and outside ball groups.</p></article>
+        <article class="method-card"><span class="method-number">03</span><span class="claim exact">Certified</span><h3>Bonferroni lower bound</h3><p>S1 − S2 remains a rigorous lower bound and a useful cheap optimisation objective even though exact portfolio evaluation is now available for smaller game counts.</p></article>
+        <article class="method-card"><span class="method-number">04</span><span class="claim exact">Optimal</span><h3>Division 4+ certificate</h3><p>If pairwise ≥4-main intersections are zero, the exact union reaches the universal sum-of-marginals upper bound.</p></article>
+        <article class="method-card"><span class="method-number">05</span><span class="claim simulated">Simulated</span><h3>Shared draws</h3><p>Monte Carlo remains for exploratory metrics that are not solved exactly; every compared portfolio sees the same simulated draw sample.</p></article>
         <article class="method-card"><span class="method-number">06</span><span class="claim guardrail">Rejected</span><h3>No simulated-training optimiser</h3><p>A prototype trained directly on sampled draws overfit its training sample and did not generalise. It is not shipped as a recommended strategy.</p></article>
       </div>
     </section>
