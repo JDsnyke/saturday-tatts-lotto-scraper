@@ -38,12 +38,16 @@ jobs:
       - name: Validate browser JavaScript
         run: |
           node --check assets/app.js
+          node --check assets/benchmark.js
           node --check service-worker.js
       - name: Validate static site references
         run: |
           test -f index.html
+          test -f benchmark.html
           test -f assets/app.css
           test -f assets/app.js
+          test -f assets/benchmark.css
+          test -f assets/benchmark.js
           test -f assets/lotto_stats.json
           test -f assets/data_provenance.json
           test -f assets/site.webmanifest
@@ -51,4 +55,7 @@ jobs:
           grep -q 'assets/app.css' index.html
           grep -q 'assets/app.js' index.html
           grep -q 'assets/site.webmanifest' index.html
+          grep -q 'assets/benchmark.css' benchmark.html
+          grep -q 'assets/benchmark.js' benchmark.html
+          grep -q 'benchmark.html' service-worker.js
           grep -q 'service-worker.js' assets/app.js

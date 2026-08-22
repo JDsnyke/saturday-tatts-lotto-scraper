@@ -14,5 +14,13 @@
       "type": "image/svg+xml",
       "purpose": "any"
     }
+  ],
+  "shortcuts": [
+    {
+      "name": "Multi-seed Benchmark",
+      "short_name": "Benchmark",
+      "description": "Compare coverage portfolios against QuickPick distributions.",
+      "url": "../benchmark.html"
+    }
   ]
 }

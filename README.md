@@ -35,7 +35,7 @@ See [`docs/ODDS_OPTIMISATION.md`](docs/ODDS_OPTIMISATION.md) for the claim hiera
 
 ### Combinatorial portfolio optimiser
 
-`coverage` mode now searches candidate games and prioritises:
+`coverage` mode searches candidate games and prioritises:
 
 1. new four-number subsets;
 2. new three-number subsets;
@@ -45,13 +45,29 @@ See [`docs/ODDS_OPTIMISATION.md`](docs/ODDS_OPTIMISATION.md) for the claim hiera
 
 The result is measurable with pair/triple/quadruple coverage efficiency. It is a portfolio-structure optimisation, not a prediction model.
 
+### Multi-seed benchmark
+
+v2.1.1 replaces the weak “one coverage seed vs one QuickPick seed” inference with a distribution benchmark:
+
+- independently seeded coverage portfolios;
+- a larger distribution of independently seeded QuickPick portfolios;
+- the same simulated draw sample applied to every portfolio;
+- 5th/25th/50th/75th/95th percentile summaries;
+- probability-of-superiority;
+- bootstrap 95% intervals for the favourable mean strategy difference;
+- fixed reference seeds and sample sizes documented in [`docs/BENCHMARKING.md`](docs/BENCHMARKING.md).
+
+Equal-size sets of distinct games still have **identical Division 1 probability**. The benchmark measures lower-division portfolio diversification.
+
+A dedicated static [`benchmark.html`](benchmark.html) page can also run a smaller exploratory benchmark locally in the browser.
+
 ### Evidence layer
 
 - Monte Carlo portfolio evaluation with actual Saturday Lotto prize divisions;
 - Wilson 95% confidence intervals;
 - leakage-free walk-forward comparison against historical draws;
-- a seeded QuickPick baseline;
-- explicit warnings that one simulation pair is not proof of a universal strategy advantage.
+- multi-seed distribution benchmarking rather than a single baseline seed;
+- explicit effect-size and uncertainty labels.
 
 ### Experimental anti-crowding mode
 
@@ -71,7 +87,7 @@ It must never be interpreted as increasing draw probability.
 
 ### Web application
 
-The GitHub Pages site now includes:
+The GitHub Pages site includes:
 
 - Probability Planner for games × repeated draws;
 - System 6–20 calculator;
@@ -85,6 +101,7 @@ The GitHub Pages site now includes:
 - Draw Explorer with date/search/number filters and CSV export;
 - accessible keyboard frequency chart;
 - data freshness and provenance display;
+- dedicated Benchmark Lab with client-side multi-seed runs and JSON export;
 - system/light/dark themes;
 - offline/PWA cache support.
 
@@ -107,6 +124,7 @@ PYTHONPATH=src python -m lotto_lab tickets --count 10 --mode coverage
 PYTHONPATH=src python -m lotto_lab tickets --count 10 --mode random
 PYTHONPATH=src python -m lotto_lab tickets --count 10 --mode anti-crowding
 PYTHONPATH=src python -m lotto_lab simulate --count 10 --trials 50000
+PYTHONPATH=src python -m lotto_lab benchmark --count 10 --coverage-portfolios 50 --random-portfolios 200 --trials 5000
 PYTHONPATH=src python -m lotto_lab backtest --count 10 --steps 120
 PYTHONPATH=src python -m lotto_lab verify-secondary --latest 10
 ```
@@ -121,7 +139,7 @@ The scheduled workflow runs after the Saturday draw. It:
 2. determines whether draw data or generated assets need rebuilding;
 3. cross-checks the newest draws against an independent source;
 4. stops on disagreement;
-5. rebuilds schema-v3 statistics and SHA-256 provenance;
+5. rebuilds schema-v3 statistics, reference evidence and SHA-256 provenance;
 6. commits only verified changes directly to `main`.
 
 It does not create recurring update branches or automated pull requests.
@@ -134,6 +152,7 @@ CI runs Ruff, Python compilation, the unit suite, tracked-dataset validation/sta
 ruff check src tests
 PYTHONPATH=src python -m unittest discover -s tests -v
 node --check assets/app.js
+node --check assets/benchmark.js
 node --check service-worker.js
 ```
 
@@ -146,6 +165,7 @@ More games increase probability only by purchasing more unique combinations; the
 - [`ROADMAP.md`](ROADMAP.md)
 - [`docs/METHODOLOGY.md`](docs/METHODOLOGY.md)
 - [`docs/ODDS_OPTIMISATION.md`](docs/ODDS_OPTIMISATION.md)
+- [`docs/BENCHMARKING.md`](docs/BENCHMARKING.md)
 - [`CONTRIBUTING.md`](CONTRIBUTING.md)
 - [`GITHUB_PAGES.md`](GITHUB_PAGES.md)
 

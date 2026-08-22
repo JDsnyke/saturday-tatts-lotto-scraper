@@ -1,9 +1,12 @@
-const CACHE_NAME = 'saturday-lotto-lab-v2-1';
+const CACHE_NAME = 'saturday-lotto-lab-v2-1-1';
 const STATIC_ASSETS = [
   './',
   './index.html',
+  './benchmark.html',
   './assets/app.css',
   './assets/app.js',
+  './assets/benchmark.css',
+  './assets/benchmark.js',
   './assets/favicon.svg',
   './assets/site.webmanifest',
   './assets/lotto_stats.json',
