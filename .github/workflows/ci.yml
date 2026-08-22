@@ -35,6 +35,44 @@ jobs:
           python -m lotto_lab stats
           python -m json.tool assets/lotto_stats.json >/dev/null
           python -m json.tool assets/data_provenance.json >/dev/null
+      - name: Validate certified objective benchmark
+        env:
+          PYTHONPATH: src
+        run: |
+          python -m lotto_lab benchmark-objectives \
+            --count 10 \
+            --portfolios 12 \
+            --random-portfolios 48 \
+            --trials 4000 \
+            --seed 20260822 \
+            --candidates-per-ticket 320 \
+            --bootstrap-resamples 800 > /tmp/objectives.json
+          python -m json.tool /tmp/objectives.json >/dev/null
+          python - <<'PY'
+          import json
+
+          with open('/tmp/objectives.json', encoding='utf-8') as handle:
+              result = json.load(handle)
+          assert result['divisionOneProbabilityEqual'] is True
+          for strategy in ('coverage', 'anyPrizeBound', 'division4Bound', 'random'):
+              assert strategy in result['strategies']
+          summary = {
+              strategy: {
+                  'anyPrizeRate': round(result['strategies'][strategy]['anyPrizeRate']['mean'], 6),
+                  'anyPrizeLowerBound': round(
+                      result['strategies'][strategy]['anyPrizeBonferroniLowerBound']['mean'], 6
+                  ),
+                  'division4Rate': round(
+                      result['strategies'][strategy]['division4OrBetterRate']['mean'], 6
+                  ),
+                  'division4GlobalOptimalRate': round(
+                      result['strategies'][strategy]['division4GloballyOptimal']['mean'], 4
+                  ),
+              }
+              for strategy in ('coverage', 'anyPrizeBound', 'division4Bound', 'random')
+          }
+          print('CERTIFIED_OBJECTIVE_SUMMARY=' + json.dumps(summary, sort_keys=True))
+          PY
       - name: Validate browser JavaScript
         run: |
           node --check assets/app.js
