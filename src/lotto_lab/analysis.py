@@ -7,6 +7,7 @@ from itertools import combinations
 
 from .benchmark import benchmark_portfolio_distributions
 from .domain import BALL_COUNT, DIVISION_ONE_COMBINATIONS, MAIN_COUNT, SUPPLEMENTARY_COUNT, Draw
+from .portfolio import exact_any_prize_probability
 from .probability import (
     any_prize_probability,
     at_least_main_match_probability,
@@ -72,6 +73,7 @@ def build_statistics(draws: Sequence[Draw], *, generated_at: datetime | None = N
     frequency_values = [main_counts[number] for number in range(1, BALL_COUNT + 1)]
     reference_seed = f"{ordered[-1].date.isoformat()}:{draw_count}:coverage-v3"
     reference_tickets = generate_coverage_tickets(10, seed=reference_seed)
+    reference_exact_any_prize = exact_any_prize_probability(reference_tickets)
     match_distribution = main_match_distribution()
     system_rows = [
         {
@@ -133,9 +135,11 @@ def build_statistics(draws: Sequence[Draw], *, generated_at: datetime | None = N
             "seed": reference_seed,
             "tickets": [list(ticket) for ticket in reference_tickets],
             "metrics": ticket_metrics(reference_tickets),
+            "exactAnyPrize": reference_exact_any_prize,
             "note": (
                 "Coverage mode maximises new 4-, 3- and 2-number subsets across multiple entries. "
-                "It does not change the odds of any individual six-number combination."
+                "It does not change the odds of any individual six-number combination. The any-prize "
+                "probability shown here is exact for this fixed reference portfolio."
             ),
         },
         "referenceSimulation": compare_strategies(10, trials=20_000, seed=20260822),

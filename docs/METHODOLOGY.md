@@ -4,11 +4,13 @@
 
 Saturday Lotto Lab separates claims into five categories:
 
-- **Exact** — combinatorial identities under the documented game rules.
+- **Exact** — combinatorial identities or exact finite-state counts under the documented game rules.
 - **Simulated** — Monte Carlo estimates with visible sample size and uncertainty.
 - **Descriptive** — summaries of historical results.
 - **Experimental** — research ideas that are plausible but not calibrated strongly enough for a probability claim.
 - **Guardrail** — rules preventing descriptive patterns from being presented as prediction.
+
+When an exact calculation and a finite simulation answer the same probability question, the exact calculation takes precedence.
 
 ## Exact Division 1 probability
 
@@ -54,6 +56,53 @@ Under the current Saturday Lotto prize structure, **winning any prize is equival
 
 Likewise, **Division 4 or better is equivalent to matching at least four winning main numbers**.
 
+## Exact fixed-portfolio any-prize probability
+
+For a portfolio of standard games, let `Ai` be the event that ticket `i` matches at least three of the six winning main numbers. v2.1.3 computes:
+
+```text
+P(A1 ∪ A2 ∪ ... ∪ An)
+```
+
+exactly for practical smaller portfolios.
+
+Rather than enumerate all `C(45,6)` possible winning-main sets one by one, the implementation counts the complement:
+
+```text
+no prize = every ticket finishes with at most two main-number matches
+```
+
+Each ticket's surviving match count is encoded as one base-3 digit with values `0`, `1` or `2`. The dynamic-programming state is:
+
+```text
+dp[selected_balls][base3_match_state] = number of ways to reach that state
+```
+
+The algorithm processes the 45 balls. For each ball it considers excluding or including the ball among the six winning main numbers. An inclusion transition is discarded if it would move any ticket from two matches to three matches.
+
+At the end:
+
+```text
+no_prize_count = sum(dp[6])
+any_prize_count = C(45,6) - no_prize_count
+P(any prize) = any_prize_count / C(45,6)
+```
+
+All state weights and final set counts are exact integers. The algorithm does not use historical results, Monte Carlo draws or fitted parameters.
+
+The evaluator is opt-in and capped at **12 tickets by default** because the reachable state space grows with portfolio size and overlap structure. It is deliberately not called from every routine `ticket_metrics()` calculation.
+
+Exact evaluation answers **how good a fixed portfolio is** on this objective. It does not prove that the portfolio is the globally optimal portfolio among every possible set of games.
+
+Independent regression checks compare the dynamic program with:
+
+- direct one-ticket hypergeometric combinatorics;
+- exact two-ticket inclusion-exclusion for disjoint tickets;
+- exact two-ticket inclusion-exclusion for overlap-one tickets;
+- the rigorous Bonferroni lower bound and ordinary union upper bound for multi-ticket portfolios.
+
+See [`EXACT_ANY_PRIZE.md`](EXACT_ANY_PRIZE.md) for the algorithm and exact benchmark in detail.
+
 ## Exact two-ticket event intersections
 
 For two six-number tickets sharing `r` numbers, partition the 45 balls into:
@@ -81,7 +130,7 @@ x + y + z + w = 6
 
 The exact pair-event probability is the resulting count divided by `C(45,6)`.
 
-This calculation is used by the certified portfolio objectives and does not depend on historical draw data or Monte Carlo sampling.
+This calculation is used by the cheap certified portfolio objectives and does not depend on historical draw data or Monte Carlo sampling.
 
 ## Bonferroni portfolio lower bound
 
@@ -100,7 +149,7 @@ P(A1 ∪ ... ∪ An) >= max(0, S1 - S2)
 
 The software computes both terms exactly.
 
-For the any-prize event (`k=3`), this is a **rigorous lower bound**, not generally the exact portfolio probability because three-way and higher intersections can remain.
+For the any-prize event (`k=3`), this is a **rigorous lower bound**. v2.1.3 can additionally compute the exact union for smaller fixed portfolios, but the lower bound remains useful because it is much cheaper to calculate while constructing candidate portfolios.
 
 The ordinary union bound gives:
 
@@ -108,7 +157,7 @@ The ordinary union bound gives:
 P(A1 ∪ ... ∪ An) <= min(1, S1)
 ```
 
-When pairwise intersections are zero, the lower and upper bounds meet and the exact probability is known.
+When pairwise intersections are zero, the lower and upper bounds meet and the exact probability is known immediately.
 
 ## Exact Division-4-or-better optimality theorem
 
@@ -147,7 +196,7 @@ For a set of tickets, the software counts the distinct subsets actually represen
 unique covered subsets / total subset placements
 ```
 
-The generic coverage generator samples candidate tickets and uses this lexicographic objective:
+The generic Coverage generator samples candidate tickets and uses this lexicographic objective:
 
 1. maximise previously unseen quadruples;
 2. maximise previously unseen triples;
@@ -157,9 +206,9 @@ The generic coverage generator samples candidate tickets and uses this lexicogra
 
 This objective reduces measurable redundancy. It does **not** increase any individual six-number combination's chance of being drawn.
 
-## Certified bound-driven objectives
+## Bound-driven objectives
 
-Two additional generators optimise exact pair-event mathematics rather than historical or simulated outcomes.
+Two additional generators optimise cheap exact pair-event mathematics rather than historical or simulated outcomes.
 
 ### Any-prize bound
 
@@ -167,7 +216,7 @@ Every candidate six-number game has the same single-ticket any-prize probability
 
 The generator uses that pair-event cost as its primary objective and structural coverage only as a tie-breaker.
 
-It optimises a **rigorous lower bound**, not the exact any-prize union.
+It optimises a **rigorous lower bound**, not the exact any-prize union directly.
 
 ### Division-4 bound
 
@@ -177,43 +226,63 @@ If the resulting portfolio receives the pairwise-disjoint certificate, its Divis
 
 If not, the software reports only the available lower bound and does not label the result globally optimal.
 
+### What the v2.1.3 exact benchmark showed
+
+A small initial 12-seed exact comparison favoured Any-prize-bound over Coverage, but the larger confirmation benchmark did not support a reliable specialist advantage.
+
+For 10-game portfolios across 32 seeds per structured strategy and 128 QuickPick seeds:
+
+- Coverage exact mean any-prize probability: **23.00372595%**;
+- Any-prize-bound: **23.00482171%**;
+- Division-4-bound: **23.00703433%**;
+- QuickPick: **21.44444742%**.
+
+Any-prize-bound minus Coverage was only about **+0.00110 percentage points**, with a portfolio-seed bootstrap 95% interval of roughly **−0.00506 to +0.00721 points**. Division-4-bound minus Coverage also had an interval crossing zero.
+
+Coverage therefore remains the recommended balanced default rather than promoting a specialist generator from an unstable small-sample ordering.
+
+Coverage vs QuickPick was materially different: the exact mean difference was about **+1.5593 percentage points**, with a portfolio-seed bootstrap 95% interval of roughly **+1.4769 to +1.6505 points**. Every tested Coverage portfolio beat every tested QuickPick portfolio on exact any-prize probability in this fixed benchmark.
+
+This result is about lower-tier portfolio correlation/overlap. Division 1 remains exactly equal for equal numbers of distinct standard games.
+
 ## Why direct simulated-training optimisation is not shipped
 
 A prototype attempted to optimise any-prize union directly by selecting candidate games that covered the most simulated training draws.
 
-Held-out experiments showed a substantial training/validation gap. The optimiser learned sampling noise and did not improve on the existing coverage design when evaluated on independent draws.
+Held-out experiments showed a substantial training/validation gap. The optimiser learned sampling noise and did not improve on the existing Coverage design when evaluated on independent draws.
 
 That prototype is deliberately excluded from the recommended generators.
 
-Future stochastic optimisation work must use separate training and validation samples, report the generalisation gap and outperform the structural baseline out of sample before being considered for release.
+Future stochastic optimisation work should use the exact evaluator where practical, or separate training and validation samples where exact optimisation itself is computationally expensive.
 
 ## Monte Carlo portfolio simulation
 
 Simulation samples eight distinct balls uniformly from 45, treats the first six as winning and the remaining two as supplementary, and evaluates the highest prize division achieved by the portfolio.
 
-Reported hit-rate uncertainty uses a Wilson 95% interval. Simulation compares portfolio correlation/coverage; it cannot establish a predictive number-selection edge.
+Reported hit-rate uncertainty uses a Wilson 95% interval. Simulation remains useful for exploratory outcomes that are not solved exactly. It cannot establish a predictive number-selection edge.
 
-## Multi-seed benchmark
+When the same any-prize probability is available exactly from the dynamic program, the exact value supersedes a finite Monte Carlo estimate.
 
-The repository benchmark compares **distributions** of independently seeded coverage and QuickPick portfolios on one shared simulated draw sample.
+## Multi-seed benchmarks
 
-It reports:
+The repository retains earlier simulated benchmarks for reproducibility, but v2.1.3 adds an **exact any-prize objective benchmark**.
 
-- structural metric distributions;
-- lower-division outcome distributions;
-- random-baseline quantiles;
-- probability-of-superiority;
-- bootstrap intervals for favourable mean differences.
+For the exact benchmark:
 
-The shared-draw design reduces irrelevant Monte Carlo noise between strategies. Current bootstrap intervals primarily represent portfolio-seed uncertainty conditional on that draw sample. Nested draw+portfolio uncertainty remains roadmap work.
+- every individual portfolio probability is exact;
+- there is no simulated draw sample;
+- bootstrap intervals describe variation across deterministic generator seeds only;
+- the portfolio seed naming matches the earlier objective benchmark so exact evaluation can resolve ambiguity without silently changing the experiment.
 
-See [`BENCHMARKING.md`](BENCHMARKING.md) for the fixed reference design and the certified-objective benchmark.
+For still-simulated metrics, the shared-draw design reduces irrelevant Monte Carlo noise between strategies. Nested draw+portfolio uncertainty remains roadmap work only where no exact calculation applies.
+
+See [`BENCHMARKING.md`](BENCHMARKING.md) for fixed benchmark designs.
 
 ## Walk-forward historical evaluation
 
 For each evaluated historical draw:
 
-1. construct a new coverage and QuickPick portfolio;
+1. construct a new Coverage and QuickPick portfolio;
 2. use only the previous draw's date as a reproducible seed component;
 3. do **not** feed previous winning numbers, frequencies, recency, pairs or z-scores into either generator;
 4. score the generated portfolios against the later draw.
@@ -238,6 +307,8 @@ Lottery-player selections are not uniformly distributed in many observed dataset
 
 The anti-crowding mode therefore penalises several such features when ranking otherwise random candidate tickets. The score is **not an estimated Australian Saturday Lotto popularity probability**, and the mode must not be described as improving draw odds.
 
+It is intentionally excluded from exact draw-probability objective comparisons.
+
 ## Data validation and provenance
 
 Before analysis, the loader checks:
@@ -254,4 +325,4 @@ Generated provenance stores SHA-256 hashes for both CSVs. Scheduled updates cros
 
 ## Reproducibility
 
-Seeded Python generators derive deterministic RNG seeds from SHA-256 when a string seed is supplied. Browser QuickPick uses `crypto.getRandomValues` when available. Browser-side simulations are for interactive estimates; repository reference simulations are generated by Python and checked by tests.
+Seeded Python generators derive deterministic RNG seeds from SHA-256 when a string seed is supplied. Browser QuickPick uses `crypto.getRandomValues` when available. Browser-side simulations are exploratory; repository reference calculations and benchmarks are generated by Python and checked by CI.

@@ -45,12 +45,20 @@ jobs:
           stats = Path('assets/lotto_stats.json')
           provenance = Path('assets/data_provenance.json')
           verification = Path('assets/secondary_verification.json')
-          schema_ok = False
+          stats_current = False
           if stats.exists():
               try:
-                  schema_ok = json.loads(stats.read_text(encoding='utf-8')).get('schemaVersion') == 3
+                  payload = json.loads(stats.read_text(encoding='utf-8'))
+                  exact_reference = payload.get('referenceCoverageSet', {}).get('exactAnyPrize', {})
+                  stats_current = (
+                      payload.get('schemaVersion') == 3
+                      and exact_reference.get('exact') is True
+                      and exact_reference.get('totalWinningMainSets') == 8_145_060
+                      and exact_reference.get('probability') is not None
+                  )
               except (OSError, json.JSONDecodeError):
                   pass
+
           provenance_ok = provenance.exists()
           if provenance_ok:
               try:
@@ -58,7 +66,7 @@ jobs:
               except (OSError, json.JSONDecodeError):
                   provenance_ok = False
 
-          needs_publish = csv_changed or not schema_ok or not provenance_ok or not verification.exists()
+          needs_publish = csv_changed or not stats_current or not provenance_ok or not verification.exists()
           print(f"needed={'true' if needs_publish else 'false'}")
           PY
       - name: Cross-check newest draws against secondary source

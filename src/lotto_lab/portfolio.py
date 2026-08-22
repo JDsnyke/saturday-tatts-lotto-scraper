@@ -52,6 +52,88 @@ def pair_event_intersection_probability(overlap: int, threshold: int) -> float:
     return pair_event_intersection_count(overlap, threshold) / combination_count()
 
 
+def exact_any_prize_probability(
+    tickets: Sequence[Sequence[int]],
+    *,
+    max_tickets: int = 12,
+) -> dict[str, float | int | bool | str | None]:
+    """Compute the exact probability that at least one ticket wins any prize.
+
+    Under the current Saturday Lotto prize structure, a standard game wins some prize
+    exactly when it matches at least three of the six winning main numbers. Instead of
+    enumerating all C(45, 6) winning sets, dynamic programming counts the complementary
+    six-ball sets where every portfolio ticket finishes with at most two matches.
+
+    Each ticket's surviving match count is encoded as one base-3 digit (0, 1 or 2).
+    States that would create a third match for any ticket are discarded. The resulting
+    count is exact integer combinatorics; no historical data or Monte Carlo is involved.
+    """
+    if max_tickets < 1:
+        raise ValueError("max_tickets must be positive")
+    if len(tickets) > max_tickets:
+        raise ValueError(
+            f"exact any-prize DP is capped at {max_tickets} tickets for predictable runtime"
+        )
+
+    normalized = [tuple(ticket) for ticket in tickets]
+    for ticket in normalized:
+        if len(ticket) != MAIN_COUNT or len(set(ticket)) != MAIN_COUNT:
+            raise ValueError("every ticket must contain six distinct numbers")
+        if any(number < 1 or number > BALL_COUNT for number in ticket):
+            raise ValueError("ticket numbers must be between 1 and 45")
+
+    total = combination_count()
+    if not normalized:
+        return {
+            "ticketCount": 0,
+            "totalWinningMainSets": total,
+            "anyPrizeWinningMainSets": 0,
+            "noPrizeWinningMainSets": total,
+            "probability": 0.0,
+            "odds": None,
+            "exact": True,
+            "algorithm": "base-3 complement dynamic programming",
+        }
+
+    ticket_sets = [set(ticket) for ticket in normalized]
+    powers = [3**index for index in range(len(normalized))]
+    memberships: list[tuple[int, ...]] = []
+    for ball in range(1, BALL_COUNT + 1):
+        memberships.append(
+            tuple(index for index, ticket in enumerate(ticket_sets) if ball in ticket)
+        )
+
+    # dp[selected_balls][base3_match_code] = number of ways to reach the state.
+    dp: list[dict[int, int]] = [dict() for _ in range(MAIN_COUNT + 1)]
+    dp[0][0] = 1
+
+    for members in memberships:
+        next_dp = [bucket.copy() for bucket in dp]
+        increment = sum(powers[index] for index in members)
+        for selected in range(MAIN_COUNT):
+            for code, ways in dp[selected].items():
+                if members and any((code // powers[index]) % 3 == 2 for index in members):
+                    continue
+                next_code = code + increment
+                bucket = next_dp[selected + 1]
+                bucket[next_code] = bucket.get(next_code, 0) + ways
+        dp = next_dp
+
+    no_prize = sum(dp[MAIN_COUNT].values())
+    any_prize = total - no_prize
+    probability = any_prize / total
+    return {
+        "ticketCount": len(normalized),
+        "totalWinningMainSets": total,
+        "anyPrizeWinningMainSets": any_prize,
+        "noPrizeWinningMainSets": no_prize,
+        "probability": probability,
+        "odds": (1 / probability) if probability else None,
+        "exact": True,
+        "algorithm": "base-3 complement dynamic programming",
+    }
+
+
 def portfolio_probability_certificate(
     tickets: Sequence[Sequence[int]],
     *,
