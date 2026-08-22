@@ -80,9 +80,9 @@ def optimise_any_prize_exact(
     tickets: Sequence[Sequence[int]],
     *,
     seed: str | int | None = None,
-    iterations: int = 3,
-    exact_shortlist: int = 5,
-    exploration_candidates: int = 2,
+    iterations: int = 2,
+    exact_shortlist: int = 4,
+    exploration_candidates: int = 1,
     preserve_division4_optimality: bool = True,
 ) -> dict:
     """Monotonic one-swap local search with exact any-prize acceptance.
@@ -194,9 +194,9 @@ def generate_exact_local_tickets(
     seed: str | int | None = None,
     *,
     candidates_per_ticket: int = 320,
-    iterations: int = 3,
-    exact_shortlist: int = 5,
-    exploration_candidates: int = 2,
+    iterations: int = 2,
+    exact_shortlist: int = 4,
+    exploration_candidates: int = 1,
 ) -> list[Ticket]:
     """Generate Coverage tickets, then improve or retain them on exact any-prize probability."""
     baseline = generate_coverage_tickets(
