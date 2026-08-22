@@ -1,7 +1,7 @@
 [project]
 name = "saturday-lotto-lab"
-version = "2.0.0"
-description = "Mathematically honest Saturday Lotto data analysis and ticket coverage tooling"
+version = "2.1.0"
+description = "Exact Saturday Lotto probability, audited data and combinatorial ticket-portfolio tooling"
 requires-python = ">=3.11"
 dependencies = ["beautifulsoup4>=4.12,<5"]
 

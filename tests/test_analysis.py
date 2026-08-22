@@ -12,10 +12,11 @@ class AnalysisTests(unittest.TestCase):
             Draw(date(2026, 1, 3), (7, 8, 9, 10, 11, 12), (1, 2)),
         ]
         stats = build_statistics(draws, generated_at=datetime(2026, 1, 11, tzinfo=UTC))
-        self.assertEqual(stats["schemaVersion"], 2)
+        self.assertEqual(stats["schemaVersion"], 3)
         self.assertEqual(stats["dataset"]["firstDraw"], "2026-01-03")
         self.assertEqual(stats["dataset"]["lastDraw"], "2026-01-10")
         self.assertEqual(stats["game"]["divisionOneCombinations"], 8_145_060)
+        self.assertEqual(len(stats["probabilityModel"]["prizeDivisions"]), 6)
 
 
 if __name__ == "__main__":

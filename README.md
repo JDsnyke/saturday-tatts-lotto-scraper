@@ -1,159 +1,154 @@
-# Saturday Lotto Lab
+# Saturday Lotto Probability Lab
 
-A probability-first Saturday Lotto / TattsLotto research project for collecting historical results, validating the dataset, exploring realised statistical variation, and generating **multi-ticket coverage sets without pretending history predicts the next draw**.
+An open-source Saturday Lotto / TattsLotto research project focused on **exact probability, data quality, multi-entry portfolio structure and honest uncertainty**.
 
-> **Key fact:** a standard Saturday Lotto entry is 6 numbers selected from 45, so there are `C(45,6) = 8,145,060` possible Division 1 combinations. Every individual combination has the same chance in a fair draw.
+The project deliberately does **not** claim that hot, cold, overdue, recently drawn or historically common numbers are more likely in the next fair draw.
 
-## What changed in v2
+## What can actually improve?
 
-The old project ranked “recommended” combinations using historical main/supplementary frequency. That is not a defensible way to increase next-draw probability for an independent random lottery.
-
-v2 replaces it with:
-
-- **exact probability maths** rather than per-number “average odds”;
-- **balanced multi-ticket coverage** that reduces internal overlap across multiple distinct entries;
-- **typed Python data tooling** instead of large shell/awk pipelines;
-- **strict draw validation** and canonical CSV ordering;
-- **historical diagnostics** (z-scores, entropy, χ² distance, pair co-occurrence) clearly labelled descriptive;
-- **a redesigned GitHub Pages dashboard** with responsive UI, light/dark/system themes, animated charts, accessible tabs and an in-browser Ticket Lab;
-- **unit tests + Ruff linting** in CI;
-- **quiet automation**: no automated dependency PR churn and no updater-created branches/PRs.
-
-## Quick start
-
-Requires Python 3.11+.
-
-```bash
-git clone https://github.com/JDsnyke/saturday-tatts-lotto-scraper.git
-cd saturday-tatts-lotto-scraper
-python3 -m pip install -r requirements.txt
-export PYTHONPATH="$PWD/src"
-```
-
-Validate and canonicalize the existing dataset:
-
-```bash
-python3 -m lotto_lab validate
-```
-
-Refresh the current year's results and rebuild website statistics:
-
-```bash
-python3 -m lotto_lab refresh
-```
-
-Generate 10 balanced-coverage entries:
-
-```bash
-python3 -m lotto_lab tickets --count 10 --mode coverage
-```
-
-Generate reproducible entries for testing/research:
-
-```bash
-python3 -m lotto_lab tickets --count 10 --mode coverage --seed demo-2026
-```
-
-The legacy shell entry points remain as thin wrappers (`master_lotto.sh`, `scrape_lotto_results.sh`, `generate_stats.sh`, `parse_and_recommend.sh`, `clean_csv.sh`) so existing usage does not abruptly break.
-
-## Ticket modes
-
-### Balanced coverage
-
-Coverage mode greedily spreads number usage and avoids repeatedly using the same number pairs across the ticket set. It is designed for **portfolio diversity** when generating multiple distinct entries.
-
-It does **not** make a chosen number more likely to be drawn and does not change the per-combination probability.
-
-### Uniform QuickPick
-
-Random mode samples distinct six-number combinations uniformly. With no seed it uses the operating system's cryptographic random source through Python's `SystemRandom`.
-
-## Probability
-
-For one standard ticket:
+For the current 6-from-45 game there are exactly:
 
 ```text
-P(Division 1) = 1 / C(45,6)
-              = 1 / 8,145,060
+C(45, 6) = 8,145,060
 ```
 
-For `n` distinct standard tickets:
+possible standard six-number combinations. Therefore one standard game has Division 1 probability `1 / 8,145,060`, while `n` distinct standard games have probability `n / 8,145,060` in one draw.
 
-```text
-P(Division 1) = n / 8,145,060
-```
+Number selection cannot improve that probability if the draw is fair. Objective optimisation instead falls into three separate categories:
 
-Because a draw produces one winning six-number set, these mutually exclusive covered combinations make the multi-ticket Division 1 probability linear in the number of **distinct** entries.
+1. **Own more distinct combinations** — the only direct Division 1 probability increase.
+2. **Reduce portfolio redundancy** — for a fixed number of games, maximise unique pairs, triples and quadruples so multiple tickets overlap less at lower orders.
+3. **Conditional prize-sharing research** — experimentally avoid patterns people may choose disproportionately. This does not improve the chance of being drawn; it may matter only to how many people share a pari-mutuel prize if that combination wins.
 
-## Historical diagnostics
+See [`docs/ODDS_OPTIMISATION.md`](docs/ODDS_OPTIMISATION.md) for the claim hierarchy and limitations.
 
-The website and `assets/lotto_stats.json` expose:
+## v2.1 highlights
 
-- observed main and supplementary counts for each number;
-- marginal binomial z-scores for main-number counts;
-- normalized entropy of the main-number distribution;
-- a χ² distance from equal historical counts (descriptive only, no naive p-value);
-- draws since last main appearance;
-- common historical pairs and lift versus expected pair co-occurrence;
-- a reproducible reference coverage set.
+### Exact probability engine
 
-See [`docs/METHODOLOGY.md`](docs/METHODOLOGY.md) for the reasoning and formulas.
+- exact Division 1 combination count and multi-game probability;
+- cumulative probability across repeated independent draws;
+- System 6–20 equivalence via `C(k, 6)` standard combinations;
+- exact 0–6 main-number match distribution;
+- exact Division 1–6 standard-game probabilities under the current 6 winning + 2 supplementary rules;
+- exact overall standard-game any-prize probability.
 
-## Data pipeline
+### Combinatorial portfolio optimiser
 
-The scraper still uses the public `au.lottonumbers.com` archive as its collection source, but the implementation is now Python + Beautiful Soup with:
+`coverage` mode now searches candidate games and prioritises:
 
-- a dynamic current year instead of a hard-coded 2025 ceiling;
-- a user agent, timeout and polite request delay;
-- link deduplication;
-- validation before data is accepted;
-- canonical newest-first output;
-- current-year incremental refresh by default.
+1. new four-number subsets;
+2. new three-number subsets;
+3. new pairs;
+4. lower maximum game-to-game overlap;
+5. balanced number usage.
 
-The scheduled GitHub Action runs once per week after the Saturday draw, rebuilds statistics, and commits directly to `main` **only when tracked draw data changed**. It does not create update branches or pull requests.
+The result is measurable with pair/triple/quadruple coverage efficiency. It is a portfolio-structure optimisation, not a prediction model.
 
-## Development
+### Evidence layer
+
+- Monte Carlo portfolio evaluation with actual Saturday Lotto prize divisions;
+- Wilson 95% confidence intervals;
+- leakage-free walk-forward comparison against historical draws;
+- a seeded QuickPick baseline;
+- explicit warnings that one simulation pair is not proof of a universal strategy advantage.
+
+### Experimental anti-crowding mode
+
+The optional anti-crowding generator penalises birthday-heavy games, number 7, consecutive pairs and very evenly spaced selections. It is based on published evidence that lottery players make non-uniform choices, but it is **not calibrated to Australian Saturday Lotto player-level ticket data**.
+
+It must never be interpreted as increasing draw probability.
+
+### Data integrity
+
+- strict CSV validation;
+- primary scraper plus independent secondary-source comparison for newest draws;
+- draw-number/source-link capture from the secondary source;
+- SHA-256 provenance for both historical CSV files;
+- saved scraper fixtures for markup-regression tests;
+- scheduled refresh refuses to publish new data when secondary verification fails;
+- migration-aware refresh rebuilds old schema assets even when the CSV itself did not change.
+
+### Web application
+
+The GitHub Pages site now includes:
+
+- Probability Planner for games × repeated draws;
+- System 6–20 calculator;
+- exact prize-division table;
+- main-match distribution;
+- upgraded Ticket Lab with coverage, QuickPick and experimental anti-crowding modes;
+- pair/triple/quadruple coverage metrics;
+- local portfolio any-prize simulation with confidence interval;
+- shareable ticket-set URLs and CSV export;
+- Strategy Evidence view;
+- Draw Explorer with date/search/number filters and CSV export;
+- accessible keyboard frequency chart;
+- data freshness and provenance display;
+- system/light/dark themes;
+- offline/PWA cache support.
+
+No framework or external browser runtime is required: the published dashboard stays a static GitHub Pages application.
+
+## CLI
+
+Install dependencies:
 
 ```bash
-python3 -m pip install -r requirements-dev.txt
-PYTHONPATH=src python3 -m unittest discover -s tests -v
+python -m pip install -r requirements-dev.txt
+```
+
+Run with the source tree:
+
+```bash
+PYTHONPATH=src python -m lotto_lab validate
+PYTHONPATH=src python -m lotto_lab stats
+PYTHONPATH=src python -m lotto_lab tickets --count 10 --mode coverage
+PYTHONPATH=src python -m lotto_lab tickets --count 10 --mode random
+PYTHONPATH=src python -m lotto_lab tickets --count 10 --mode anti-crowding
+PYTHONPATH=src python -m lotto_lab simulate --count 10 --trials 50000
+PYTHONPATH=src python -m lotto_lab backtest --count 10 --steps 120
+PYTHONPATH=src python -m lotto_lab verify-secondary --latest 10
+```
+
+Legacy shell entry points remain thin compatibility wrappers.
+
+## Data refresh
+
+The scheduled workflow runs after the Saturday draw. It:
+
+1. scrapes the current-year primary archive;
+2. determines whether draw data or generated assets need rebuilding;
+3. cross-checks the newest draws against an independent source;
+4. stops on disagreement;
+5. rebuilds schema-v3 statistics and SHA-256 provenance;
+6. commits only verified changes directly to `main`.
+
+It does not create recurring update branches or automated pull requests.
+
+## Tests
+
+CI runs Ruff, Python compilation, the unit suite, tracked-dataset validation/stat regeneration, JSON validation, browser JavaScript syntax checks and static-site reference tests.
+
+```bash
 ruff check src tests
+PYTHONPATH=src python -m unittest discover -s tests -v
+node --check assets/app.js
+node --check service-worker.js
 ```
 
-CI also compiles all Python modules, validates the tracked historical dataset, and checks that the static web assets referenced by `index.html` exist.
+## Responsible-use note
 
-## Repository layout
+More games increase probability only by purchasing more unique combinations; they also increase spend. Historical analysis does not turn a random negative-expectation lottery product into an investment strategy. Set a budget you are comfortable losing.
 
-```text
-src/lotto_lab/
-  analysis.py       # descriptive statistics + website JSON
-  cli.py            # command-line interface
-  data.py           # CSV parsing/validation/canonical writing
-  domain.py         # game constants and Draw model
-  probability.py    # exact combinatorics + diagnostics
-  scrape.py         # public results scraper
-  tickets.py        # random and balanced coverage generators
-assets/
-  app.css
-  app.js
-  lotto_stats.json
-.github/workflows/
-  ci.yml
-  data-refresh.yml
-  deploy.yml
-tests/
-docs/METHODOLOGY.md
-ROADMAP.md
-```
+## Documentation
 
-## Roadmap
+- [`ROADMAP.md`](ROADMAP.md)
+- [`docs/METHODOLOGY.md`](docs/METHODOLOGY.md)
+- [`docs/ODDS_OPTIMISATION.md`](docs/ODDS_OPTIMISATION.md)
+- [`CONTRIBUTING.md`](CONTRIBUTING.md)
+- [`GITHUB_PAGES.md`](GITHUB_PAGES.md)
 
-The living implementation plan is in [`ROADMAP.md`](ROADMAP.md). Future work prioritises provenance, second-source verification, walk-forward/Monte Carlo comparison, and stronger randomness diagnostics—not “AI prediction”.
+## References
 
-## Responsible use
-
-This project is for educational and research purposes. Lottery games are games of chance and involve financial risk. Historical patterns do not guarantee or meaningfully predict future winning numbers in a fair draw. Set a budget and gamble responsibly.
-
-## License
-
-MIT. See [`LICENSE`](LICENSE).
+Current game rules and odds should be checked against the official operator before relying on a release. Research references for human number-choice behaviour are linked from the methodology and dashboard.
