@@ -1,5 +1,27 @@
 # Changelog
 
+## 2.1.2 — Certified portfolio objectives
+
+### Added
+
+- exact two-ticket intersection counts/probabilities for `>=k` main-number events;
+- rigorous second-order Bonferroni lower bounds for portfolio union probabilities;
+- exact/global-optimality certificates when target ticket events are pairwise disjoint;
+- proof-backed Division-4-or-better certificate: max pairwise ticket overlap `<=1` makes `>=4 main` events disjoint;
+- `any-prize-bound` ticket mode, which greedily minimises exact pairwise `>=3 main` event-intersection cost;
+- `division4-bound` ticket mode, which minimises exact pairwise `>=4 main` intersections and reports when the global optimum is reached;
+- `lotto-lab benchmark-objectives` for coverage vs any-prize-bound vs Division-4-bound vs QuickPick;
+- probability certificates in ticket metrics and generated reference coverage-set statistics;
+- Certified Probability panel in Benchmark Lab;
+- tests for exact intersection counts, Bonferroni behaviour and the Division-4 global-optimality theorem.
+
+### Research finding / guardrail
+
+- a prototype that directly trained ticket selection on simulated any-prize outcomes overfit its training draw sample and failed to improve on the existing coverage design out of sample;
+- that sampled-training optimiser is not shipped as a recommended strategy;
+- a Bonferroni lower bound is never presented as an exact union probability unless disjointness conditions prove exactness;
+- Division 1 remains exactly equal for same-sized sets of distinct standard games.
+
 ## 2.1.1 — Multi-seed benchmark
 
 ### Added
