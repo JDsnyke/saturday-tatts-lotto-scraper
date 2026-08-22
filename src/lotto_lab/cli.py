@@ -10,9 +10,11 @@ from .benchmark import benchmark_portfolio_distributions, benchmark_probability_
 from .crowding import generate_anti_crowding_tickets
 from .data import load_draws, write_draws
 from .exact_benchmark import benchmark_exact_any_prize_objectives
+from .optimizer import generate_exact_local_tickets, optimise_any_prize_exact
 from .portfolio import exact_any_prize_probability
 from .provenance import build_provenance, write_provenance
 from .scrape import refresh_dataset
+from .search_benchmark import benchmark_exact_local_search
 from .simulation import compare_strategies, walk_forward_backtest
 from .tickets import (
     generate_any_prize_bound_tickets,
@@ -81,6 +83,12 @@ def _probability_mode_tickets(
             seed=seed,
             candidates_per_ticket=candidates_per_ticket,
         )
+    if mode == "exact-local":
+        return generate_exact_local_tickets(
+            count,
+            seed=seed,
+            candidates_per_ticket=candidates_per_ticket,
+        )
     if mode == "random":
         return generate_random_tickets(count, seed=seed)
     raise ValueError(f"unsupported probability mode: {mode}")
@@ -111,6 +119,7 @@ def build_parser() -> argparse.ArgumentParser:
             "coverage",
             "any-prize-bound",
             "division4-bound",
+            "exact-local",
             "random",
             "anti-crowding",
         ),
@@ -126,11 +135,22 @@ def build_parser() -> argparse.ArgumentParser:
     exact.add_argument("--count", type=int, default=10)
     exact.add_argument(
         "--mode",
-        choices=("coverage", "any-prize-bound", "division4-bound", "random"),
+        choices=("coverage", "any-prize-bound", "division4-bound", "exact-local", "random"),
         default="coverage",
     )
-    exact.add_argument("--seed", default="exact-any-prize-v213")
+    exact.add_argument("--seed", default="exact-any-prize-v214")
     exact.add_argument("--candidates-per-ticket", type=int, default=320)
+
+    optimise = sub.add_parser(
+        "optimize-any-prize",
+        help="Improve a Coverage portfolio with exact-DP monotonic local search",
+    )
+    optimise.add_argument("--count", type=int, default=10)
+    optimise.add_argument("--seed", default="exact-local-v214")
+    optimise.add_argument("--candidates-per-ticket", type=int, default=320)
+    optimise.add_argument("--iterations", type=int, default=3)
+    optimise.add_argument("--exact-shortlist", type=int, default=5)
+    optimise.add_argument("--exploration-candidates", type=int, default=2)
 
     simulate = sub.add_parser("simulate", help="Monte Carlo comparison of coverage vs QuickPick")
     simulate.add_argument("--count", type=int, default=10)
@@ -171,6 +191,19 @@ def build_parser() -> argparse.ArgumentParser:
     exact_objectives.add_argument("--seed", type=int, default=20260822)
     exact_objectives.add_argument("--candidates-per-ticket", type=int, default=320)
     exact_objectives.add_argument("--bootstrap-resamples", type=int, default=2000)
+
+    local_benchmark = sub.add_parser(
+        "benchmark-local-search",
+        help="Paired exact benchmark of Coverage vs exact-guided local search",
+    )
+    local_benchmark.add_argument("--count", type=int, default=10)
+    local_benchmark.add_argument("--portfolios", type=int, default=8)
+    local_benchmark.add_argument("--seed", type=int, default=20260822)
+    local_benchmark.add_argument("--candidates-per-ticket", type=int, default=320)
+    local_benchmark.add_argument("--iterations", type=int, default=2)
+    local_benchmark.add_argument("--exact-shortlist", type=int, default=4)
+    local_benchmark.add_argument("--exploration-candidates", type=int, default=1)
+    local_benchmark.add_argument("--bootstrap-resamples", type=int, default=1200)
 
     backtest = sub.add_parser("backtest", help="Leakage-free historical portfolio-structure comparison")
     backtest.add_argument("--count", type=int, default=10)
@@ -213,6 +246,7 @@ def main(argv: list[str] | None = None) -> int:
             "coverage": generate_coverage_tickets,
             "any-prize-bound": generate_any_prize_bound_tickets,
             "division4-bound": generate_division4_bound_tickets,
+            "exact-local": generate_exact_local_tickets,
             "random": generate_random_tickets,
             "anti-crowding": generate_anti_crowding_tickets,
         }
@@ -264,6 +298,24 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(payload, indent=2))
         return 0
 
+    if args.command == "optimize-any-prize":
+        baseline = generate_coverage_tickets(
+            args.count,
+            seed=args.seed,
+            candidates_per_ticket=args.candidates_per_ticket,
+        )
+        result = optimise_any_prize_exact(
+            baseline,
+            seed=f"{args.seed}:search",
+            iterations=args.iterations,
+            exact_shortlist=args.exact_shortlist,
+            exploration_candidates=args.exploration_candidates,
+            preserve_division4_optimality=True,
+        )
+        result["baselineTickets"] = [list(ticket) for ticket in baseline]
+        print(json.dumps(result, indent=2))
+        return 0
+
     if args.command == "simulate":
         print(json.dumps(compare_strategies(args.count, trials=args.trials, seed=args.seed), indent=2))
         return 0
@@ -301,6 +353,20 @@ def main(argv: list[str] | None = None) -> int:
             random_portfolios=args.random_portfolios,
             seed=args.seed,
             candidates_per_ticket=args.candidates_per_ticket,
+            bootstrap_resamples=args.bootstrap_resamples,
+        )
+        print(json.dumps(result, indent=2))
+        return 0
+
+    if args.command == "benchmark-local-search":
+        result = benchmark_exact_local_search(
+            args.count,
+            portfolios=args.portfolios,
+            seed=args.seed,
+            candidates_per_ticket=args.candidates_per_ticket,
+            iterations=args.iterations,
+            exact_shortlist=args.exact_shortlist,
+            exploration_candidates=args.exploration_candidates,
             bootstrap_resamples=args.bootstrap_resamples,
         )
         print(json.dumps(result, indent=2))
