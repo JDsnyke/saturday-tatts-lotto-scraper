@@ -1,5 +1,27 @@
 # Changelog
 
+## 2.1.1 — Multi-seed benchmark
+
+### Added
+
+- distribution-vs-distribution benchmarking across independently seeded coverage and QuickPick portfolios;
+- shared simulated draw samples for lower-noise strategy comparisons;
+- random-baseline 5th/25th/50th/75th/95th percentile summaries;
+- bootstrap 95% intervals for favourable mean strategy differences;
+- probability-of-superiority effect summaries;
+- `lotto-lab benchmark` CLI command;
+- reproducible reference benchmark embedded in generated statistics;
+- dedicated `benchmark.html` Benchmark Lab with smaller browser-local exploratory runs and JSON export;
+- PWA shortcut/offline cache entries for Benchmark Lab;
+- benchmark methodology documentation and regression tests.
+
+### Guardrails
+
+- equal-size distinct portfolios remain explicitly equal for Division 1 probability;
+- browser-local results are labelled exploratory;
+- bootstrap intervals are documented as portfolio-seed uncertainty conditional on the shared simulated draw sample;
+- no benchmark result is presented as future-number prediction.
+
 ## 2.1.0 — Objective odds & portfolio research
 
 ### Added

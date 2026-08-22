@@ -31,7 +31,7 @@ This is the living engineering/research tracker. The governing rule is: **improv
 - [x] Greedy candidate search prioritising new quads → triples → pairs.
 - [x] Report subset placement count, unique count, repeats, efficiency and universe coverage.
 - [x] Retain distinct-combination and overlap guarantees.
-- [ ] Compare optimiser performance against a **distribution** of many independent random portfolios, not one baseline.
+- [x] Compare optimiser performance against a **distribution** of independently seeded random portfolios.
 - [ ] Benchmark greedy search against local search / simulated annealing / integer programming for useful ticket-count ranges.
 - [ ] Add objective selector: maximise any-prize probability, ≥4-main coverage, or generic subset diversity.
 
@@ -41,8 +41,12 @@ This is the living engineering/research tracker. The governing rule is: **improv
 - [x] Wilson 95% intervals for Monte Carlo hit rates.
 - [x] Leakage-free walk-forward historical comparison.
 - [x] Surface sample sizes and limitations in UI.
-- [ ] Bootstrap/repeated-seed confidence interval for strategy **difference**.
-- [ ] Pre-register fixed benchmark seeds/ticket counts so optimisation changes can be compared reproducibly.
+- [x] Bootstrap/repeated-seed confidence interval for strategy **difference** across portfolio seeds.
+- [x] Pre-register fixed benchmark seeds/ticket counts in `docs/BENCHMARKING.md`.
+- [x] Add probability-of-superiority and random-baseline quantiles.
+- [x] Use shared simulated draws across portfolio distributions to reduce comparison noise.
+- [ ] Add nested resampling so strategy-difference uncertainty includes both portfolio-seed and draw-sample uncertainty.
+- [ ] Add benchmark regression thresholds only after enough releases establish stable expected ranges.
 
 ## v2.1 — Data provenance & auditability
 
@@ -80,10 +84,13 @@ This is the living engineering/research tracker. The governing rule is: **improv
 - [x] Provenance/data-health UI.
 - [x] Offline/PWA caching.
 - [x] Static-site integration tests.
+- [x] Dedicated Benchmark Lab page with local multi-seed exploratory runs and JSON export.
+- [x] PWA shortcut to the Benchmark Lab.
 - [ ] Add richer accessible SVG charts and comparison views.
 - [ ] Add explicit PWA install/update UI.
 - [ ] Add Playwright browser smoke tests on a stable CI runner.
 - [ ] Compare two saved portfolios side-by-side.
+- [ ] Integrate Benchmark Lab directly into the main navigation after the legacy single-file UI bundle is modularised.
 
 ## v2.4 — Formal randomness diagnostics
 
@@ -107,4 +114,5 @@ This is the living engineering/research tracker. The governing rule is: **improv
 - Do **not** present machine learning as a magic predictor of independent fair draws.
 - Do **not** mix anti-crowding / payout-sharing research into the probability of a combination being drawn.
 - Do **not** claim a strategy advantage from one random seed, one backtest window or overlapping confidence intervals.
+- Do **not** call probability-of-superiority the probability that a strategy wins the lottery.
 - Do **not** encourage higher spend; probability-vs-spend tools must show both sides of the trade-off.

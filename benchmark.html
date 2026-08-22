@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en" data-theme="system">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#07101f">
+  <meta name="description" content="Multi-seed portfolio benchmark for Saturday Lotto coverage portfolios versus QuickPick distributions.">
+  <title>Benchmark Lab · Saturday Lotto Probability Lab</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="assets/site.webmanifest">
+  <link rel="stylesheet" href="assets/app.css">
+  <link rel="stylesheet" href="assets/benchmark.css">
+  <script defer src="assets/benchmark.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="aurora aurora-a" aria-hidden="true"></div>
+  <div class="aurora aurora-b" aria-hidden="true"></div>
+
+  <header class="site-header" id="top">
+    <a class="brand" href="index.html" aria-label="Saturday Lotto Lab home">
+      <span class="brand-orbit" aria-hidden="true"><span>6</span></span>
+      <span class="brand-copy"><strong>Saturday Lotto</strong><small>Benchmark Lab</small></span>
+    </a>
+    <nav class="header-nav" aria-label="Benchmark navigation">
+      <a href="index.html#tickets">Ticket Lab</a>
+      <a href="#evidence">Benchmark</a>
+      <a href="index.html#diagnostics">Diagnostics</a>
+      <a href="https://github.com/JDsnyke/saturday-tatts-lotto-scraper/blob/main/ROADMAP.md">Roadmap</a>
+    </nav>
+    <div class="header-actions">
+      <span class="data-pill"><span class="status-dot"></span><span>Multi-seed evidence</span></span>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero section-shell">
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="status-dot"></span> Portfolio distributions · shared draws</div>
+        <h1>Stop comparing<br><span>one lucky seed.</span></h1>
+        <p class="hero-lead">A single coverage portfolio beating a single QuickPick portfolio can happen by chance. Benchmark Lab compares independently seeded portfolio distributions on the same simulated draw sample and reports effect size, uncertainty and probability-of-superiority.</p>
+        <div class="hero-actions">
+          <a class="button primary" href="#evidence">Open benchmark <span aria-hidden="true">→</span></a>
+          <a class="button secondary" href="index.html">Back to main lab</a>
+        </div>
+        <div class="principle-strip" aria-label="Benchmark principles">
+          <span><b>01</b> Independent portfolio seeds</span>
+          <span><b>02</b> Common simulated draws</span>
+          <span><b>03</b> Bootstrap uncertainty</span>
+          <span><b>04</b> Div 1 held equal</span>
+        </div>
+      </div>
+
+      <aside class="hero-console glass" aria-labelledby="benchmark-rule-title">
+        <div class="console-head"><span class="card-kicker">Benchmark invariant</span><span class="live-chip">EXACT</span></div>
+        <h2 id="benchmark-rule-title">Same number of distinct games</h2>
+        <div class="odds-number">Same Div 1 odds</div>
+        <div class="probability-track"><span style="width:100%"></span></div>
+        <div class="console-grid">
+          <div><span>Coverage portfolio</span><strong>n / 8,145,060</strong></div>
+          <div><span>QuickPick portfolio</span><strong>n / 8,145,060</strong></div>
+          <div><span>What can differ</span><strong>Lower-tier overlap</strong></div>
+          <div><span>What cannot differ</span><strong>Per-combination draw chance</strong></div>
+        </div>
+        <p class="console-note">The benchmark asks whether diversification changes lower-division portfolio behaviour, not whether it predicts the next winning numbers.</p>
+      </aside>
+    </section>
+
+    <section class="section-shell thesis" role="note">
+      <div class="thesis-mark" aria-hidden="true">Δ</div>
+      <div>
+        <span class="eyebrow">How to read the benchmark</span>
+        <h2>A positive lower-division effect is a portfolio result, not a forecasting edge.</h2>
+        <p>Triple and quadruple coverage are exact structural measures. Prize-hit rates are Monte Carlo estimates. Bootstrap intervals describe variability across independently seeded portfolios conditional on the shared simulated draw sample.</p>
+      </div>
+    </section>
+
+    <section class="section-shell" id="evidence">
+      <div class="section-heading">
+        <div><span class="eyebrow">Distribution Benchmark</span><h2>Coverage vs QuickPick populations</h2></div>
+        <p>The repository reference benchmark is generated during the validated statistics build. You can also run a smaller exploratory benchmark locally without sending ticket data anywhere.</p>
+      </div>
+      <div class="research-note glass">
+        <div><span class="research-icon" aria-hidden="true">i</span></div>
+        <div>
+          <span class="eyebrow">Interpretation guardrail</span>
+          <h3>Probability-of-superiority is not “chance this strategy wins the lottery”.</h3>
+          <p>It is the empirical probability that a randomly chosen coverage portfolio scores better than a randomly chosen QuickPick portfolio on the named benchmark metric.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-shell method-section">
+      <div class="section-heading"><div><span class="eyebrow">Method</span><h2>What this improves over v2.1</h2></div><p>The old reference comparison used one seeded portfolio per strategy. The new benchmark estimates distributions and strategy differences across many seeds.</p></div>
+      <div class="method-grid">
+        <article class="method-card"><span class="method-number">01</span><span class="claim exact">Exact</span><h3>Structural coverage</h3><p>Pair, triple and quadruple efficiency is counted directly for every portfolio.</p></article>
+        <article class="method-card"><span class="method-number">02</span><span class="claim simulated">Simulated</span><h3>Shared draws</h3><p>Every portfolio sees the same draw sample, reducing irrelevant Monte Carlo noise in comparisons.</p></article>
+        <article class="method-card"><span class="method-number">03</span><span class="claim simulated">Bootstrap</span><h3>Mean difference interval</h3><p>Portfolio distributions are resampled to estimate a 95% interval for the favourable mean difference.</p></article>
+        <article class="method-card"><span class="method-number">04</span><span class="claim descriptive">Effect</span><h3>Probability-of-superiority</h3><p>Pairwise distribution comparison shows how consistently one strategy beats the other on a metric.</p></article>
+        <article class="method-card"><span class="method-number">05</span><span class="claim guardrail">Invariant</span><h3>Division 1 equality</h3><p>Equal-size sets of distinct standard games always retain identical Division 1 probability.</p></article>
+        <article class="method-card"><span class="method-number">06</span><span class="claim guardrail">Next</span><h3>Optimiser benchmark</h3><p>The roadmap next compares greedy coverage against local-search and optimisation alternatives.</p></article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer section-shell">
+    <div><strong>Saturday Lotto Benchmark Lab</strong><p>Open-source portfolio research. Not affiliated with The Lott.</p></div>
+    <div class="footer-links"><a href="index.html">Main lab</a><a href="https://github.com/JDsnyke/saturday-tatts-lotto-scraper">GitHub</a><a href="https://github.com/JDsnyke/saturday-tatts-lotto-scraper/blob/main/docs/BENCHMARKING.md">Benchmark method</a></div>
+    <p class="responsible">More entries increase spend as well as probability. Portfolio optimisation does not turn lottery play into an investment strategy.</p>
+  </footer>
+</body>
+</html>
