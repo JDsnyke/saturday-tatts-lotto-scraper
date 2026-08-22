@@ -9,6 +9,8 @@ from .analysis import build_statistics
 from .benchmark import benchmark_portfolio_distributions, benchmark_probability_objectives
 from .crowding import generate_anti_crowding_tickets
 from .data import load_draws, write_draws
+from .exact_benchmark import benchmark_exact_any_prize_objectives
+from .portfolio import exact_any_prize_probability
 from .provenance import build_provenance, write_provenance
 from .scrape import refresh_dataset
 from .simulation import compare_strategies, walk_forward_backtest
@@ -54,6 +56,36 @@ def _write_secondary_report(limit: int) -> dict:
     return report
 
 
+def _probability_mode_tickets(
+    mode: str,
+    count: int,
+    *,
+    seed: str | int | None,
+    candidates_per_ticket: int,
+):
+    if mode == "coverage":
+        return generate_coverage_tickets(
+            count,
+            seed=seed,
+            candidates_per_ticket=candidates_per_ticket,
+        )
+    if mode == "any-prize-bound":
+        return generate_any_prize_bound_tickets(
+            count,
+            seed=seed,
+            candidates_per_ticket=candidates_per_ticket,
+        )
+    if mode == "division4-bound":
+        return generate_division4_bound_tickets(
+            count,
+            seed=seed,
+            candidates_per_ticket=candidates_per_ticket,
+        )
+    if mode == "random":
+        return generate_random_tickets(count, seed=seed)
+    raise ValueError(f"unsupported probability mode: {mode}")
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="lotto-lab",
@@ -87,6 +119,19 @@ def build_parser() -> argparse.ArgumentParser:
     tickets.add_argument("--seed")
     tickets.add_argument("--json", action="store_true")
 
+    exact = sub.add_parser(
+        "exact-any-prize",
+        help="Compute the exact any-prize probability for a generated portfolio",
+    )
+    exact.add_argument("--count", type=int, default=10)
+    exact.add_argument(
+        "--mode",
+        choices=("coverage", "any-prize-bound", "division4-bound", "random"),
+        default="coverage",
+    )
+    exact.add_argument("--seed", default="exact-any-prize-v213")
+    exact.add_argument("--candidates-per-ticket", type=int, default=320)
+
     simulate = sub.add_parser("simulate", help="Monte Carlo comparison of coverage vs QuickPick")
     simulate.add_argument("--count", type=int, default=10)
     simulate.add_argument("--trials", type=int, default=50_000)
@@ -115,6 +160,17 @@ def build_parser() -> argparse.ArgumentParser:
     objectives.add_argument("--seed", type=int, default=20260822)
     objectives.add_argument("--candidates-per-ticket", type=int, default=320)
     objectives.add_argument("--bootstrap-resamples", type=int, default=2000)
+
+    exact_objectives = sub.add_parser(
+        "benchmark-exact-objectives",
+        help="Compare portfolio objectives using exact any-prize union probabilities",
+    )
+    exact_objectives.add_argument("--count", type=int, default=10)
+    exact_objectives.add_argument("--portfolios", type=int, default=12)
+    exact_objectives.add_argument("--random-portfolios", type=int, default=48)
+    exact_objectives.add_argument("--seed", type=int, default=20260822)
+    exact_objectives.add_argument("--candidates-per-ticket", type=int, default=320)
+    exact_objectives.add_argument("--bootstrap-resamples", type=int, default=2000)
 
     backtest = sub.add_parser("backtest", help="Leakage-free historical portfolio-structure comparison")
     backtest.add_argument("--count", type=int, default=10)
@@ -191,6 +247,23 @@ def main(argv: list[str] | None = None) -> int:
             )
         return 0
 
+    if args.command == "exact-any-prize":
+        generated = _probability_mode_tickets(
+            args.mode,
+            args.count,
+            seed=args.seed,
+            candidates_per_ticket=args.candidates_per_ticket,
+        )
+        payload = {
+            "mode": args.mode,
+            "seed": args.seed,
+            "tickets": [list(ticket) for ticket in generated],
+            "metrics": ticket_metrics(generated),
+            "exactAnyPrize": exact_any_prize_probability(generated),
+        }
+        print(json.dumps(payload, indent=2))
+        return 0
+
     if args.command == "simulate":
         print(json.dumps(compare_strategies(args.count, trials=args.trials, seed=args.seed), indent=2))
         return 0
@@ -214,6 +287,18 @@ def main(argv: list[str] | None = None) -> int:
             portfolios_per_objective=args.portfolios,
             random_portfolios=args.random_portfolios,
             trials=args.trials,
+            seed=args.seed,
+            candidates_per_ticket=args.candidates_per_ticket,
+            bootstrap_resamples=args.bootstrap_resamples,
+        )
+        print(json.dumps(result, indent=2))
+        return 0
+
+    if args.command == "benchmark-exact-objectives":
+        result = benchmark_exact_any_prize_objectives(
+            args.count,
+            portfolios_per_objective=args.portfolios,
+            random_portfolios=args.random_portfolios,
             seed=args.seed,
             candidates_per_ticket=args.candidates_per_ticket,
             bootstrap_resamples=args.bootstrap_resamples,
