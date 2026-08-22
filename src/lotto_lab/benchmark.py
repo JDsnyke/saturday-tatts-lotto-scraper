@@ -174,6 +174,42 @@ def _comparison(
         "probabilityOfSuperiority": probability_of_superiority(
             coverage_values, random_values, direction=direction
         ),
+        "inferenceSuppressed": False,
+    }
+
+
+def _exact_equality_override(
+    left_rows: Sequence[MetricRow],
+    right_rows: Sequence[MetricRow],
+    *,
+    simulated_metric: str,
+    exact_metric: str,
+    certificate_metric: str,
+) -> dict | None:
+    """Suppress Monte Carlo inference when exact certificates prove equal probabilities."""
+    all_certified = all(
+        row[certificate_metric] == 1.0 for row in [*left_rows, *right_rows]
+    )
+    exact_values = [row[exact_metric] for row in [*left_rows, *right_rows]]
+    exact_equal = bool(exact_values) and max(exact_values) == min(exact_values)
+    if not (all_certified and exact_equal):
+        return None
+
+    descriptive_difference = fmean(row[simulated_metric] for row in left_rows) - fmean(
+        row[simulated_metric] for row in right_rows
+    )
+    return {
+        "direction": "higher",
+        "inferenceSuppressed": True,
+        "exactProbabilityDifference": 0.0,
+        "descriptiveSimulatedMeanDifference": descriptive_difference,
+        "bootstrapMeanDifferenceCi95": None,
+        "probabilityOfSuperiority": None,
+        "reason": (
+            "Both strategy distributions are exactly certified at the same Division-4-or-better "
+            "probability. Any difference in the shared finite Monte Carlo draw sample is sampling "
+            "noise, so bootstrap inference on that simulated difference is suppressed."
+        ),
     }
 
 
@@ -336,6 +372,18 @@ def benchmark_probability_objectives(
             seed=seed + offset,
         )
 
+    division4_simulated_comparison = _exact_equality_override(
+        rows["division4Bound"],
+        rows["coverage"],
+        simulated_metric="division4OrBetterRate",
+        exact_metric="division4CertifiedProbability",
+        certificate_metric="division4GloballyOptimal",
+    )
+    if division4_simulated_comparison is None:
+        division4_simulated_comparison = compare(
+            "division4Bound", "coverage", "division4OrBetterRate", "higher", 202
+        )
+
     comparisons = {
         "anyPrizeBoundVsCoverage": {
             "anyPrizeBonferroniLowerBound": compare(
@@ -349,9 +397,7 @@ def benchmark_probability_objectives(
             "division4CertifiedProbability": compare(
                 "division4Bound", "coverage", "division4CertifiedProbability", "higher", 201
             ),
-            "division4OrBetterRate": compare(
-                "division4Bound", "coverage", "division4OrBetterRate", "higher", 202
-            ),
+            "division4OrBetterRate": division4_simulated_comparison,
         },
         "coverageVsRandom": {
             "anyPrizeRate": compare("coverage", "random", "anyPrizeRate", "higher", 301),
@@ -373,9 +419,9 @@ def benchmark_probability_objectives(
         "comparisons": comparisons,
         "note": (
             "The bound-driven generators optimise exact pairwise-event mathematics, not simulated "
-            "training outcomes. Monte Carlo draws are used only for out-of-sample comparison. A "
-            "Division-4+ global-optimality rate of 100% means every tested portfolio achieved "
-            "pairwise-disjoint >=4-main events, so no same-sized portfolio can have a higher "
-            "Division-4-or-better union probability."
+            "training outcomes. Monte Carlo draws are used only for out-of-sample comparison. When "
+            "exact certificates prove two strategy distributions have the same true probability, "
+            "Monte Carlo difference inference is suppressed rather than allowed to contradict the "
+            "known combinatorial result."
         ),
     }
