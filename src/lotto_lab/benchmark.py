@@ -5,7 +5,14 @@ from collections.abc import Sequence
 from statistics import fmean, pstdev
 
 from .domain import BALL_COUNT, MAIN_COUNT
-from .tickets import Ticket, generate_coverage_tickets, generate_random_tickets, ticket_metrics
+from .tickets import (
+    Ticket,
+    generate_any_prize_bound_tickets,
+    generate_coverage_tickets,
+    generate_division4_bound_tickets,
+    generate_random_tickets,
+    ticket_metrics,
+)
 
 MetricRow = dict[str, float]
 
@@ -121,12 +128,21 @@ def _outcome_rates(tickets: Sequence[Ticket], draws: Sequence[frozenset[int]]) -
 def _portfolio_row(tickets: Sequence[Ticket], draws: Sequence[frozenset[int]]) -> MetricRow:
     metrics = ticket_metrics(tickets)
     outcomes = _outcome_rates(tickets, draws)
+    certificates = metrics["probabilityCertificates"]
+    any_prize = certificates["anyPrize"]
+    division4 = certificates["division4OrBetter"]
+    division4_certified = division4["exactProbability"]
+    if division4_certified is None:
+        division4_certified = division4["bonferroniLowerBound"]
     return {
         "pairCoverageEfficiency": float(metrics["pairCoverage"]["efficiency"]),
         "tripleCoverageEfficiency": float(metrics["tripleCoverage"]["efficiency"]),
         "quadCoverageEfficiency": float(metrics["quadrupleCoverage"]["efficiency"]),
         "maxPairwiseOverlap": float(metrics["maxPairwiseOverlap"]),
         "uniqueNumbers": float(metrics["uniqueNumbers"]),
+        "anyPrizeBonferroniLowerBound": float(any_prize["bonferroniLowerBound"]),
+        "division4CertifiedProbability": float(division4_certified),
+        "division4GloballyOptimal": float(bool(division4["globallyOptimalForTicketCount"])),
         **outcomes,
     }
 
@@ -157,6 +173,42 @@ def _comparison(
         "bootstrapMeanDifferenceCi95": [ci_low, ci_high],
         "probabilityOfSuperiority": probability_of_superiority(
             coverage_values, random_values, direction=direction
+        ),
+        "inferenceSuppressed": False,
+    }
+
+
+def _exact_equality_override(
+    left_rows: Sequence[MetricRow],
+    right_rows: Sequence[MetricRow],
+    *,
+    simulated_metric: str,
+    exact_metric: str,
+    certificate_metric: str,
+) -> dict | None:
+    """Suppress Monte Carlo inference when exact certificates prove equal probabilities."""
+    all_certified = all(
+        row[certificate_metric] == 1.0 for row in [*left_rows, *right_rows]
+    )
+    exact_values = [row[exact_metric] for row in [*left_rows, *right_rows]]
+    exact_equal = bool(exact_values) and max(exact_values) == min(exact_values)
+    if not (all_certified and exact_equal):
+        return None
+
+    descriptive_difference = fmean(row[simulated_metric] for row in left_rows) - fmean(
+        row[simulated_metric] for row in right_rows
+    )
+    return {
+        "direction": "higher",
+        "inferenceSuppressed": True,
+        "exactProbabilityDifference": 0.0,
+        "descriptiveSimulatedMeanDifference": descriptive_difference,
+        "bootstrapMeanDifferenceCi95": None,
+        "probabilityOfSuperiority": None,
+        "reason": (
+            "Both strategy distributions are exactly certified at the same Division-4-or-better "
+            "probability. Any difference in the shared finite Monte Carlo draw sample is sampling "
+            "noise, so bootstrap inference on that simulated difference is suppressed."
         ),
     }
 
@@ -211,6 +263,9 @@ def benchmark_portfolio_distributions(
         "quadCoverageEfficiency": "higher",
         "maxPairwiseOverlap": "lower",
         "uniqueNumbers": "higher",
+        "anyPrizeBonferroniLowerBound": "higher",
+        "division4CertifiedProbability": "higher",
+        "division4GloballyOptimal": "higher",
         "anyPrizeRate": "higher",
         "division4OrBetterRate": "higher",
         "meanBestMainMatch": "higher",
@@ -246,5 +301,127 @@ def benchmark_portfolio_distributions(
             "Coverage and QuickPick distributions use the same number of distinct standard games. "
             "Division 1 probability is therefore identical. Positive lower-division differences "
             "measure portfolio diversification, not prediction of future draw numbers."
+        ),
+    }
+
+
+def benchmark_probability_objectives(
+    ticket_count: int = 10,
+    *,
+    portfolios_per_objective: int = 24,
+    random_portfolios: int = 96,
+    trials: int = 5000,
+    seed: int = 20260822,
+    candidates_per_ticket: int = 320,
+    bootstrap_resamples: int = 2000,
+) -> dict:
+    """Compare subset, any-prize-bound and Division-4-bound objectives out of sample."""
+    if portfolios_per_objective < 2 or random_portfolios < 2:
+        raise ValueError("at least two portfolios are required in each distribution")
+    draws = _sample_main_draws(trials, seed=seed ^ 0x0B1E_C71E)
+
+    generators = {
+        "coverage": generate_coverage_tickets,
+        "anyPrizeBound": generate_any_prize_bound_tickets,
+        "division4Bound": generate_division4_bound_tickets,
+    }
+    rows: dict[str, list[MetricRow]] = {}
+    for strategy, generator in generators.items():
+        rows[strategy] = [
+            _portfolio_row(
+                generator(
+                    ticket_count,
+                    seed=f"objective:{seed}:{strategy}:{index}",
+                    candidates_per_ticket=candidates_per_ticket,
+                ),
+                draws,
+            )
+            for index in range(portfolios_per_objective)
+        ]
+    rows["random"] = [
+        _portfolio_row(
+            generate_random_tickets(ticket_count, seed=f"objective:{seed}:random:{index}"),
+            draws,
+        )
+        for index in range(random_portfolios)
+    ]
+
+    reported_metrics = (
+        "anyPrizeBonferroniLowerBound",
+        "anyPrizeRate",
+        "division4CertifiedProbability",
+        "division4OrBetterRate",
+        "division4GloballyOptimal",
+        "tripleCoverageEfficiency",
+        "maxPairwiseOverlap",
+    )
+    summaries = {
+        strategy: {
+            metric: distribution_summary([row[metric] for row in strategy_rows])
+            for metric in reported_metrics
+        }
+        for strategy, strategy_rows in rows.items()
+    }
+
+    def compare(left: str, right: str, metric: str, direction: str, offset: int) -> dict:
+        return _comparison(
+            [row[metric] for row in rows[left]],
+            [row[metric] for row in rows[right]],
+            direction=direction,
+            resamples=bootstrap_resamples,
+            seed=seed + offset,
+        )
+
+    division4_simulated_comparison = _exact_equality_override(
+        rows["division4Bound"],
+        rows["coverage"],
+        simulated_metric="division4OrBetterRate",
+        exact_metric="division4CertifiedProbability",
+        certificate_metric="division4GloballyOptimal",
+    )
+    if division4_simulated_comparison is None:
+        division4_simulated_comparison = compare(
+            "division4Bound", "coverage", "division4OrBetterRate", "higher", 202
+        )
+
+    comparisons = {
+        "anyPrizeBoundVsCoverage": {
+            "anyPrizeBonferroniLowerBound": compare(
+                "anyPrizeBound", "coverage", "anyPrizeBonferroniLowerBound", "higher", 101
+            ),
+            "anyPrizeRate": compare(
+                "anyPrizeBound", "coverage", "anyPrizeRate", "higher", 102
+            ),
+        },
+        "division4BoundVsCoverage": {
+            "division4CertifiedProbability": compare(
+                "division4Bound", "coverage", "division4CertifiedProbability", "higher", 201
+            ),
+            "division4OrBetterRate": division4_simulated_comparison,
+        },
+        "coverageVsRandom": {
+            "anyPrizeRate": compare("coverage", "random", "anyPrizeRate", "higher", 301),
+            "division4OrBetterRate": compare(
+                "coverage", "random", "division4OrBetterRate", "higher", 302
+            ),
+        },
+    }
+
+    return {
+        "ticketCount": ticket_count,
+        "portfoliosPerObjective": portfolios_per_objective,
+        "randomPortfolios": random_portfolios,
+        "simulatedDraws": trials,
+        "seed": seed,
+        "candidatesPerTicket": candidates_per_ticket,
+        "divisionOneProbabilityEqual": True,
+        "strategies": summaries,
+        "comparisons": comparisons,
+        "note": (
+            "The bound-driven generators optimise exact pairwise-event mathematics, not simulated "
+            "training outcomes. Monte Carlo draws are used only for out-of-sample comparison. When "
+            "exact certificates prove two strategy distributions have the same true probability, "
+            "Monte Carlo difference inference is suppressed rather than allowed to contradict the "
+            "known combinatorial result."
         ),
     }

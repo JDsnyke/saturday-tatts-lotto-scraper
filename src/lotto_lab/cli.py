@@ -6,13 +6,19 @@ from datetime import UTC, date, datetime
 from pathlib import Path
 
 from .analysis import build_statistics
-from .benchmark import benchmark_portfolio_distributions
+from .benchmark import benchmark_portfolio_distributions, benchmark_probability_objectives
 from .crowding import generate_anti_crowding_tickets
 from .data import load_draws, write_draws
 from .provenance import build_provenance, write_provenance
 from .scrape import refresh_dataset
 from .simulation import compare_strategies, walk_forward_backtest
-from .tickets import generate_coverage_tickets, generate_random_tickets, ticket_metrics
+from .tickets import (
+    generate_any_prize_bound_tickets,
+    generate_coverage_tickets,
+    generate_division4_bound_tickets,
+    generate_random_tickets,
+    ticket_metrics,
+)
 from .verify import fetch_secondary_html, parse_secondary_results, verify_latest_draws
 
 SECONDARY_REPORT = Path("assets/secondary_verification.json")
@@ -67,7 +73,17 @@ def build_parser() -> argparse.ArgumentParser:
 
     tickets = sub.add_parser("tickets", help="Generate distinct entries")
     tickets.add_argument("--count", type=int, default=10)
-    tickets.add_argument("--mode", choices=("coverage", "random", "anti-crowding"), default="coverage")
+    tickets.add_argument(
+        "--mode",
+        choices=(
+            "coverage",
+            "any-prize-bound",
+            "division4-bound",
+            "random",
+            "anti-crowding",
+        ),
+        default="coverage",
+    )
     tickets.add_argument("--seed")
     tickets.add_argument("--json", action="store_true")
 
@@ -87,6 +103,18 @@ def build_parser() -> argparse.ArgumentParser:
     benchmark.add_argument("--seed", type=int, default=20260822)
     benchmark.add_argument("--candidates-per-ticket", type=int, default=120)
     benchmark.add_argument("--bootstrap-resamples", type=int, default=2000)
+
+    objectives = sub.add_parser(
+        "benchmark-objectives",
+        help="Compare subset coverage with certified any-prize and Division-4 bound objectives",
+    )
+    objectives.add_argument("--count", type=int, default=10)
+    objectives.add_argument("--portfolios", type=int, default=24)
+    objectives.add_argument("--random-portfolios", type=int, default=96)
+    objectives.add_argument("--trials", type=int, default=5000)
+    objectives.add_argument("--seed", type=int, default=20260822)
+    objectives.add_argument("--candidates-per-ticket", type=int, default=320)
+    objectives.add_argument("--bootstrap-resamples", type=int, default=2000)
 
     backtest = sub.add_parser("backtest", help="Leakage-free historical portfolio-structure comparison")
     backtest.add_argument("--count", type=int, default=10)
@@ -127,25 +155,39 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "tickets":
         generators = {
             "coverage": generate_coverage_tickets,
+            "any-prize-bound": generate_any_prize_bound_tickets,
+            "division4-bound": generate_division4_bound_tickets,
             "random": generate_random_tickets,
             "anti-crowding": generate_anti_crowding_tickets,
         }
-        tickets = generators[args.mode](args.count, seed=args.seed)
+        generated = generators[args.mode](args.count, seed=args.seed)
         payload = {
             "mode": args.mode,
-            "tickets": [list(ticket) for ticket in tickets],
-            "metrics": ticket_metrics(tickets),
+            "tickets": [list(ticket) for ticket in generated],
+            "metrics": ticket_metrics(generated),
         }
         if args.json:
             print(json.dumps(payload, indent=2))
         else:
-            for index, ticket in enumerate(tickets, start=1):
+            for index, ticket in enumerate(generated, start=1):
                 print(f"{index:>2}: " + " ".join(f"{number:02d}" for number in ticket))
             metrics = payload["metrics"]
+            certificates = metrics["probabilityCertificates"]
+            any_prize = certificates["anyPrize"]
+            division4 = certificates["division4OrBetter"]
+            division4_status = (
+                "exact/global optimum"
+                if division4["globallyOptimalForTicketCount"]
+                else "lower bound only"
+            )
             print(
                 f"unique numbers {metrics['uniqueNumbers']}; max overlap {metrics['maxPairwiseOverlap']}; "
                 f"triple efficiency {metrics['tripleCoverage']['efficiency']:.1%}; "
                 f"Div 1 chance {metrics['divisionOneProbability']:.10%}"
+            )
+            print(
+                f"any-prize certified lower bound {any_prize['bonferroniLowerBound']:.6%}; "
+                f"Div 4+ {division4_status}"
             )
         return 0
 
@@ -157,6 +199,19 @@ def main(argv: list[str] | None = None) -> int:
         result = benchmark_portfolio_distributions(
             args.count,
             coverage_portfolios=args.coverage_portfolios,
+            random_portfolios=args.random_portfolios,
+            trials=args.trials,
+            seed=args.seed,
+            candidates_per_ticket=args.candidates_per_ticket,
+            bootstrap_resamples=args.bootstrap_resamples,
+        )
+        print(json.dumps(result, indent=2))
+        return 0
+
+    if args.command == "benchmark-objectives":
+        result = benchmark_probability_objectives(
+            args.count,
+            portfolios_per_objective=args.portfolios,
             random_portfolios=args.random_portfolios,
             trials=args.trials,
             seed=args.seed,

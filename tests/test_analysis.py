@@ -17,6 +17,10 @@ class AnalysisTests(unittest.TestCase):
         self.assertEqual(stats["dataset"]["lastDraw"], "2026-01-10")
         self.assertEqual(stats["game"]["divisionOneCombinations"], 8_145_060)
         self.assertEqual(len(stats["probabilityModel"]["prizeDivisions"]), 6)
+        certificates = stats["referenceCoverageSet"]["metrics"]["probabilityCertificates"]
+        self.assertIn("anyPrize", certificates)
+        self.assertIn("division4OrBetter", certificates)
+        self.assertGreater(certificates["anyPrize"]["bonferroniLowerBound"], 0)
 
 
 if __name__ == "__main__":
