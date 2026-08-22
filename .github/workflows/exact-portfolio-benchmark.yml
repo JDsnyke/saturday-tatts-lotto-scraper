@@ -2,6 +2,14 @@ name: Exact portfolio benchmark
 
 on:
   pull_request:
+    paths:
+      - 'src/lotto_lab/portfolio.py'
+      - 'src/lotto_lab/tickets.py'
+      - 'src/lotto_lab/exact_benchmark.py'
+      - 'src/lotto_lab/benchmark.py'
+      - 'src/lotto_lab/probability.py'
+      - 'src/lotto_lab/domain.py'
+      - '.github/workflows/exact-portfolio-benchmark.yml'
   workflow_dispatch:
 
 permissions:
