@@ -71,7 +71,17 @@ jobs:
               }
               for strategy in ('coverage', 'anyPrizeBound', 'division4Bound', 'random')
           }
+          comparisons = {}
+          for name, metrics in result['comparisons'].items():
+              comparisons[name] = {}
+              for metric, values in metrics.items():
+                  comparisons[name][metric] = {
+                      'favourableMeanDifference': round(values['favourableMeanDifference'], 8),
+                      'ci95': [round(value, 8) for value in values['bootstrapMeanDifferenceCi95']],
+                      'probabilityOfSuperiority': round(values['probabilityOfSuperiority'], 6),
+                  }
           print('CERTIFIED_OBJECTIVE_SUMMARY=' + json.dumps(summary, sort_keys=True))
+          print('CERTIFIED_OBJECTIVE_COMPARISONS=' + json.dumps(comparisons, sort_keys=True))
           PY
       - name: Validate browser JavaScript
         run: |
