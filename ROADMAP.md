@@ -24,6 +24,10 @@ This is the living engineering/research tracker. The governing rule is: **improv
 - [x] Exact 0–6 main-number match distribution.
 - [x] Exact Division 1–6 standard-game probabilities.
 - [x] Exact any-prize probability for a standard game.
+- [x] Exact two-ticket intersection probability for any ≥k-main event.
+- [x] Rigorous portfolio Bonferroni lower bound `S1 - S2` from exact pair intersections.
+- [x] Exact global-optimality certificate when portfolio events are pairwise disjoint.
+- [x] Prove that max pairwise game overlap ≤1 makes Division-4-or-better events pairwise disjoint.
 
 ### Better portfolio construction
 
@@ -32,8 +36,12 @@ This is the living engineering/research tracker. The governing rule is: **improv
 - [x] Report subset placement count, unique count, repeats, efficiency and universe coverage.
 - [x] Retain distinct-combination and overlap guarantees.
 - [x] Compare optimiser performance against a **distribution** of independently seeded random portfolios.
+- [x] Add an any-prize-bound objective that minimises exact pair-event intersection cost.
+- [x] Add a Division-4-bound objective that can return a global-optimality certificate.
+- [x] Keep generic subset-diversity coverage as a separate objective rather than silently replacing it.
 - [ ] Benchmark greedy search against local search / simulated annealing / integer programming for useful ticket-count ranges.
-- [ ] Add objective selector: maximise any-prize probability, ≥4-main coverage, or generic subset diversity.
+- [ ] Investigate exact or higher-order optimisation of the any-prize union beyond the second-order Bonferroni bound.
+- [ ] Determine useful ticket-count ranges where a pairwise-disjoint ≥4-main packing can be constructed reliably.
 
 ### Evidence
 
@@ -45,6 +53,8 @@ This is the living engineering/research tracker. The governing rule is: **improv
 - [x] Pre-register fixed benchmark seeds/ticket counts in `docs/BENCHMARKING.md`.
 - [x] Add probability-of-superiority and random-baseline quantiles.
 - [x] Use shared simulated draws across portfolio distributions to reduce comparison noise.
+- [x] Add objective benchmark: subset coverage vs any-prize-bound vs Division-4-bound vs QuickPick.
+- [x] Reject direct simulated-training optimisation after held-out prototypes overfit and failed to improve on coverage.
 - [ ] Add nested resampling so strategy-difference uncertainty includes both portfolio-seed and draw-sample uncertainty.
 - [ ] Add benchmark regression thresholds only after enough releases establish stable expected ranges.
 
@@ -86,6 +96,7 @@ This is the living engineering/research tracker. The governing rule is: **improv
 - [x] Static-site integration tests.
 - [x] Dedicated Benchmark Lab page with local multi-seed exploratory runs and JSON export.
 - [x] PWA shortcut to the Benchmark Lab.
+- [x] Certified Probability panel separating exact bounds from Monte Carlo evidence.
 - [ ] Add richer accessible SVG charts and comparison views.
 - [ ] Add explicit PWA install/update UI.
 - [ ] Add Playwright browser smoke tests on a stable CI runner.
@@ -115,4 +126,6 @@ This is the living engineering/research tracker. The governing rule is: **improv
 - Do **not** mix anti-crowding / payout-sharing research into the probability of a combination being drawn.
 - Do **not** claim a strategy advantage from one random seed, one backtest window or overlapping confidence intervals.
 - Do **not** call probability-of-superiority the probability that a strategy wins the lottery.
+- Do **not** train an optimiser on simulated draws and report its training performance as evidence; use held-out evaluation and reject it if it fails to generalise.
+- Do **not** describe a Bonferroni lower bound as the exact union probability unless the event intersections required for exactness have been proved absent.
 - Do **not** encourage higher spend; probability-vs-spend tools must show both sides of the trade-off.
