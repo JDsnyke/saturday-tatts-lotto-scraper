@@ -1,54 +1,110 @@
 # Saturday Lotto Lab Roadmap
 
-This roadmap is the living tracker for the v2 refresh. The guiding rule is simple: improve data quality, transparency and multi-entry coverage without implying that historical results predict an independent lottery draw.
+This is the living engineering/research tracker. The governing rule is: **improve measurable probability, coverage, data quality or decision clarity without presenting historical noise as a future-draw edge.**
 
-## v2.0 — Probability-first refresh
+## v2.0 — Probability-first foundation ✅
 
-- [x] Replace frequency-weighted “prediction” with mathematically honest ticket generation.
-- [x] Add exact `C(45, 6) = 8,145,060` Division 1 combinatorics.
-- [x] Add balanced-coverage ticket generation that reduces repeated number/pair usage across multiple entries.
-- [x] Add validated, typed draw parsing with duplicate/range/overlap checks.
+- [x] Remove frequency-weighted prediction.
+- [x] Add exact `C(45,6) = 8,145,060` Division 1 combinatorics.
+- [x] Add distinct QuickPick and balanced multi-entry generation.
+- [x] Add strict draw validation and canonical ordering.
 - [x] Replace order-sensitive shell statistics with Python diagnostics.
-- [x] Add number z-scores, normalized entropy, χ² descriptive diagnostic and historical pair lift.
-- [x] Rewrite the GitHub Pages UI with responsive layouts, dynamic charts, animations, accessible tabs and theme switching.
-- [x] Add unit tests and Ruff linting.
-- [x] Simplify legacy shell scripts into thin compatibility wrappers.
-- [x] Remove automated dependency PR churn.
-- [x] Replace branch/PR-style updater behaviour with direct, change-only scheduled data commits.
-- [x] Refresh project documentation and statistical disclaimers.
+- [x] Add z-scores, entropy, χ² descriptive diagnostic and pair counts.
+- [x] Replace the old page with a responsive theme-aware static dashboard.
+- [x] Add unit tests, Ruff and CI.
+- [x] Remove dependency-PR churn and automated update branches.
 
-## v2.1 — Data provenance & stronger auditability
+## v2.1 — Objective odds & portfolio structure
 
-- [ ] Add draw-number IDs and source URL per draw.
-- [ ] Store scrape provenance/checksum metadata alongside each data refresh.
-- [ ] Add a second-source comparison job and flag disagreements before committing data.
-- [ ] Add a stale-data health badge to the README and website.
-- [ ] Add fixture snapshots for known historical draws to catch scraper markup regressions.
+### Exact probability
 
-## v2.2 — Backtesting & simulation
+- [x] Exact Division 1 probability for any number of distinct standard games.
+- [x] Cumulative Division 1 probability across repeated independent draws.
+- [x] Exact System 6–20 standard-combination equivalence.
+- [x] Exact 0–6 main-number match distribution.
+- [x] Exact Division 1–6 standard-game probabilities.
+- [x] Exact any-prize probability for a standard game.
 
-- [ ] Add walk-forward backtests that compare coverage mode with independent QuickPick baselines.
-- [ ] Add Monte Carlo confidence intervals for hit-rate comparisons.
-- [ ] Add system-entry coverage comparison (System 7–20) without claiming improved per-combination odds.
-- [ ] Add ticket-budget scenarios that show probability versus spend without encouraging higher spend.
+### Better portfolio construction
+
+- [x] Replace pair-first heuristic with explicit pair/triple/quadruple subset coverage.
+- [x] Greedy candidate search prioritising new quads → triples → pairs.
+- [x] Report subset placement count, unique count, repeats, efficiency and universe coverage.
+- [x] Retain distinct-combination and overlap guarantees.
+- [ ] Compare optimiser performance against a **distribution** of many independent random portfolios, not one baseline.
+- [ ] Benchmark greedy search against local search / simulated annealing / integer programming for useful ticket-count ranges.
+- [ ] Add objective selector: maximise any-prize probability, ≥4-main coverage, or generic subset diversity.
+
+### Evidence
+
+- [x] Simulate actual prize divisions rather than main matches only.
+- [x] Wilson 95% intervals for Monte Carlo hit rates.
+- [x] Leakage-free walk-forward historical comparison.
+- [x] Surface sample sizes and limitations in UI.
+- [ ] Bootstrap/repeated-seed confidence interval for strategy **difference**.
+- [ ] Pre-register fixed benchmark seeds/ticket counts so optimisation changes can be compared reproducibly.
+
+## v2.1 — Data provenance & auditability
+
+- [x] Secondary-source draw-number and source URL capture.
+- [x] SHA-256 checksums for both tracked CSV datasets.
+- [x] Secondary verification report.
+- [x] Block scheduled publication on newest-draw disagreement.
+- [x] Data-health/freshness status in dashboard.
+- [x] Saved known-draw parser fixtures.
+- [x] Migration-aware regeneration when data assets use an older schema.
+- [ ] Prefer an official/regulator machine-readable source if one becomes reliably available.
+- [ ] Persist primary source URL/draw ID per historical row rather than only verification metadata for recent draws.
+
+## v2.2 — Conditional prize sharing / crowding research
+
+- [x] Separate conditional payout-sharing logic from draw-probability logic.
+- [x] Add an explicitly experimental anti-crowding generator.
+- [x] Penalise birthday-heavy, 7, consecutive and highly regular patterns as research-informed features.
+- [x] Link the UI and methodology to supporting research.
+- [ ] Find or build a defensible Australian Saturday Lotto player-choice dataset.
+- [ ] Replace hand-set feature penalties with empirically estimated crowding likelihoods if data supports it.
+- [ ] Simulate conditional co-winner/prize-sharing distributions when ticket-popularity data is available.
+- [ ] Add expected-value analysis only when prize pool, division rules and player-count inputs are sourced and parameterised.
 
 ## v2.3 — Web experience
 
-- [ ] Add client-side draw search and date filters.
-- [ ] Add downloadable JSON/CSV diagnostics.
-- [ ] Add shareable ticket-set URLs using encoded local state only.
-- [ ] Add richer accessible tooltips and keyboard navigation for charts.
-- [ ] Add offline/PWA caching for the static dashboard.
+- [x] Probability Planner.
+- [x] System 6–20 calculator.
+- [x] Exact prize and main-match views.
+- [x] Upgraded portfolio metrics and local simulation.
+- [x] Draw search, date filters and number filters.
+- [x] Ticket and draw CSV export.
+- [x] Shareable ticket URLs using encoded local state only.
+- [x] Keyboard-accessible frequency chart details.
+- [x] Provenance/data-health UI.
+- [x] Offline/PWA caching.
+- [x] Static-site integration tests.
+- [ ] Add richer accessible SVG charts and comparison views.
+- [ ] Add explicit PWA install/update UI.
+- [ ] Add Playwright browser smoke tests on a stable CI runner.
+- [ ] Compare two saved portfolios side-by-side.
 
-## v3 — Optional research modules
+## v2.4 — Formal randomness diagnostics
 
-- [ ] Formal randomness diagnostics (runs, serial correlation and Monte Carlo-calibrated goodness-of-fit tests).
-- [ ] Player-choice/crowding research only if a defensible Australian dataset becomes available.
-- [ ] Conditional prize-sharing simulations clearly separated from draw probability.
-- [ ] Support additional Australian lottery formats through a reusable game definition layer.
+- [ ] Runs tests for derived binary/count sequences with appropriate calibration.
+- [ ] Serial/cross-lag correlation diagnostics.
+- [ ] Monte-Carlo-calibrated global goodness-of-fit statistics that respect within-draw dependence.
+- [ ] Multiple-testing controls and clear exploratory/confirmatory labelling.
+- [ ] Automated alert only for persistent, independently reproduced anomalies — never as a betting signal by default.
 
-## Non-goals
+## v3 — Reusable lottery research platform
 
-- Predicting future winning numbers from “hot”, “cold”, “due”, recency or pair-frequency scores.
-- Claiming machine learning can overcome a fair independent lottery draw without evidence of exploitable non-randomness.
-- Presenting historical frequency as an individual number’s next-draw probability.
+- [ ] Game-definition layer for other Australian lottery formats.
+- [ ] Reusable prize-category definitions.
+- [ ] Source adapters with provenance contracts.
+- [ ] Reproducible research exports/notebooks.
+- [ ] Optional fully static precomputed benchmark datasets.
+
+## Permanent guardrails
+
+- Do **not** rank future numbers using hot/cold/due/recency/pair-frequency scores without credible evidence of exploitable non-randomness.
+- Do **not** present machine learning as a magic predictor of independent fair draws.
+- Do **not** mix anti-crowding / payout-sharing research into the probability of a combination being drawn.
+- Do **not** claim a strategy advantage from one random seed, one backtest window or overlapping confidence intervals.
+- Do **not** encourage higher spend; probability-vs-spend tools must show both sides of the trade-off.

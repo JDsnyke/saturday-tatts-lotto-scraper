@@ -16,7 +16,7 @@ BASE_URL = "https://au.lottonumbers.com"
 ARCHIVE_TEMPLATE = BASE_URL + "/saturday-lotto/results/{year}-archive"
 DATE_PATTERN = re.compile(r"(\d{1,2}\s+[A-Za-z]+\s+\d{4})")
 DRAW_LINK_PATTERN = re.compile(r"^/saturday-lotto/results/\d")
-USER_AGENT = "SaturdayLottoResearchBot/2.0 (+https://github.com/JDsnyke/saturday-tatts-lotto-scraper)"
+USER_AGENT = "SaturdayLottoResearchBot/2.1 (+https://github.com/JDsnyke/saturday-tatts-lotto-scraper)"
 
 
 def _fetch(url: str, timeout: int = 20) -> str:

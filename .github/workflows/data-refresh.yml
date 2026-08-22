@@ -30,24 +30,58 @@ jobs:
         env:
           PYTHONPATH: src
         run: python -m lotto_lab scrape
-      - name: Check whether draw data changed
-        id: changes
+      - name: Decide whether publication assets need rebuilding
+        id: publish
         run: |
-          if git diff --quiet -- winning_numbers.csv supplementary_numbers.csv; then
-            echo 'changed=false' >> "$GITHUB_OUTPUT"
-          else
-            echo 'changed=true' >> "$GITHUB_OUTPUT"
-          fi
-      - name: Regenerate statistics
-        if: steps.changes.outputs.changed == 'true'
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          from pathlib import Path
+          import subprocess
+
+          csv_changed = subprocess.run(
+              ['git', 'diff', '--quiet', '--', 'winning_numbers.csv', 'supplementary_numbers.csv']
+          ).returncode != 0
+
+          stats = Path('assets/lotto_stats.json')
+          provenance = Path('assets/data_provenance.json')
+          verification = Path('assets/secondary_verification.json')
+          schema_ok = False
+          if stats.exists():
+              try:
+                  schema_ok = json.loads(stats.read_text(encoding='utf-8')).get('schemaVersion') == 3
+              except (OSError, json.JSONDecodeError):
+                  pass
+          provenance_ok = provenance.exists()
+          if provenance_ok:
+              try:
+                  provenance_ok = json.loads(provenance.read_text(encoding='utf-8')).get('status') != 'bootstrap-placeholder'
+              except (OSError, json.JSONDecodeError):
+                  provenance_ok = False
+
+          needs_publish = csv_changed or not schema_ok or not provenance_ok or not verification.exists()
+          print(f"needed={'true' if needs_publish else 'false'}")
+          PY
+      - name: Cross-check newest draws against secondary source
+        if: steps.publish.outputs.needed == 'true'
+        env:
+          PYTHONPATH: src
+        run: python -m lotto_lab verify-secondary --latest 10
+      - name: Regenerate statistics and provenance
+        if: steps.publish.outputs.needed == 'true'
         env:
           PYTHONPATH: src
         run: python -m lotto_lab stats
-      - name: Commit changed data directly
-        if: steps.changes.outputs.changed == 'true'
+      - name: Commit verified changed assets directly
+        if: steps.publish.outputs.needed == 'true'
         run: |
+          if git diff --quiet -- winning_numbers.csv supplementary_numbers.csv assets/lotto_stats.json \
+            assets/data_provenance.json assets/secondary_verification.json; then
+            echo 'No tracked data or generated asset changes to commit.'
+            exit 0
+          fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -- winning_numbers.csv supplementary_numbers.csv assets/lotto_stats.json
-          git commit -m 'data: refresh Saturday Lotto results'
+          git add -- winning_numbers.csv supplementary_numbers.csv \
+            assets/lotto_stats.json assets/data_provenance.json assets/secondary_verification.json
+          git commit -m 'data: refresh and verify Saturday Lotto results'
           git push origin HEAD:main

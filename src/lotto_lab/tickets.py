@@ -5,6 +5,7 @@ import random
 from collections import Counter
 from collections.abc import Iterable
 from itertools import combinations
+from math import comb
 
 from .domain import BALL_COUNT, MAIN_COUNT
 from .probability import division_one_probability
@@ -21,67 +22,97 @@ def _rng(seed: str | int | None = None) -> random.Random:
     return random.Random(seed)
 
 
+def _random_ticket(rng: random.Random) -> Ticket:
+    return tuple(sorted(rng.sample(range(1, BALL_COUNT + 1), MAIN_COUNT)))
+
+
 def generate_random_tickets(count: int, seed: str | int | None = None) -> list[Ticket]:
     _validate_count(count)
     rng = _rng(seed)
     seen: set[Ticket] = set()
     tickets: list[Ticket] = []
-    population = list(range(1, BALL_COUNT + 1))
     while len(tickets) < count:
-        ticket = tuple(sorted(rng.sample(population, MAIN_COUNT)))
+        ticket = _random_ticket(rng)
         if ticket not in seen:
             seen.add(ticket)
             tickets.append(ticket)
     return tickets
 
 
-def generate_coverage_tickets(count: int, seed: str | int | None = None) -> list[Ticket]:
-    """Generate tickets with balanced number usage and low repeated-pair overlap.
+def subset_coverage(tickets: Iterable[Ticket], subset_size: int) -> dict[str, float | int]:
+    if subset_size < 1 or subset_size > MAIN_COUNT:
+        raise ValueError("subset_size must be between 1 and 6")
+    ticket_list = list(tickets)
+    covered = {
+        subset
+        for ticket in ticket_list
+        for subset in combinations(ticket, subset_size)
+    }
+    placements = len(ticket_list) * comb(MAIN_COUNT, subset_size)
+    universe = comb(BALL_COUNT, subset_size)
+    simple_upper_bound = min(universe, placements)
+    repeated = placements - len(covered)
+    return {
+        "subsetSize": subset_size,
+        "unique": len(covered),
+        "placements": placements,
+        "repeated": repeated,
+        "simpleUpperBound": simple_upper_bound,
+        "efficiency": (len(covered) / placements) if placements else 0.0,
+        "universeCoverage": len(covered) / universe,
+    }
 
-    This does *not* increase the probability of any individual combination. It is useful
-    only when constructing multiple distinct entries because it reduces redundant coverage.
+
+def generate_coverage_tickets(
+    count: int,
+    seed: str | int | None = None,
+    *,
+    candidates_per_ticket: int = 320,
+) -> list[Ticket]:
+    """Greedy combinatorial design for multiple distinct standard entries.
+
+    The objective prioritises new 4-, 3-, then 2-number subsets, followed by low
+    ticket overlap and balanced number usage. This cannot improve an individual
+    six-number combination's draw probability; it reduces portfolio redundancy.
     """
     _validate_count(count)
+    if candidates_per_ticket < 20:
+        raise ValueError("candidates_per_ticket must be at least 20")
     rng = _rng(seed)
-    usage = Counter({number: 0 for number in range(1, BALL_COUNT + 1)})
-    pair_usage: Counter[tuple[int, int]] = Counter()
     tickets: list[Ticket] = []
     seen: set[Ticket] = set()
+    usage = Counter({number: 0 for number in range(1, BALL_COUNT + 1)})
+    covered = {2: set(), 3: set(), 4: set()}
 
     for _ in range(count):
-        for _attempt in range(100):
-            chosen: list[int] = []
-            while len(chosen) < MAIN_COUNT:
-                candidates = [number for number in range(1, BALL_COUNT + 1) if number not in chosen]
-                rng.shuffle(candidates)
+        best_ticket: Ticket | None = None
+        best_score: tuple[float, ...] | None = None
+        for _candidate in range(candidates_per_ticket):
+            candidate = _random_ticket(rng)
+            if candidate in seen:
+                continue
+            new4 = sum(1 for s in combinations(candidate, 4) if s not in covered[4])
+            new3 = sum(1 for s in combinations(candidate, 3) if s not in covered[3])
+            new2 = sum(1 for s in combinations(candidate, 2) if s not in covered[2])
+            max_overlap = max((len(set(candidate) & set(ticket)) for ticket in tickets), default=0)
+            usage_cost = sum(usage[number] for number in candidate)
+            score = (new4, new3, new2, -max_overlap, -usage_cost, rng.random())
+            if best_score is None or score > best_score:
+                best_score = score
+                best_ticket = candidate
 
-                def score(number: int) -> tuple[float, float, float]:
-                    repeated_pairs = sum(pair_usage[tuple(sorted((number, other)))] for other in chosen)
-                    shared_with_existing = sum(
-                        1
-                        for ticket in tickets
-                        if number in ticket and any(other in ticket for other in chosen)
-                    )
-                    return (usage[number], repeated_pairs, shared_with_existing + rng.random() * 0.01)
-
-                chosen.append(min(candidates, key=score))
-
-            ticket = tuple(sorted(chosen))
-            if ticket not in seen:
-                break
-            rng.random()
-        else:
-            raise RuntimeError("unable to generate a unique ticket set")
-
-        seen.add(ticket)
-        tickets.append(ticket)
-        usage.update(ticket)
-        pair_usage.update(tuple(sorted(pair)) for pair in combinations(ticket, 2))
+        if best_ticket is None:
+            raise RuntimeError("unable to generate a unique coverage ticket")
+        tickets.append(best_ticket)
+        seen.add(best_ticket)
+        usage.update(best_ticket)
+        for size in covered:
+            covered[size].update(combinations(best_ticket, size))
 
     return tickets
 
 
-def ticket_metrics(tickets: Iterable[Ticket]) -> dict[str, float | int]:
+def ticket_metrics(tickets: Iterable[Ticket]) -> dict[str, float | int | dict]:
     ticket_list = list(tickets)
     if not ticket_list:
         return {
@@ -91,6 +122,9 @@ def ticket_metrics(tickets: Iterable[Ticket]) -> dict[str, float | int]:
             "averagePairwiseOverlap": 0.0,
             "usageSpread": 0,
             "divisionOneProbability": 0.0,
+            "pairCoverage": subset_coverage([], 2),
+            "tripleCoverage": subset_coverage([], 3),
+            "quadrupleCoverage": subset_coverage([], 4),
         }
 
     usage = Counter(number for ticket in ticket_list for number in ticket)
@@ -103,6 +137,9 @@ def ticket_metrics(tickets: Iterable[Ticket]) -> dict[str, float | int]:
         "averagePairwiseOverlap": round(sum(overlaps) / len(overlaps), 4) if overlaps else 0.0,
         "usageSpread": max(all_usage) - min(all_usage),
         "divisionOneProbability": division_one_probability(len(ticket_list)),
+        "pairCoverage": subset_coverage(ticket_list, 2),
+        "tripleCoverage": subset_coverage(ticket_list, 3),
+        "quadrupleCoverage": subset_coverage(ticket_list, 4),
     }
 
 

@@ -6,7 +6,19 @@ from datetime import UTC, datetime
 from itertools import combinations
 
 from .domain import BALL_COUNT, DIVISION_ONE_COMBINATIONS, MAIN_COUNT, SUPPLEMENTARY_COUNT, Draw
-from .probability import chi_square_uniform, expected_number_count, normalized_entropy, number_z_score
+from .probability import (
+    any_prize_probability,
+    at_least_main_match_probability,
+    chi_square_uniform,
+    expected_number_count,
+    main_match_distribution,
+    normalized_entropy,
+    number_z_score,
+    odds_from_probability,
+    prize_division_probabilities,
+    system_entry_combinations,
+)
+from .simulation import compare_strategies, walk_forward_backtest
 from .tickets import generate_coverage_tickets, ticket_metrics
 
 
@@ -47,7 +59,7 @@ def build_statistics(draws: Sequence[Draw], *, generated_at: datetime | None = N
         pair_counts.update(tuple(sorted(pair)) for pair in combinations(draw.main, 2))
     expected_pair_count = draw_count * (MAIN_COUNT / BALL_COUNT) * ((MAIN_COUNT - 1) / (BALL_COUNT - 1))
     top_pairs = []
-    for pair, count in sorted(pair_counts.items(), key=lambda item: (-item[1], item[0]))[:15]:
+    for pair, count in sorted(pair_counts.items(), key=lambda item: (-item[1], item[0]))[:20]:
         top_pairs.append(
             {
                 "numbers": list(pair),
@@ -57,11 +69,20 @@ def build_statistics(draws: Sequence[Draw], *, generated_at: datetime | None = N
         )
 
     frequency_values = [main_counts[number] for number in range(1, BALL_COUNT + 1)]
-    reference_seed = f"{ordered[-1].date.isoformat()}:{draw_count}:coverage-v2"
+    reference_seed = f"{ordered[-1].date.isoformat()}:{draw_count}:coverage-v3"
     reference_tickets = generate_coverage_tickets(10, seed=reference_seed)
+    match_distribution = main_match_distribution()
+    system_rows = [
+        {
+            "selectedNumbers": selected,
+            "standardCombinations": system_entry_combinations(selected),
+            "divisionOneProbability": system_entry_combinations(selected) / DIVISION_ONE_COMBINATIONS,
+        }
+        for selected in range(6, 21)
+    ]
 
     return {
-        "schemaVersion": 2,
+        "schemaVersion": 3,
         "generatedAt": generated_at.isoformat().replace("+00:00", "Z"),
         "game": {
             "name": "Saturday Lotto / TattsLotto",
@@ -78,6 +99,15 @@ def build_statistics(draws: Sequence[Draw], *, generated_at: datetime | None = N
             "mainObservations": draw_count * MAIN_COUNT,
             "supplementaryObservations": draw_count * SUPPLEMENTARY_COUNT,
         },
+        "probabilityModel": {
+            "prizeDivisions": prize_division_probabilities(),
+            "anyPrizeProbability": any_prize_probability(),
+            "anyPrizeOdds": odds_from_probability(any_prize_probability()),
+            "mainMatchDistribution": match_distribution,
+            "atLeastThreeMainProbability": at_least_main_match_probability(3),
+            "atLeastThreeMainOdds": odds_from_probability(at_least_main_match_probability(3)),
+            "systemEntries": system_rows,
+        },
         "fairnessDiagnostics": {
             "expectedMainCountPerNumber": round(expected, 4),
             "chiSquareUniform": round(chi_square_uniform(frequency_values), 4),
@@ -90,13 +120,23 @@ def build_statistics(draws: Sequence[Draw], *, generated_at: datetime | None = N
         },
         "numbers": number_rows,
         "topHistoricalPairs": top_pairs,
+        "draws": [
+            {
+                "date": draw.date.isoformat(),
+                "main": list(draw.main),
+                "supplementary": list(draw.supplementary),
+            }
+            for draw in reversed(ordered)
+        ],
         "referenceCoverageSet": {
             "seed": reference_seed,
             "tickets": [list(ticket) for ticket in reference_tickets],
             "metrics": ticket_metrics(reference_tickets),
             "note": (
-                "Coverage mode reduces overlap across multiple distinct entries. It does not change the odds "
-                "of any individual six-number combination."
+                "Coverage mode maximises new 4-, 3- and 2-number subsets across multiple entries. "
+                "It does not change the odds of any individual six-number combination."
             ),
         },
+        "referenceSimulation": compare_strategies(10, trials=20_000, seed=20260822),
+        "referenceBacktest": walk_forward_backtest(list(ordered), ticket_count=10, max_steps=52),
     }
