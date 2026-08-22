@@ -23,21 +23,20 @@ jobs:
         with:
           python-version: '3.12'
           cache: pip
-      - name: Install dependencies
-        run: python -m pip install -r requirements-dev.txt
-      - name: Paired exact 10-game local-search benchmark
+      - name: Paired exact 10-game local-search confirmation
         env:
           PYTHONPATH: src
         run: |
+          python -m pip install -r requirements-dev.txt
           python -m lotto_lab benchmark-local-search \
             --count 10 \
-            --portfolios 12 \
-            --seed 20260822 \
+            --portfolios 16 \
+            --seed 20260823 \
             --candidates-per-ticket 320 \
             --iterations 2 \
             --exact-shortlist 4 \
             --exploration-candidates 1 \
-            --bootstrap-resamples 1200 > /tmp/local-search.json
+            --bootstrap-resamples 1600 > /tmp/local-search.json
           python -m json.tool /tmp/local-search.json >/dev/null
           python - <<'PY'
           import json
@@ -50,6 +49,8 @@ jobs:
           assert result['divisionOneProbabilityEqual'] is True
           assert result['allExactImprovementsNonNegative'] is True
           assert result['allExistingDivision4OptimaPreserved'] is True
+          assert result['seed'] == 20260823
+          assert result['portfolioPairs'] == 16
 
           summary = {
               'baselineMean': result['baseline']['mean'],
@@ -60,7 +61,7 @@ jobs:
               'improvedPortfolioFraction': result['improvedPortfolioFraction'],
               'unchangedPortfolioFraction': result['unchangedPortfolioFraction'],
           }
-          print('EXACT_LOCAL_SEARCH_SUMMARY=' + json.dumps(summary, sort_keys=True))
+          print('EXACT_LOCAL_SEARCH_CONFIRMATION=' + json.dumps(summary, sort_keys=True))
           print(
               'EXACT_LOCAL_SEARCH_ROWS=' + json.dumps(
                   [
