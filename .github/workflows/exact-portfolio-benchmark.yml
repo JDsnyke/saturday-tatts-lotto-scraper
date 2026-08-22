@@ -1,0 +1,67 @@
+name: Exact portfolio benchmark
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  exact-any-prize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+          cache: pip
+      - name: Install dependencies
+        run: python -m pip install -r requirements-dev.txt
+      - name: Exact 10-game confirmation benchmark
+        env:
+          PYTHONPATH: src
+        run: |
+          python -m lotto_lab benchmark-exact-objectives \
+            --count 10 \
+            --portfolios 32 \
+            --random-portfolios 128 \
+            --seed 20260822 \
+            --candidates-per-ticket 320 \
+            --bootstrap-resamples 2000 > /tmp/exact-confirmation.json
+          python -m json.tool /tmp/exact-confirmation.json >/dev/null
+          python - <<'PY'
+          import json
+
+          with open('/tmp/exact-confirmation.json', encoding='utf-8') as handle:
+              result = json.load(handle)
+          assert result['exact'] is True
+          assert result['ticketCount'] == 10
+          assert result['portfoliosPerObjective'] == 32
+          assert result['randomPortfolios'] == 128
+          assert result['divisionOneProbabilityEqual'] is True
+
+          summary = {
+              strategy: round(
+                  result['strategies'][strategy]['exactAnyPrizeProbability']['mean'], 10
+              )
+              for strategy in ('coverage', 'anyPrizeBound', 'division4Bound', 'random')
+          }
+          comparisons = {
+              name: {
+                  'difference': round(values['exactAnyPrizeProbability']['favourableMeanDifference'], 12),
+                  'ci95': [
+                      round(value, 12)
+                      for value in values['exactAnyPrizeProbability']['bootstrapMeanDifferenceCi95']
+                  ],
+                  'probabilityOfSuperiority': round(
+                      values['exactAnyPrizeProbability']['probabilityOfSuperiority'], 6
+                  ),
+              }
+              for name, values in result['comparisons'].items()
+              if 'exactAnyPrizeProbability' in values
+          }
+          print('EXACT_CONFIRMATION_BEST=' + result['bestExactMeanStrategy'])
+          print('EXACT_CONFIRMATION_SUMMARY=' + json.dumps(summary, sort_keys=True))
+          print('EXACT_CONFIRMATION_COMPARISONS=' + json.dumps(comparisons, sort_keys=True))
+          PY
