@@ -13,6 +13,8 @@
   };
 
   function renderPending() {
+    setText('cert-any-exact', 'Pending stats refresh');
+    setText('cert-any-exact-status', 'Exact v2.1.3 reference result not published yet');
     setText('cert-any-lower', 'Pending stats refresh');
     setText('cert-any-upper', '—');
     setText('cert-d4-exact', 'Pending stats refresh');
@@ -21,7 +23,8 @@
   }
 
   function renderCertificates(stats) {
-    const metrics = stats?.referenceCoverageSet?.metrics;
+    const reference = stats?.referenceCoverageSet;
+    const metrics = reference?.metrics;
     const certificates = metrics?.probabilityCertificates;
     if (!certificates) {
       renderPending();
@@ -30,8 +33,21 @@
 
     const anyPrize = certificates.anyPrize;
     const division4 = certificates.division4OrBetter;
-    setText('cert-any-lower', pct(anyPrize.bonferroniLowerBound, 3));
-    setText('cert-any-upper', `Union upper bound ${pct(anyPrize.firstOrderUnionBound, 3)}`);
+    const exactAnyPrize = reference?.exactAnyPrize;
+
+    if (exactAnyPrize?.exact && exactAnyPrize.probability != null) {
+      setText('cert-any-exact', pct(exactAnyPrize.probability, 4));
+      setText(
+        'cert-any-exact-status',
+        `${nf.format(exactAnyPrize.anyPrizeWinningMainSets)} of ${nf.format(exactAnyPrize.totalWinningMainSets)} winning-main sets`,
+      );
+    } else {
+      setText('cert-any-exact', 'Pending stats refresh');
+      setText('cert-any-exact-status', 'Exact v2.1.3 reference result not published yet');
+    }
+
+    setText('cert-any-lower', pct(anyPrize.bonferroniLowerBound, 4));
+    setText('cert-any-upper', `Union upper bound ${pct(anyPrize.firstOrderUnionBound, 4)}`);
     setText(
       'cert-d4-exact',
       division4.exactProbability == null ? 'Not exact' : pct(division4.exactProbability, 4),
@@ -42,7 +58,10 @@
         ? 'Certified global optimum for this game count'
         : 'Lower bound only; pairwise event intersections remain',
     );
-    setText('cert-overlap', `${nf.format(metrics.maxPairwiseOverlap)} shared number${metrics.maxPairwiseOverlap === 1 ? '' : 's'}`);
+    setText(
+      'cert-overlap',
+      `${nf.format(metrics.maxPairwiseOverlap)} shared number${metrics.maxPairwiseOverlap === 1 ? '' : 's'}`,
+    );
 
     const badge = document.getElementById('cert-d4-badge');
     if (badge) {
