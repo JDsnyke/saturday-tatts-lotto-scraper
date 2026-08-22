@@ -39,6 +39,7 @@ jobs:
         run: |
           node --check assets/app.js
           node --check assets/benchmark.js
+          node --check assets/certificates.js
           node --check service-worker.js
       - name: Validate static site references
         run: |
@@ -48,6 +49,7 @@ jobs:
           test -f assets/app.js
           test -f assets/benchmark.css
           test -f assets/benchmark.js
+          test -f assets/certificates.js
           test -f assets/lotto_stats.json
           test -f assets/data_provenance.json
           test -f assets/site.webmanifest
@@ -57,5 +59,8 @@ jobs:
           grep -q 'assets/site.webmanifest' index.html
           grep -q 'assets/benchmark.css' benchmark.html
           grep -q 'assets/benchmark.js' benchmark.html
+          grep -q 'assets/certificates.js' benchmark.html
+          grep -q 'id="certificates"' benchmark.html
+          grep -q 'assets/certificates.js' service-worker.js
           grep -q 'benchmark.html' service-worker.js
           grep -q 'service-worker.js' assets/app.js
