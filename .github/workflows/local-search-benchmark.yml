@@ -1,0 +1,81 @@
+name: Exact local-search benchmark
+
+on:
+  pull_request:
+    paths:
+      - 'src/lotto_lab/optimizer.py'
+      - 'src/lotto_lab/search_benchmark.py'
+      - 'src/lotto_lab/portfolio.py'
+      - 'src/lotto_lab/tickets.py'
+      - 'src/lotto_lab/cli.py'
+      - '.github/workflows/local-search-benchmark.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  paired-exact-search:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+          cache: pip
+      - name: Install dependencies
+        run: python -m pip install -r requirements-dev.txt
+      - name: Paired exact 10-game local-search benchmark
+        env:
+          PYTHONPATH: src
+        run: |
+          python -m lotto_lab benchmark-local-search \
+            --count 10 \
+            --portfolios 12 \
+            --seed 20260822 \
+            --candidates-per-ticket 320 \
+            --iterations 2 \
+            --exact-shortlist 4 \
+            --exploration-candidates 1 \
+            --bootstrap-resamples 1200 > /tmp/local-search.json
+          python -m json.tool /tmp/local-search.json >/dev/null
+          python - <<'PY'
+          import json
+
+          with open('/tmp/local-search.json', encoding='utf-8') as handle:
+              result = json.load(handle)
+
+          assert result['exact'] is True
+          assert result['pairedDesign'] is True
+          assert result['divisionOneProbabilityEqual'] is True
+          assert result['allExactImprovementsNonNegative'] is True
+          assert result['allExistingDivision4OptimaPreserved'] is True
+
+          summary = {
+              'baselineMean': result['baseline']['mean'],
+              'finalMean': result['final']['mean'],
+              'meanImprovementProbability': result['improvementProbability']['mean'],
+              'meanImprovementWinningMainSets': result['improvementWinningMainSets']['mean'],
+              'ci95': result['pairedMeanImprovementCi95'],
+              'improvedPortfolioFraction': result['improvedPortfolioFraction'],
+              'unchangedPortfolioFraction': result['unchangedPortfolioFraction'],
+          }
+          print('EXACT_LOCAL_SEARCH_SUMMARY=' + json.dumps(summary, sort_keys=True))
+          print(
+              'EXACT_LOCAL_SEARCH_ROWS=' + json.dumps(
+                  [
+                      {
+                          'index': row['index'],
+                          'improvementWinningMainSets': row['improvementWinningMainSets'],
+                          'acceptedMoves': row['acceptedMoves'],
+                          'exactEvaluations': row['exactEvaluations'],
+                          'screenedNeighbours': row['screenedNeighbours'],
+                          'd4Before': row['baselineDivision4Optimal'],
+                          'd4After': row['finalDivision4Optimal'],
+                      }
+                      for row in result['rows']
+                  ],
+                  sort_keys=True,
+              )
+          )
+          PY
