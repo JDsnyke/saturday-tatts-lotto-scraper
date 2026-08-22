@@ -75,11 +75,27 @@ jobs:
           for name, metrics in result['comparisons'].items():
               comparisons[name] = {}
               for metric, values in metrics.items():
+                  if values.get('inferenceSuppressed'):
+                      comparisons[name][metric] = {
+                          'inferenceSuppressed': True,
+                          'exactProbabilityDifference': values['exactProbabilityDifference'],
+                          'descriptiveSimulatedMeanDifference': round(
+                              values['descriptiveSimulatedMeanDifference'], 8
+                          ),
+                          'reason': values['reason'],
+                      }
+                      continue
                   comparisons[name][metric] = {
+                      'inferenceSuppressed': False,
                       'favourableMeanDifference': round(values['favourableMeanDifference'], 8),
                       'ci95': [round(value, 8) for value in values['bootstrapMeanDifferenceCi95']],
                       'probabilityOfSuperiority': round(values['probabilityOfSuperiority'], 6),
                   }
+          suppressed = result['comparisons']['division4BoundVsCoverage']['division4OrBetterRate']
+          assert suppressed['inferenceSuppressed'] is True
+          assert suppressed['exactProbabilityDifference'] == 0.0
+          assert suppressed['bootstrapMeanDifferenceCi95'] is None
+          assert suppressed['probabilityOfSuperiority'] is None
           print('CERTIFIED_OBJECTIVE_SUMMARY=' + json.dumps(summary, sort_keys=True))
           print('CERTIFIED_OBJECTIVE_COMPARISONS=' + json.dumps(comparisons, sort_keys=True))
           PY
