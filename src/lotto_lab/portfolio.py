@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
-from functools import lru_cache
+from functools import cache
 from itertools import combinations
 from math import comb
 
@@ -9,7 +9,7 @@ from .domain import BALL_COUNT, MAIN_COUNT
 from .probability import at_least_main_match_probability, combination_count
 
 
-@lru_cache(maxsize=None)
+@cache
 def pair_event_intersection_count(overlap: int, threshold: int) -> int:
     """Count winning main-number sets satisfying a match threshold for two tickets.
 
