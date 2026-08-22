@@ -5,6 +5,7 @@ from collections.abc import Sequence
 from datetime import UTC, datetime
 from itertools import combinations
 
+from .benchmark import benchmark_portfolio_distributions
 from .domain import BALL_COUNT, DIVISION_ONE_COMBINATIONS, MAIN_COUNT, SUPPLEMENTARY_COUNT, Draw
 from .probability import (
     any_prize_probability,
@@ -139,4 +140,13 @@ def build_statistics(draws: Sequence[Draw], *, generated_at: datetime | None = N
         },
         "referenceSimulation": compare_strategies(10, trials=20_000, seed=20260822),
         "referenceBacktest": walk_forward_backtest(list(ordered), ticket_count=10, max_steps=52),
+        "referenceBenchmark": benchmark_portfolio_distributions(
+            10,
+            coverage_portfolios=32,
+            random_portfolios=128,
+            trials=2500,
+            seed=20260822,
+            candidates_per_ticket=120,
+            bootstrap_resamples=1200,
+        ),
     }

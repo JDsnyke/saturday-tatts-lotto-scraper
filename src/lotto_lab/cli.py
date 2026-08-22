@@ -6,6 +6,7 @@ from datetime import UTC, date, datetime
 from pathlib import Path
 
 from .analysis import build_statistics
+from .benchmark import benchmark_portfolio_distributions
 from .crowding import generate_anti_crowding_tickets
 from .data import load_draws, write_draws
 from .provenance import build_provenance, write_provenance
@@ -75,6 +76,18 @@ def build_parser() -> argparse.ArgumentParser:
     simulate.add_argument("--trials", type=int, default=50_000)
     simulate.add_argument("--seed", type=int, default=20260822)
 
+    benchmark = sub.add_parser(
+        "benchmark",
+        help="Multi-seed coverage-vs-QuickPick portfolio distribution benchmark",
+    )
+    benchmark.add_argument("--count", type=int, default=10)
+    benchmark.add_argument("--coverage-portfolios", type=int, default=50)
+    benchmark.add_argument("--random-portfolios", type=int, default=200)
+    benchmark.add_argument("--trials", type=int, default=5000)
+    benchmark.add_argument("--seed", type=int, default=20260822)
+    benchmark.add_argument("--candidates-per-ticket", type=int, default=120)
+    benchmark.add_argument("--bootstrap-resamples", type=int, default=2000)
+
     backtest = sub.add_parser("backtest", help="Leakage-free historical portfolio-structure comparison")
     backtest.add_argument("--count", type=int, default=10)
     backtest.add_argument("--steps", type=int, default=120)
@@ -138,6 +151,19 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "simulate":
         print(json.dumps(compare_strategies(args.count, trials=args.trials, seed=args.seed), indent=2))
+        return 0
+
+    if args.command == "benchmark":
+        result = benchmark_portfolio_distributions(
+            args.count,
+            coverage_portfolios=args.coverage_portfolios,
+            random_portfolios=args.random_portfolios,
+            trials=args.trials,
+            seed=args.seed,
+            candidates_per_ticket=args.candidates_per_ticket,
+            bootstrap_resamples=args.bootstrap_resamples,
+        )
+        print(json.dumps(result, indent=2))
         return 0
 
     if args.command == "backtest":
