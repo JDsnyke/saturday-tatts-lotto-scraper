@@ -8,6 +8,8 @@ from .domain import BALL_COUNT, MAIN_COUNT
 from .portfolio import exact_any_prize_probability, portfolio_probability_certificate
 from .tickets import Ticket, generate_coverage_tickets, subset_coverage
 
+Move = dict[str, int | list[int]]
+
 
 def _rng(seed: str | int | None) -> random.Random:
     if seed is None:
@@ -34,11 +36,11 @@ def _validate_portfolio(tickets: Sequence[Sequence[int]]) -> list[Ticket]:
     return normalized
 
 
-def _one_swap_neighbours(tickets: Sequence[Ticket]) -> list[tuple[tuple[Ticket, ...], dict[str, int]]]:
+def _one_swap_neighbours(tickets: Sequence[Ticket]) -> list[tuple[tuple[Ticket, ...], Move]]:
     """Enumerate unique portfolios reachable by one number replacement in one ticket."""
     current = tuple(tickets)
     current_set = set(current)
-    neighbours: dict[tuple[Ticket, ...], dict[str, int]] = {}
+    neighbours: dict[tuple[Ticket, ...], Move] = {}
 
     for ticket_index, ticket in enumerate(current):
         ticket_numbers = set(ticket)
@@ -52,16 +54,17 @@ def _one_swap_neighbours(tickets: Sequence[Ticket]) -> list[tuple[tuple[Ticket, 
                     continue
                 candidate = list(current)
                 candidate[ticket_index] = replacement
-                candidate_tuple = tuple(candidate)
-                canonical_portfolio = tuple(sorted(candidate_tuple))
+                canonical_portfolio = tuple(sorted(candidate))
                 if canonical_portfolio in neighbours:
                     continue
                 neighbours[canonical_portfolio] = {
-                    "ticketIndex": ticket_index,
+                    "ticketIndexBeforeCanonicalSort": ticket_index,
                     "removed": removed,
                     "added": added,
+                    "beforeTicket": list(ticket),
+                    "afterTicket": list(replacement),
                 }
-    return [(portfolio, move) for portfolio, move in neighbours.items()]
+    return list(neighbours.items())
 
 
 def _screen_score(tickets: Sequence[Ticket]) -> tuple[float, float, float, int]:
@@ -117,7 +120,7 @@ def optimise_any_prize_exact(
     screened_neighbours = 0
 
     for iteration in range(1, iterations + 1):
-        screened: list[tuple[tuple[float, float, float, int], float, tuple[Ticket, ...], dict[str, int]]] = []
+        screened: list[tuple[tuple[float, float, float, int], float, tuple[Ticket, ...], Move]] = []
         for neighbour, move in _one_swap_neighbours(portfolio):
             if require_div4_certificate:
                 division4 = portfolio_probability_certificate(neighbour, threshold=4)
