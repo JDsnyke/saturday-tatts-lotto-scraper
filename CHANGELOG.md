@@ -1,5 +1,42 @@
 # Changelog
 
+## 2.1.3 — Exact any-prize portfolio probability
+
+### Added
+
+- exact fixed-portfolio any-prize probability via complement dynamic programming;
+- integer counting across all `C(45,6) = 8,145,060` winning-main sets without Monte Carlo enumeration;
+- independent one-ticket and two-ticket inclusion-exclusion regression checks;
+- default 12-ticket runtime guard so exact evaluation remains an explicit workload;
+- `lotto-lab exact-any-prize` CLI command;
+- `lotto-lab benchmark-exact-objectives` for seed-matched exact strategy comparisons;
+- exact any-prize result in the generated 10-game reference Coverage statistics;
+- Benchmark Lab exact-any-prize display above the older Bonferroni bound;
+- dedicated exact benchmark workflow and `docs/EXACT_ANY_PRIZE.md`.
+
+### Exact confirmation finding
+
+The larger fixed benchmark uses 32 portfolios for each structured strategy and 128 QuickPick portfolios, all with 10 games and root seed `20260822`.
+
+Mean exact any-prize probabilities:
+
+- Coverage: **23.00372595%**;
+- Any-prize-bound: **23.00482171%**;
+- Division-4-bound: **23.00703433%**;
+- QuickPick: **21.44444742%**.
+
+Coverage vs QuickPick had an exact mean advantage of about **+1.5593 percentage points**, with a portfolio-seed bootstrap 95% interval of about **+1.4769 to +1.6505 points** and probability-of-superiority `1.000` in the fixed benchmark.
+
+Neither specialist bound-driven generator showed a reliable exact any-prize advantage over Coverage in the larger confirmation run. Coverage remains the recommended balanced default.
+
+### Guardrails
+
+- every individual any-prize probability in the exact benchmark is combinatorial, not simulated;
+- bootstrap intervals describe generator-seed variation only, not draw-sample uncertainty;
+- the smaller 12-seed run that favoured Any-prize-bound is retained in the research history rather than cherry-picked as the release conclusion;
+- exact evaluation does not imply global optimisation of the any-prize portfolio;
+- equal-size distinct portfolios still have identical Division 1 probability.
+
 ## 2.1.2 — Certified portfolio objectives
 
 ### Added
