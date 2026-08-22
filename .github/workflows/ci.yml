@@ -35,6 +35,19 @@ jobs:
           python -m lotto_lab stats
           python -m json.tool assets/lotto_stats.json >/dev/null
           python -m json.tool assets/data_provenance.json >/dev/null
+          python - <<'PY'
+          import json
+
+          with open('assets/lotto_stats.json', encoding='utf-8') as handle:
+              stats = json.load(handle)
+          exact = stats['referenceCoverageSet']['exactAnyPrize']
+          certificate = stats['referenceCoverageSet']['metrics']['probabilityCertificates']['anyPrize']
+          assert exact['exact'] is True
+          assert exact['totalWinningMainSets'] == 8_145_060
+          assert certificate['bonferroniLowerBound'] <= exact['probability']
+          assert exact['probability'] <= certificate['firstOrderUnionBound']
+          print('REFERENCE_EXACT_ANY_PRIZE=' + json.dumps(exact, sort_keys=True))
+          PY
       - name: Validate certified objective benchmark
         env:
           PYTHONPATH: src
@@ -99,6 +112,59 @@ jobs:
           print('CERTIFIED_OBJECTIVE_SUMMARY=' + json.dumps(summary, sort_keys=True))
           print('CERTIFIED_OBJECTIVE_COMPARISONS=' + json.dumps(comparisons, sort_keys=True))
           PY
+      - name: Validate exact any-prize objective benchmark
+        env:
+          PYTHONPATH: src
+        run: |
+          python -m lotto_lab benchmark-exact-objectives \
+            --count 10 \
+            --portfolios 12 \
+            --random-portfolios 48 \
+            --seed 20260822 \
+            --candidates-per-ticket 320 \
+            --bootstrap-resamples 800 > /tmp/exact-objectives.json
+          python -m json.tool /tmp/exact-objectives.json >/dev/null
+          python - <<'PY'
+          import json
+
+          with open('/tmp/exact-objectives.json', encoding='utf-8') as handle:
+              result = json.load(handle)
+          assert result['exact'] is True
+          assert result['divisionOneProbabilityEqual'] is True
+          assert result['portfolioSeedsMatchSimulatedObjectiveBenchmark'] is True
+          for strategy in ('coverage', 'anyPrizeBound', 'division4Bound', 'random'):
+              metrics = result['strategies'][strategy]
+              assert metrics['bonferroniGap']['min'] >= 0
+              assert metrics['exactAnyPrizeProbability']['min'] >= 0
+          summary = {
+              strategy: {
+                  'exactAnyPrize': round(
+                      result['strategies'][strategy]['exactAnyPrizeProbability']['mean'], 8
+                  ),
+                  'lowerBound': round(
+                      result['strategies'][strategy]['anyPrizeBonferroniLowerBound']['mean'], 8
+                  ),
+                  'meanBoundGap': round(
+                      result['strategies'][strategy]['bonferroniGap']['mean'], 8
+                  ),
+              }
+              for strategy in ('coverage', 'anyPrizeBound', 'division4Bound', 'random')
+          }
+          comparisons = {
+              name: {
+                  metric: {
+                      'favourableMeanDifference': round(values['favourableMeanDifference'], 10),
+                      'ci95': [round(value, 10) for value in values['bootstrapMeanDifferenceCi95']],
+                      'probabilityOfSuperiority': round(values['probabilityOfSuperiority'], 6),
+                  }
+                  for metric, values in metrics.items()
+              }
+              for name, metrics in result['comparisons'].items()
+          }
+          print('EXACT_OBJECTIVE_BEST=' + result['bestExactMeanStrategy'])
+          print('EXACT_OBJECTIVE_SUMMARY=' + json.dumps(summary, sort_keys=True))
+          print('EXACT_OBJECTIVE_COMPARISONS=' + json.dumps(comparisons, sort_keys=True))
+          PY
       - name: Validate browser JavaScript
         run: |
           node --check assets/app.js
@@ -125,6 +191,8 @@ jobs:
           grep -q 'assets/benchmark.js' benchmark.html
           grep -q 'assets/certificates.js' benchmark.html
           grep -q 'id="certificates"' benchmark.html
+          grep -q 'id="cert-any-exact"' benchmark.html
+          grep -q 'exactAnyPrize' assets/certificates.js
           grep -q 'assets/certificates.js' service-worker.js
           grep -q 'benchmark.html' service-worker.js
           grep -q 'service-worker.js' assets/app.js
