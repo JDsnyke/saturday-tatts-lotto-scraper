@@ -148,9 +148,9 @@ def build_parser() -> argparse.ArgumentParser:
     optimise.add_argument("--count", type=int, default=10)
     optimise.add_argument("--seed", default="exact-local-v214")
     optimise.add_argument("--candidates-per-ticket", type=int, default=320)
-    optimise.add_argument("--iterations", type=int, default=3)
-    optimise.add_argument("--exact-shortlist", type=int, default=5)
-    optimise.add_argument("--exploration-candidates", type=int, default=2)
+    optimise.add_argument("--iterations", type=int, default=2)
+    optimise.add_argument("--exact-shortlist", type=int, default=4)
+    optimise.add_argument("--exploration-candidates", type=int, default=1)
 
     simulate = sub.add_parser("simulate", help="Monte Carlo comparison of coverage vs QuickPick")
     simulate.add_argument("--count", type=int, default=10)
