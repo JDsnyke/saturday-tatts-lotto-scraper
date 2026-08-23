@@ -1,8 +1,8 @@
 from __future__ import annotations
 
+from collections.abc import Iterable
 from fractions import Fraction
 from math import comb, perm
-from typing import Iterable
 
 from .game_catalog import GameDefinition, PrizePattern, get_game
 
@@ -186,7 +186,12 @@ def computed_top_prize_probability(game: GameDefinition) -> Fraction | None:
     return None
 
 
-def keno_match_distribution(spot_size: int, *, pool_size: int = 80, draw_count: int = 20) -> dict[int, Fraction]:
+def keno_match_distribution(
+    spot_size: int,
+    *,
+    pool_size: int = 80,
+    draw_count: int = 20,
+) -> dict[int, Fraction]:
     if spot_size < 1 or spot_size > pool_size:
         raise ValueError("spot_size must be between 1 and the pool size")
     if draw_count < 0 or draw_count > pool_size:
