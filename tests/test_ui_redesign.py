@@ -1,3 +1,4 @@
+import json
 import unittest
 from pathlib import Path
 
@@ -43,6 +44,19 @@ class UiRedesignTests(unittest.TestCase):
         for name in ("assets/games.css", "assets/benchmark.css"):
             css = (ROOT / name).read_text(encoding="utf-8")
             self.assertLess(len(css), 500, name)
+
+    def test_pwa_metadata_matches_neutral_redesign(self):
+        manifest = json.loads((ROOT / "assets/site.webmanifest").read_text(encoding="utf-8"))
+        self.assertEqual(manifest["name"], "Lottery Lab")
+        self.assertEqual(manifest["background_color"], "#f5f6f3")
+        self.assertEqual(manifest["theme_color"], "#f5f6f3")
+
+    def test_favicon_is_simple_and_has_no_decorative_effects(self):
+        favicon = (ROOT / "assets/favicon.svg").read_text(encoding="utf-8")
+        self.assertNotIn("linearGradient", favicon)
+        self.assertNotIn("feDropShadow", favicon)
+        self.assertNotIn("sparkle", favicon.casefold())
+        self.assertIn('fill="#0b6b4f"', favicon)
 
 
 if __name__ == "__main__":
