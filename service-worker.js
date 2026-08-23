@@ -1,4 +1,4 @@
-const CACHE_NAME = 'australian-lottery-lab-v3-0-0';
+const CACHE_NAME = 'australian-lottery-lab-v3-0-1-ui';
 const STATIC_ASSETS = [
   './',
   './index.html',
