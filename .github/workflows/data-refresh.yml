@@ -50,11 +50,16 @@ jobs:
               try:
                   payload = json.loads(stats.read_text(encoding='utf-8'))
                   exact_reference = payload.get('referenceCoverageSet', {}).get('exactAnyPrize', {})
+                  local_reference = payload.get('referenceExactLocalSearch', {})
+                  local_final = local_reference.get('finalExactAnyPrize', {})
                   stats_current = (
                       payload.get('schemaVersion') == 3
                       and exact_reference.get('exact') is True
                       and exact_reference.get('totalWinningMainSets') == 8_145_060
                       and exact_reference.get('probability') is not None
+                      and local_final.get('exact') is True
+                      and local_reference.get('improvementWinningMainSets') is not None
+                      and local_reference.get('preservedDivision4Optimality') is True
                   )
               except (OSError, json.JSONDecodeError):
                   pass
