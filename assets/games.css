@@ -1,0 +1,229 @@
+.games-hero {
+  padding-top: 132px;
+}
+
+.games-hero .hero-copy {
+  max-width: 880px;
+}
+
+.games-hero h1 {
+  max-width: 980px;
+}
+
+.catalog-toolbar {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin: 22px 0 12px;
+}
+
+.catalog-toolbar label,
+.calculator-controls label {
+  display: grid;
+  gap: 7px;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.catalog-toolbar select,
+.calculator-controls input,
+.calculator-controls select {
+  width: 100%;
+  min-height: 44px;
+  padding: 9px 11px;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  background: var(--panel);
+  color: var(--text);
+  font: inherit;
+}
+
+.catalog-summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 18px;
+  color: var(--muted);
+}
+
+.game-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.game-card {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  min-width: 0;
+}
+
+.game-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.game-card h3 {
+  margin: 4px 0 0;
+  font-size: 1.18rem;
+}
+
+.game-rule,
+.game-note {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.game-note {
+  font-size: 0.88rem;
+  flex: 1;
+}
+
+.odds-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.odds-pair > div {
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--panel-soft);
+}
+
+.odds-pair span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.75rem;
+  margin-bottom: 5px;
+}
+
+.odds-pair strong {
+  font-size: 1rem;
+  overflow-wrap: anywhere;
+}
+
+.game-meta {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+}
+
+.game-meta > div {
+  display: grid;
+  grid-template-columns: 86px 1fr;
+  gap: 10px;
+  font-size: 0.84rem;
+}
+
+.game-meta dt {
+  color: var(--muted);
+}
+
+.game-meta dd {
+  margin: 0;
+}
+
+.source-link {
+  font-size: 0.84rem;
+  font-weight: 650;
+}
+
+.calculator-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.calc-card {
+  padding: 20px;
+}
+
+.calc-card h3 {
+  margin: 5px 0 8px;
+}
+
+.calc-card > p {
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.calculator-controls {
+  margin: 16px 0;
+}
+
+.calc-output {
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--panel-soft);
+}
+
+.calc-output span,
+.calc-output small {
+  display: block;
+  color: var(--muted);
+}
+
+.calc-output strong {
+  display: block;
+  margin: 4px 0;
+  font-size: 1.2rem;
+}
+
+.mechanic-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.mechanic-card {
+  padding: 18px;
+}
+
+.mechanic-card h3 {
+  margin: 8px 0;
+}
+
+.mechanic-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+@media (max-width: 980px) {
+  .game-grid,
+  .calculator-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .catalog-toolbar,
+  .mechanic-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 680px) {
+  .games-hero {
+    padding-top: 104px;
+  }
+
+  .game-grid,
+  .calculator-grid,
+  .catalog-toolbar,
+  .mechanic-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .catalog-summary {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
