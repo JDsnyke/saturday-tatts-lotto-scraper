@@ -10,15 +10,15 @@
     {
       slug: 'weekday-windfall', name: 'Weekday Windfall', operator: 'The Lott', mechanic: 'one-pool',
       jurisdictions: ['QLD', 'NSW', 'ACT', 'VIC', 'TAS', 'SA', 'NT'], schedule: 'Mon / Wed / Fri',
-      rule: '6 from 45 + 2 supplementary', topOdds: 8145060, anyOdds: 86, computed: true,
-      note: 'Top odds are exact from the 6/45 mechanic. Lower-division patterns stay operator-reported until separately sourced.',
+      rule: '6 from 45 + 2 supplementary', topOdds: 8145060, anyOdds: null, computed: true,
+      note: 'Division 1 is exact from the verified 6/45 mechanic. A current aggregate any-prize figure is not shown until separately re-verified.',
       source: 'https://help.thelott.com/hc/en-us/articles/34129397583513-How-do-I-play-the-Weekday-Windfall-game'
     },
     {
       slug: 'oz-lotto', name: 'Oz Lotto', operator: 'The Lott', mechanic: 'one-pool',
       jurisdictions: ['QLD', 'NSW', 'ACT', 'VIC', 'TAS', 'SA', 'NT', 'WA'], schedule: 'Tuesday',
       rule: '7 from 47 + 3 supplementary', topOdds: 62891499, anyOdds: 50.3318823947, computed: true,
-      note: 'Seven main numbers create a much larger combination space than 6/45 Lotto.',
+      note: 'Exact one-pool match distribution with a seven-number main selection.',
       source: 'https://help.thelott.com/hc/en-us/articles/4416863329689-How-do-I-play-the-Oz-Lotto-game'
     },
     {
@@ -32,55 +32,55 @@
       slug: 'set-for-life', name: 'Set for Life', operator: 'The Lott', mechanic: 'one-pool',
       jurisdictions: ['QLD', 'NSW', 'ACT', 'VIC', 'TAS', 'SA', 'NT', 'WA'], schedule: 'Daily · standard entry spans 7 draws',
       rule: '7 from 44 + 2 supplementary', topOdds: 38320568, anyOdds: 50.0810511637, computed: true,
-      note: 'Single-draw odds and the cumulative chance across the seven included draws are different quantities.',
+      note: 'The per-draw odds and cumulative chance over the seven included independent draws are different quantities.',
       source: 'https://help.thelott.com/hc/en-us/articles/4416859752601-How-do-I-play-the-Set-for-Life-game'
     },
     {
       slug: 'super-66', name: 'Super 66', operator: 'The Lott', mechanic: 'ordered-digits',
       jurisdictions: ['QLD', 'VIC', 'TAS', 'SA', 'NT', 'WA'], schedule: 'Saturday',
       rule: '6 ordered digits · 10 possibilities each', topOdds: 1000000, anyOdds: 51, computed: true,
-      note: 'An ordered-digit game, not a choose-k combination lottery.',
-      source: 'https://help.thelott.com/hc/en-us/articles/4416863565465-How-do-I-play-the-Super-66-game'
+      note: 'An ordered-digit game, not a choose-k combination lottery. Overall odds are current Lotterywest-reported national game odds.',
+      source: 'https://www.lotterywest.wa.gov.au/games/super-66'
     },
     {
       slug: 'lotto-strike', name: 'Lotto Strike', operator: 'The Lott', mechanic: 'ordered-without-replacement',
       jurisdictions: ['NSW', 'ACT'], schedule: 'Mon / Wed / Fri / Sat add-on',
-      rule: 'First 4 Lotto balls in exact order', topOdds: 3575880, anyOdds: 11, computed: true,
-      note: 'Jurisdiction-limited. Top odds are 45P4, not C(45,4).',
+      rule: 'First 4 Lotto balls in exact order', topOdds: 3575880, anyOdds: null, computed: true,
+      note: 'Top odds are 45P4, not C(45,4). Aggregate any-prize odds are withheld until current full division semantics are separately captured.',
       source: 'https://help.thelott.com/hc/en-us/articles/4416863538969-How-do-I-play-the-Lotto-Strike-game'
     },
     {
       slug: 'lucky-lotteries-super', name: 'Lucky Lotteries Super Jackpot', operator: 'The Lott', mechanic: 'raffle',
       jurisdictions: ['QLD', 'NSW', 'ACT', 'VIC', 'TAS', 'SA', 'NT'], schedule: 'When ticket pool sells out',
-      rule: 'Finite raffle pool + separate jackpot draw', topOdds: 18385877, anyOdds: 24, computed: false,
-      note: 'Operator-reported jackpot odds; not represented as a fake combination-selection model.',
-      source: 'https://help.thelott.com/hc/en-us/articles/4416872034073-How-do-I-play-the-Lucky-Lotteries-raffle-style-game'
+      rule: 'Finite raffle pool + separate jackpot draw', topOdds: 18385877, anyOdds: null, computed: false,
+      note: 'Current jackpot odds are operator-reported. No stale aggregate any-prize figure is carried forward.',
+      source: 'https://help.thelott.com/hc/en-us/articles/35525459564441-What-are-the-odds-of-each-game'
     },
     {
       slug: 'lucky-lotteries-mega', name: 'Lucky Lotteries Mega Jackpot', operator: 'The Lott', mechanic: 'raffle',
       jurisdictions: ['QLD', 'NSW', 'ACT', 'VIC', 'TAS', 'SA', 'NT'], schedule: 'When ticket pool sells out',
-      rule: 'Finite raffle pool + separate jackpot draw', topOdds: 9483168, anyOdds: 17, computed: false,
-      note: 'Operator-reported jackpot odds; each raffle number is unique.',
-      source: 'https://help.thelott.com/hc/en-us/articles/4416872034073-How-do-I-play-the-Lucky-Lotteries-raffle-style-game'
+      rule: 'Finite raffle pool + separate jackpot draw', topOdds: 9483168, anyOdds: null, computed: false,
+      note: 'Current jackpot odds are operator-reported. The game is not represented as a combination-selection draw.',
+      source: 'https://help.thelott.com/hc/en-us/articles/35525459564441-What-are-the-odds-of-each-game'
     },
     {
       slug: 'keno-sa', name: 'Keno', operator: 'The Lott', mechanic: 'keno',
       jurisdictions: ['SA'], schedule: 'Every few minutes',
       rule: '20 drawn from 80 · Spot 1–10', topOdds: null, anyOdds: null, computed: true,
-      note: 'SA-only through The Lott. Use the Spot calculator because there is no single universal top-prize denominator.',
+      note: 'SA-only through The Lott. Use the Spot calculator because the relevant probability changes with Spot size and prize condition.',
       source: 'https://help.thelott.com/hc/en-us/articles/4416859934873-How-do-I-play-the-Keno-game'
     },
     {
       slug: 'instant-scratch-its', name: 'Instant Scratch-Its', operator: 'The Lott', mechanic: 'variable-instant',
       jurisdictions: ['QLD', 'NSW', 'ACT', 'VIC', 'TAS', 'SA', 'NT'], schedule: 'Instant product family',
       rule: 'Varies by printed game', topOdds: null, anyOdds: 4, computed: false,
-      note: 'The Lott reports about 1 in 4 for any prize; top-prize odds vary by the specific ticket and availability.',
+      note: 'The Lott currently reports about 1 in 4 for any prize; top-prize odds vary by the specific ticket.',
       source: 'https://help.thelott.com/hc/en-us/articles/35525459564441-What-are-the-odds-of-each-game'
     },
     {
       slug: 'play-for-purpose', name: 'Play For Purpose charity raffle', operator: 'Play For Purpose / The Lott platform', mechanic: 'variable-raffle',
       jurisdictions: ['Australia · raffle terms apply'], schedule: 'Varies by raffle',
-      rule: 'Ticket-supply-dependent raffle', topOdds: null, anyOdds: null, computed: false,
+      rule: 'Ticket-supply-dependent charity raffle', topOdds: null, anyOdds: null, computed: false,
       note: 'The operator states odds depend on the number of tickets sold, so no fixed denominator is invented.',
       source: 'https://help.thelott.com/hc/en-us/articles/35525459564441-What-are-the-odds-of-each-game'
     },
@@ -88,14 +88,14 @@
       slug: 'millionaire-medley', name: 'Millionaire Medley', operator: 'Lotterywest', mechanic: 'one-pool',
       jurisdictions: ['WA'], schedule: 'Mon / Wed / Fri',
       rule: '6 from 45 + 2 supplementary', topOdds: 8145060, anyOdds: 85.4317180617, computed: true,
-      note: 'Same 6/45 draw family, different lower-division mapping from Saturday Lotto.',
+      note: 'Same 6/45 draw geometry as Saturday Lotto but a different lower-division prize mapping.',
       source: 'https://www.lotterywest.wa.gov.au/games/millionaire-medley'
     },
     {
       slug: 'cash-3', name: 'Cash 3', operator: 'Lotterywest', mechanic: 'ordered-digits',
       jurisdictions: ['WA'], schedule: 'Daily',
       rule: '3 ordered digits · Exact / Any Order', topOdds: 1000, anyOdds: null, computed: true,
-      note: 'Exact Order is 1 in 1,000. Any Order is 1 in 333.33 for a two-same multiset or 1 in 166.67 for three distinct digits.',
+      note: 'Exact Order is 1 in 1,000. Any Order depends on the number of distinct permutations of the chosen digits.',
       source: 'https://www.lotterywest.wa.gov.au/games/cash-3'
     },
     {
@@ -104,6 +104,54 @@
       rule: 'Varies by printed game', topOdds: null, anyOdds: null, computed: false,
       note: 'Prize tables and top-prize odds vary by ticket design and print run.',
       source: 'https://www.lotterywest.wa.gov.au/games/games-to-play'
+    },
+    {
+      slug: 'yourtown-prize-home', name: 'yourtown Prize Home Draws', operator: 'yourtown', mechanic: 'variable-raffle',
+      jurisdictions: ['Australia · draw terms apply'], schedule: 'Recurring Prize Home draws',
+      rule: 'Art union · First Prize odds depend on tickets sold', topOdds: null, anyOdds: null, computed: false,
+      capacity: 'Most Prize Home draws: 500,000 tickets available', price: 'Usually $15/ticket',
+      note: 'yourtown explicitly says 1 in 500,000 is the sold-out one-ticket example; if fewer tickets sell, the denominator is lower.',
+      source: 'https://support.yourtown.com.au/hc/en-us/articles/360000830493-What-are-the-odds-of-winning-First-Prize'
+    },
+    {
+      slug: 'mater-prize-home', name: 'Mater Prize Home', operator: 'Mater Lotteries', mechanic: 'variable-raffle',
+      jurisdictions: ['QLD', 'NSW', 'ACT', 'VIC', 'NT'], schedule: 'Draw 327 · 23 Oct 2026',
+      rule: 'Prize Home art union with bundle-dependent entry count', topOdds: null, anyOdds: null, computed: false,
+      capacity: 'Draw 327: 13,455,147–22,805,334 possible entries', price: 'Tickets from $2',
+      note: 'The current terms give an entry-count range because bundles create bonus entries. That range is not collapsed into one fake odds denominator.',
+      source: 'https://www.materlotteries.com.au/mater-prize-home/terms-and-conditions/327'
+    },
+    {
+      slug: 'mater-cars-for-cancer', name: 'Mater Cars for Cancer', operator: 'Mater Lotteries', mechanic: 'variable-raffle',
+      jurisdictions: ['QLD', 'NSW', 'ACT', 'VIC', 'SA', 'NT'], schedule: 'Draw 130 · 16 Sep 2026',
+      rule: 'Vehicle/lifestyle prize lottery', topOdds: null, anyOdds: null, computed: false,
+      capacity: 'Draw 130: up to 85,117 tickets', price: '$30/ticket',
+      note: 'The current draw offers a $510,707 main prize package. The permitted ticket cap is shown as scarcity metadata, not assumed final valid-entry odds.',
+      source: 'https://www.materlotteries.com.au/mater-cars-for-cancer/terms-and-conditions/130'
+    },
+    {
+      slug: 'dream-home-art-union', name: 'Dream Home Art Union', operator: 'RSL Queensland', mechanic: 'variable-raffle',
+      jurisdictions: ['Australia · draw permits apply'], schedule: 'Draw 434 · 20 Oct 2026',
+      rule: 'Recurring prize-home art union', topOdds: null, anyOdds: null, computed: false,
+      capacity: 'Draw-specific entry capacity', price: 'Tickets from $5',
+      note: 'Formerly RSL Art Union. Current Draw 434 offers a $10.2M Currumbin Gold Coast package; exact odds stay variable until draw-specific entry-capacity terms are captured.',
+      source: 'https://dreamhomeartunion.com.au/'
+    },
+    {
+      slug: 'endeavour-prize-home', name: 'Endeavour Foundation Prize Home', operator: 'Endeavour Lotteries', mechanic: 'variable-raffle',
+      jurisdictions: ['Australia · draw terms apply'], schedule: 'Recurring Prize Home draws',
+      rule: 'Prize Home art union with bundle bonus tickets', topOdds: null, anyOdds: null, computed: false,
+      capacity: 'Draw-specific', price: 'Recent Draw 468 tickets from $10',
+      note: 'Recent Draw 468 was drawn 20 Aug 2026. Bundle bonuses mean dollars spent are not a universal probability denominator.',
+      source: 'https://www.endeavourlotteries.com.au/endeavour-foundation/terms-and-conditions'
+    },
+    {
+      slug: 'endeavour-pay-day', name: 'Endeavour Pay Day', operator: 'Endeavour Lotteries', mechanic: 'variable-raffle',
+      jurisdictions: ['Australia · eligibility terms apply'], schedule: 'Draw 221 · 8 Oct 2026',
+      rule: 'Cash/vehicle prize draw', topOdds: null, anyOdds: null, computed: false,
+      capacity: 'Draw 221: limited to 200,000 tickets', price: '$5/ticket',
+      note: 'Current first prize is $200K gold or a vehicle/gold package. The 200,000-ticket cap is shown as capacity, not silently treated as final odds.',
+      source: 'https://www.endeavourlotteries.com.au/pay-day/terms-and-conditions/221'
     }
   ];
 
@@ -120,8 +168,8 @@
     'variable-raffle': 'Variable raffle'
   };
 
-  const formatOdds = value => value == null ? 'Variable' : `1 in ${nf.format(value)}`;
-  const escapeHtml = text => String(text)
+  const formatOdds = value => value == null ? 'Variable / draw-specific' : `1 in ${nf.format(value)}`;
+  const escapeHtml = text => String(text ?? '')
     .replaceAll('&', '&amp;')
     .replaceAll('<', '&lt;')
     .replaceAll('>', '&gt;')
@@ -148,7 +196,7 @@
     );
     if (sort === 'odds') {
       filtered = [...filtered].sort((a, b) => (a.topOdds ?? Infinity) - (b.topOdds ?? Infinity));
-    } else if (sort === 'name') {
+    } else {
       filtered = [...filtered].sort((a, b) => a.name.localeCompare(b.name));
     }
 
@@ -156,11 +204,8 @@
     document.getElementById('game-grid').innerHTML = filtered.map(game => `
       <article class="game-card glass" data-game="${escapeHtml(game.slug)}">
         <div class="game-card-head">
-          <div>
-            <span class="eyebrow">${escapeHtml(game.operator)}</span>
-            <h3>${escapeHtml(game.name)}</h3>
-          </div>
-          <span class="claim ${game.computed ? 'exact' : 'guardrail'}">${game.computed ? 'COMPUTED' : 'REPORTED'}</span>
+          <div><span class="eyebrow">${escapeHtml(game.operator)}</span><h3>${escapeHtml(game.name)}</h3></div>
+          <span class="claim ${game.computed ? 'exact' : 'guardrail'}">${game.computed ? 'COMPUTED' : 'VARIABLE / REPORTED'}</span>
         </div>
         <p class="game-rule">${escapeHtml(game.rule)}</p>
         <div class="odds-pair">
@@ -171,6 +216,8 @@
           <div><dt>Mechanic</dt><dd>${escapeHtml(mechanicNames[game.mechanic])}</dd></div>
           <div><dt>Where</dt><dd>${escapeHtml(game.jurisdictions.join(', '))}</dd></div>
           <div><dt>Draw</dt><dd>${escapeHtml(game.schedule)}</dd></div>
+          ${game.price ? `<div><dt>Price</dt><dd>${escapeHtml(game.price)}</dd></div>` : ''}
+          ${game.capacity ? `<div><dt>Capacity</dt><dd>${escapeHtml(game.capacity)}</dd></div>` : ''}
         </dl>
         <p class="game-note">${escapeHtml(game.note)}</p>
         <a class="source-link" href="${escapeHtml(game.source)}" target="_blank" rel="noreferrer">Official source ↗</a>
@@ -211,12 +258,12 @@
   }
 
   function populateFilters() {
-    const operators = [...new Set(games.map(game => game.operator))].sort();
     const operatorSelect = document.getElementById('game-operator');
-    operators.forEach(operator => operatorSelect.add(new Option(operator, operator)));
-    const mechanics = [...new Set(games.map(game => game.mechanic))].sort();
+    [...new Set(games.map(game => game.operator))].sort()
+      .forEach(operator => operatorSelect.add(new Option(operator, operator)));
     const mechanicSelect = document.getElementById('game-mechanic');
-    mechanics.forEach(mechanic => mechanicSelect.add(new Option(mechanicNames[mechanic], mechanic)));
+    [...new Set(games.map(game => game.mechanic))].sort()
+      .forEach(mechanic => mechanicSelect.add(new Option(mechanicNames[mechanic], mechanic)));
   }
 
   populateFilters();
