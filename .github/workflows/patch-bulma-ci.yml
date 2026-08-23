@@ -1,0 +1,130 @@
+name: One-time Bulma CI migration patch
+
+on:
+  push:
+    branches: [fix/bulma-only-ui]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: true
+      - name: Replace legacy custom-CSS checks
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('.github/workflows/ci.yml')
+          text = path.read_text(encoding='utf-8')
+          text = text.replace(
+          '''      - name: Validate browser JavaScript
+        run: |
+          node --check assets/app.js
+          node --check assets/benchmark.js
+          node --check assets/certificates.js
+          node --check assets/games.js
+          node --check service-worker.js
+      - name: Validate static site references
+        run: |
+          test -f index.html
+          test -f benchmark.html
+          test -f games.html
+          test -f assets/app.css
+          test -f assets/app.js
+          test -f assets/benchmark.css
+          test -f assets/benchmark.js
+          test -f assets/certificates.js
+          test -f assets/games.css
+          test -f assets/games.js
+          test -f assets/lotto_stats.json
+          test -f assets/data_provenance.json
+          test -f assets/site.webmanifest
+          test -f service-worker.js
+          grep -q 'assets/app.css' index.html
+          grep -q 'assets/app.js' index.html
+          grep -q 'assets/site.webmanifest' index.html
+          grep -q 'assets/benchmark.css' benchmark.html
+          grep -q 'assets/benchmark.js' benchmark.html
+          grep -q 'assets/certificates.js' benchmark.html
+          grep -q 'id="certificates"' benchmark.html
+          grep -q 'id="cert-any-exact"' benchmark.html
+          grep -q 'exactAnyPrize' assets/certificates.js
+          grep -q 'assets/games.css' games.html
+          grep -q 'assets/games.js' games.html
+          grep -q 'id="game-grid"' games.html
+          grep -q 'id="keno-spot"' games.html
+          grep -q 'games.html' assets/site.webmanifest
+          grep -q 'assets/games.js' service-worker.js
+          grep -q 'assets/certificates.js' service-worker.js
+          grep -q 'benchmark.html' service-worker.js
+          grep -q 'games.html' service-worker.js
+          grep -q 'service-worker.js' assets/app.js
+''',
+          '''      - name: Validate browser JavaScript
+        run: |
+          node --check assets/ui.js
+          node --check assets/app.js
+          node --check assets/benchmark.js
+          node --check assets/certificates.js
+          node --check assets/games.js
+          node --check service-worker.js
+      - name: Validate Bulma-only static site
+        run: |
+          test -f index.html
+          test -f benchmark.html
+          test -f games.html
+          test -f assets/ui.js
+          test -f assets/app.js
+          test -f assets/benchmark.js
+          test -f assets/certificates.js
+          test -f assets/games.js
+          test -f assets/lotto_stats.json
+          test -f assets/data_provenance.json
+          test -f assets/site.webmanifest
+          test -f service-worker.js
+          test ! -f assets/app.css
+          test ! -f assets/benchmark.css
+          test ! -f assets/games.css
+          grep -q 'bulma@1.0.4/css/bulma.min.css' index.html
+          grep -q 'bulma@1.0.4/css/bulma.min.css' benchmark.html
+          grep -q 'bulma@1.0.4/css/bulma.min.css' games.html
+          grep -q 'lucide@1.33.0/dist/umd/lucide.js' index.html
+          grep -q 'lucide@1.33.0/dist/umd/lucide.js' benchmark.html
+          grep -q 'lucide@1.33.0/dist/umd/lucide.js' games.html
+          grep -q 'assets/ui.js' index.html
+          grep -q 'assets/app.js' index.html
+          grep -q 'assets/benchmark.js' benchmark.html
+          grep -q 'assets/certificates.js' benchmark.html
+          grep -q 'id="certificates"' benchmark.html
+          grep -q 'id="cert-any-exact"' benchmark.html
+          grep -q 'exactAnyPrize' assets/certificates.js
+          grep -q 'assets/games.js' games.html
+          grep -q 'id="game-grid"' games.html
+          grep -q 'id="keno-spot"' games.html
+          grep -q 'games.html' assets/site.webmanifest
+          grep -q 'assets/ui.js' service-worker.js
+          grep -q 'assets/games.js' service-worker.js
+          grep -q 'assets/certificates.js' service-worker.js
+          grep -q 'benchmark.html' service-worker.js
+          grep -q 'games.html' service-worker.js
+          grep -q 'service-worker.js' assets/app.js
+          ! grep -R -n 'style=' index.html games.html benchmark.html assets/ui.js assets/app.js assets/games.js assets/benchmark.js assets/certificates.js
+''')
+          path.write_text(text, encoding='utf-8')
+          PY
+      - name: Commit patch
+        run: |
+          if git diff --quiet -- .github/workflows/ci.yml; then
+            echo 'CI already migrated.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .github/workflows/ci.yml
+          git commit -m 'Enforce Bulma-only UI in CI'
+          git push origin HEAD:fix/bulma-only-ui
