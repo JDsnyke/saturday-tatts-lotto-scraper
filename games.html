@@ -4,9 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
-  <meta name="theme-color" content="#07101f">
+  <meta name="theme-color" content="#f5f6f3">
   <meta name="description" content="Operator-aware catalog and exact probability tools for Australian lottery games.">
-  <title>Games & Odds Lab · Australian Lottery Research</title>
+  <title>Games & Odds · Lottery Lab</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="assets/site.webmanifest">
   <link rel="stylesheet" href="assets/app.css">
@@ -15,21 +15,18 @@
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
-  <div class="noise" aria-hidden="true"></div>
-  <div class="aurora aurora-a" aria-hidden="true"></div>
-  <div class="aurora aurora-b" aria-hidden="true"></div>
 
   <header class="site-header" id="top">
-    <a class="brand" href="games.html" aria-label="Australian Lottery Games and Odds Lab">
+    <a class="brand" href="games.html" aria-label="Lottery Lab games and odds">
       <span class="brand-orbit" aria-hidden="true"><span>AU</span></span>
-      <span class="brand-copy"><strong>Lottery Research</strong><small>Games & Odds Lab</small></span>
+      <span class="brand-copy"><strong>Lottery Lab</strong><small>Games &amp; odds</small></span>
     </a>
-    <nav class="header-nav" aria-label="Games navigation">
-      <a href="#catalog">Game catalog</a>
+    <nav class="header-nav" aria-label="Primary navigation">
+      <a href="index.html">Saturday</a>
+      <a href="games.html" aria-current="page">Games &amp; odds</a>
+      <a href="benchmark.html">Benchmarks</a>
       <a href="#calculators">Calculators</a>
-      <a href="#mechanics">Mechanics</a>
-      <a href="benchmark.html">Saturday benchmark</a>
-      <a href="index.html">Saturday lab</a>
+      <a href="https://github.com/JDsnyke/saturday-tatts-lotto-scraper">GitHub</a>
     </nav>
     <div class="header-actions">
       <span class="data-pill"><span class="status-dot"></span><span>Rules checked 23 Aug 2026</span></span>
@@ -39,40 +36,40 @@
   <main id="main">
     <section class="hero section-shell games-hero">
       <div class="hero-copy">
-        <div class="eyebrow"><span class="status-dot"></span> The Lott · Lotterywest · distinct probability mechanics</div>
-        <h1>Compare the games.<br><span>Not just the jackpot ads.</span></h1>
-        <p class="hero-lead">Australian lottery products do not all use the same mathematics. This lab separates combination draws, two-pool games, ordered digits, ordered draw positions, Keno, raffle pools and variable scratch products — with jurisdiction and operator provenance kept visible.</p>
+        <div class="eyebrow">Australian game catalogue</div>
+        <h1>Game rules and odds, side by side</h1>
+        <p class="hero-lead">Compare current Australian lottery mechanics without forcing unlike products into the same formula. Jurisdiction, operator source and variable raffle capacity stay visible.</p>
         <div class="hero-actions">
-          <a class="button primary" href="#catalog">Browse current options <span aria-hidden="true">→</span></a>
+          <a class="button primary" href="#catalog">Browse games</a>
           <a class="button secondary" href="#calculators">Open calculators</a>
-          <a class="button secondary" href="index.html">Saturday portfolio lab</a>
+          <a class="button secondary" href="index.html">Saturday portfolio</a>
         </div>
         <div class="principle-strip" aria-label="Catalog principles">
-          <span><b>01</b> Compute when possible</span>
-          <span><b>02</b> Report when variable</span>
-          <span><b>03</b> Keep jurisdictions explicit</span>
-          <span><b>04</b> No prediction claims</span>
+          <span>Exact when derivable</span>
+          <span>Variable when it really varies</span>
+          <span>Jurisdiction-aware</span>
+          <span>Operator sources</span>
         </div>
       </div>
 
       <aside class="hero-console glass" aria-labelledby="catalog-rule-title">
-        <div class="console-head"><span class="card-kicker">Comparison rule</span><span class="live-chip">IMPORTANT</span></div>
-        <h2 id="catalog-rule-title">“1 in X” is not expected value</h2>
-        <div class="odds-number">Different prize structures</div>
+        <div class="console-head"><span class="card-kicker">Comparison rule</span><span class="live-chip">Context matters</span></div>
+        <h2 id="catalog-rule-title">Odds are only one part of value</h2>
+        <div class="odds-number">Different games, different maths</div>
         <div class="console-grid">
           <div><span>Powerball</span><strong>2 independent pools</strong></div>
           <div><span>Lucky Lotteries</span><strong>Raffle mechanics</strong></div>
           <div><span>Keno</span><strong>Spot-size dependent</strong></div>
           <div><span>Scratch games</span><strong>Print-run dependent</strong></div>
         </div>
-        <p class="console-note">Top-prize odds alone do not tell you ticket price, payout percentage, prize size, rollover conditions, annuity value or expected return. This page compares probability mechanics first.</p>
+        <p class="console-note">Top-prize odds do not capture ticket price, prize size, payout rules, sharing, annuity terms or prize inventory. This page compares the probability model first.</p>
       </aside>
     </section>
 
     <section class="section-shell" id="catalog">
       <div class="section-heading">
-        <div><span class="eyebrow">Current catalog</span><h2>The Lott and distinct alternatives</h2></div>
-        <p>Computed badges mean the top-prize denominator follows directly from the verified draw mechanism. Reported badges mean the operator's odds are shown without pretending the product is a simple combination draw.</p>
+        <div><span class="eyebrow">Catalogue</span><h2>Current games and alternatives</h2></div>
+        <p>Computed values follow directly from a verified draw mechanism. Reported values stay operator-sourced where the product cannot be reduced to one fixed combination denominator.</p>
       </div>
 
       <div class="catalog-toolbar glass" aria-label="Game filters">
@@ -102,8 +99,8 @@
 
     <section class="section-shell" id="calculators">
       <div class="section-heading">
-        <div><span class="eyebrow">Mechanic-specific tools</span><h2>Use the right probability model</h2></div>
-        <p>These calculators illustrate why a reusable lottery platform needs more than one formula.</p>
+        <div><span class="eyebrow">Calculators</span><h2>Use the probability model that matches the game</h2></div>
+        <p>Repeated draws, Keno spots and ordered digits are different experiments. These tools keep those distinctions explicit.</p>
       </div>
       <div class="calculator-grid">
         <article class="calc-card glass">
@@ -140,7 +137,7 @@
         <article class="calc-card glass">
           <span class="eyebrow">Lotterywest Cash 3</span>
           <h3>Exact vs Any Order</h3>
-          <p>Exact Order always has 1,000 possible three-digit strings. Any Order depends on how many distinct permutations your selected digit multiset has.</p>
+          <p>Exact Order has 1,000 possible three-digit strings. Any Order depends on whether the selected multiset has 1, 3 or 6 distinct permutations.</p>
           <div class="calculator-controls">
             <label>Three digits
               <input id="cash3-digits" type="text" maxlength="3" value="223" inputmode="numeric" pattern="[0-9]{3}">
@@ -157,42 +154,42 @@
 
     <section class="section-shell" id="mechanics">
       <div class="section-heading">
-        <div><span class="eyebrow">Architecture</span><h2>One platform, several probability families</h2></div>
-        <p>The Saturday optimiser remains specialised. The reusable layer underneath it now models the probability experiment before any strategy is discussed.</p>
+        <div><span class="eyebrow">Mechanics</span><h2>One catalogue, several probability families</h2></div>
+        <p>The Saturday portfolio optimiser stays specialised. The shared catalogue models each probability experiment before any strategy is discussed.</p>
       </div>
       <div class="mechanic-grid">
-        <article class="mechanic-card glass"><span class="claim exact">COMBINATION</span><h3>One-pool draw</h3><p>Saturday Lotto, Weekday Windfall, Oz Lotto, Set for Life and Millionaire Medley use hypergeometric main/supplementary match distributions with game-specific prize mappings.</p></article>
-        <article class="mechanic-card glass"><span class="claim exact">TWO POOLS</span><h3>Powerball</h3><p>The seven-number main selection and the separate one-from-20 Powerball result multiply into a joint distribution.</p></article>
-        <article class="mechanic-card glass"><span class="claim exact">ORDERED</span><h3>Digits and positions</h3><p>Super 66 and Cash 3 use ordered digits; Lotto Strike uses ordered numbers sampled without replacement. Combination formulas would be wrong.</p></article>
-        <article class="mechanic-card glass"><span class="claim guardrail">VARIABLE</span><h3>Raffles and instant games</h3><p>Lucky Lotteries, charity raffles and scratch products need pool/print-run-specific metadata. Where a fixed experiment is not established, the lab reports rather than invents.</p></article>
+        <article class="mechanic-card glass"><span class="claim exact">Combination</span><h3>One-pool draw</h3><p>Saturday Lotto, Weekday Windfall, Oz Lotto, Set for Life and Millionaire Medley use hypergeometric main/supplementary match distributions with game-specific prize mappings.</p></article>
+        <article class="mechanic-card glass"><span class="claim exact">Two pools</span><h3>Powerball</h3><p>The seven-number main selection and the separate one-from-20 Powerball result multiply into a joint distribution.</p></article>
+        <article class="mechanic-card glass"><span class="claim exact">Ordered</span><h3>Digits and positions</h3><p>Super 66 and Cash 3 use ordered digits; Lotto Strike uses ordered numbers sampled without replacement. Combination formulas would be wrong.</p></article>
+        <article class="mechanic-card glass"><span class="claim guardrail">Variable</span><h3>Raffles and instant games</h3><p>Lucky Lotteries, charity raffles and scratch products need pool or print-run-specific metadata. Where a fixed experiment is not established, the lab reports rather than invents.</p></article>
       </div>
 
       <div class="research-note glass" style="margin-top:16px">
         <div><span class="research-icon" aria-hidden="true">i</span></div>
         <div>
-          <span class="eyebrow">Responsible interpretation</span>
-          <h3>A different game can have easier top-prize odds and still be a worse value proposition.</h3>
-          <p>Odds must be considered with ticket cost, prize amounts, payout rules, jackpot sharing, annuity terms and available prize inventory. The project does not recommend increasing lottery spend and does not treat any lottery as an investment.</p>
+          <span class="eyebrow">Interpretation</span>
+          <h3>Easier top-prize odds do not automatically mean better value.</h3>
+          <p>Ticket cost, prize amounts, payout rules, jackpot sharing, annuity terms and prize inventory all matter. The project does not treat lottery play as an investment.</p>
         </div>
       </div>
     </section>
 
     <section class="section-shell">
       <div class="section-heading">
-        <div><span class="eyebrow">Source policy</span><h2>Operator rules first</h2></div>
-        <p>Core mechanics and published odds were rechecked against current operator pages on 23 August 2026. Where a lower-division rule was not captured from a current authoritative source, it is left uncomputed rather than copied from a superficially similar game.</p>
+        <div><span class="eyebrow">Sources</span><h2>Operator rules first</h2></div>
+        <p>Core mechanics and published odds were rechecked against current operator pages on 23 August 2026. A lower-division rule stays uncomputed when a current authoritative source has not been captured.</p>
       </div>
       <div class="method-grid">
-        <article class="method-card"><span class="method-number">01</span><span class="claim exact">The Lott</span><h3>Current odds</h3><p>Official Help Centre odds are the cross-check for current Division 1 / jackpot denominators.</p></article>
-        <article class="method-card"><span class="method-number">02</span><span class="claim exact">Lotterywest</span><h3>Division tables</h3><p>WA game pages provide current prize conditions used to independently verify Oz Lotto, Powerball, Set for Life, Millionaire Medley and Cash 3.</p></article>
-        <article class="method-card"><span class="method-number">03</span><span class="claim guardrail">Jurisdiction</span><h3>Availability matters</h3><p>Lotto Strike is NSW/ACT-limited, The Lott Keno is SA-only, and Lotterywest-specific games are WA products. The catalog does not flatten those restrictions.</p></article>
+        <article class="method-card"><span class="claim exact">The Lott</span><h3>Current odds</h3><p>Official Help Centre odds cross-check current Division 1 and jackpot denominators.</p></article>
+        <article class="method-card"><span class="claim exact">Lotterywest</span><h3>Division tables</h3><p>WA game pages independently verify Oz Lotto, Powerball, Set for Life, Millionaire Medley and Cash 3 mechanics.</p></article>
+        <article class="method-card"><span class="claim guardrail">Jurisdiction</span><h3>Availability matters</h3><p>Lotto Strike is NSW/ACT-limited, The Lott Keno is SA-only, and Lotterywest-specific games are WA products.</p></article>
       </div>
     </section>
   </main>
 
   <footer class="site-footer section-shell">
-    <div><strong>Australian Lottery Research</strong><p>Open-source probability research. Not affiliated with The Lott or Lotterywest.</p></div>
-    <div class="footer-links"><a href="index.html">Saturday Lab</a><a href="benchmark.html">Benchmark Lab</a><a href="https://github.com/JDsnyke/saturday-tatts-lotto-scraper">GitHub</a></div>
+    <div><strong>Lottery Lab</strong><p>Open-source Australian lottery probability research. Not affiliated with The Lott or Lotterywest.</p></div>
+    <div class="footer-links"><a href="index.html">Saturday</a><a href="benchmark.html">Benchmarks</a><a href="https://github.com/JDsnyke/saturday-tatts-lotto-scraper">GitHub</a></div>
     <p class="responsible">Lottery outcomes are random. More entries cost more money. Use the tools to understand probability, not to justify spending beyond a fixed entertainment budget.</p>
   </footer>
 </body>
