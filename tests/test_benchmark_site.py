@@ -34,7 +34,7 @@ class BenchmarkSiteTests(unittest.TestCase):
         self.assertIn('id="cert-any-exact"', html)
         self.assertIn('id="cert-any-lower"', html)
         self.assertIn('id="cert-d4-exact"', html)
-        self.assertIn("Certified Probability", html)
+        self.assertIn('id="cert-overlap"', html)
 
 
 if __name__ == "__main__":
