@@ -44,8 +44,11 @@ This is the living engineering/research tracker. The governing rule is: **improv
 - [x] Add a Division-4-bound objective that can return a global-optimality certificate.
 - [x] Keep generic subset-diversity Coverage as a separate objective rather than silently replacing it.
 - [x] Evaluate completed portfolios with the exact any-prize union rather than only a second-order bound.
-- [ ] **Next priority:** benchmark stronger search methods — local search / simulated annealing / constraint or integer optimisation — using the exact any-prize evaluator as the final objective for practical ticket counts.
-- [ ] Explore swap/neighbourhood search starting from Coverage and bound-driven portfolios rather than random restarts only.
+- [x] Implement one-swap exact-guided local search starting from Coverage.
+- [x] Use the Bonferroni bound only for screening and require the full exact DP for acceptance.
+- [x] Preserve an existing Division-4+ global-optimality certificate during exact-local search.
+- [x] Confirm exact-local on an independent root seed after freezing the search budget.
+- [ ] Benchmark simulated annealing / larger neighbourhoods / constraint or integer optimisation against exact-local and Coverage.
 - [ ] Investigate symmetry reduction / canonical portfolio representations to avoid evaluating equivalent portfolio structures repeatedly.
 - [ ] Determine whether a provable or tightly bounded global optimum is tractable for useful 10-game any-prize portfolios.
 - [ ] Determine useful ticket-count ranges where a pairwise-disjoint ≥4-main packing can be constructed reliably.
@@ -66,8 +69,25 @@ This is the living engineering/research tracker. The governing rule is: **improv
 - [x] Add larger exact confirmation benchmark: 32 seeds per structured strategy vs 128 QuickPick seeds.
 - [x] Preserve the smaller favourable 12-seed result while using the larger confirmation run for the release recommendation.
 - [x] Confirm a strong exact Coverage-vs-QuickPick any-prize difference in the fixed 10-game benchmark.
+- [x] Add paired exact-local development and independent confirmation benchmarks.
 - [ ] Add nested resampling where strategy metrics still depend on simulated draw samples; it is unnecessary for exact any-prize probabilities.
 - [ ] Add benchmark regression thresholds only after enough exact benchmark releases establish stable expected ranges.
+
+### v2.1.4 exact-local confirmation finding
+
+The exact-local release budget was frozen at **2 search passes / 4 bound-ranked exact candidates / 1 exploration candidate** before the independent confirmation run.
+
+On 16 new 10-game Coverage portfolios rooted at seed `20260823`:
+
+- **11/16 portfolios improved** and **5/16 were unchanged**;
+- mean gain: **91.75 exact any-prize winning-main sets**;
+- mean exact probability gain: about **+0.001126 percentage points**;
+- paired portfolio-seed bootstrap 95% interval: about **+0.000636 to +0.001664 points**;
+- no portfolio worsened;
+- all existing Division-4+ global-optimality certificates were preserved;
+- Division 1 remained exactly unchanged.
+
+Coverage remains the fast balanced default. Exact-local is an optional higher-compute local refinement, not a proof of the global any-prize optimum.
 
 ### v2.1.3 exact confirmation finding
 
@@ -100,7 +120,7 @@ Division 1 remains exactly equal for all same-sized sets of distinct standard ga
 - [x] Block scheduled publication on newest-draw disagreement.
 - [x] Data-health/freshness status in dashboard.
 - [x] Saved known-draw parser fixtures.
-- [x] Migration-aware regeneration when data assets use an older schema.
+- [x] Migration-aware regeneration when data assets use an older or incomplete schema-v3 payload.
 - [ ] Prefer an official/regulator machine-readable source if one becomes reliably available.
 - [ ] Persist primary source URL/draw ID per historical row rather than only verification metadata for recent draws.
 
@@ -132,7 +152,8 @@ Division 1 remains exactly equal for all same-sized sets of distinct standard ga
 - [x] PWA shortcut to the Benchmark Lab.
 - [x] Certified Probability panel separating exact bounds from Monte Carlo evidence.
 - [x] Promote exact reference any-prize probability above the older Bonferroni bound in Benchmark Lab.
-- [x] Version the service-worker cache so v2.1.3 evidence UI replaces stale cached v2.1.2 assets.
+- [x] Show the generated exact-local reference improvement/non-worsening result.
+- [x] Version the service-worker cache for v2.1.4 evidence UI.
 - [ ] Add richer accessible SVG charts and comparison views.
 - [ ] Add explicit PWA install/update UI.
 - [ ] Add Playwright browser smoke tests on a stable CI runner.
@@ -147,10 +168,14 @@ Division 1 remains exactly equal for all same-sized sets of distinct standard ga
 - [ ] Multiple-testing controls and clear exploratory/confirmatory labelling.
 - [ ] Automated alert only for persistent, independently reproduced anomalies — never as a betting signal by default.
 
-## v3 — Reusable lottery research platform
+## v3 — Reusable Australian lottery research platform
 
-- [ ] Game-definition layer for other Australian lottery formats.
+- [ ] Game-definition layer for distinct Australian lottery mechanics.
+- [ ] Add The Lott catalog definitions: Saturday Lotto / Weekday Windfall, Oz Lotto, Powerball, Set for Life, Super 66, Lotto Strike, Lucky Lotteries and Keno.
+- [ ] Keep jurisdiction-limited games explicit rather than pretending every game is available nationally.
+- [ ] Reusable one-pool, two-pool, ordered-digit, ordered-draw, raffle-pool and Keno/spot probability engines.
 - [ ] Reusable prize-category definitions.
+- [ ] Separate alternative operators/products from The Lott and label eligibility/jurisdiction.
 - [ ] Source adapters with provenance contracts.
 - [ ] Reproducible research exports/notebooks.
 - [ ] Optional fully static precomputed benchmark datasets.

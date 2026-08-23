@@ -22,6 +22,33 @@ Number selection cannot improve that Division 1 probability if the draw is fair.
 
 See [`docs/ODDS_OPTIMISATION.md`](docs/ODDS_OPTIMISATION.md), [`docs/BENCHMARKING.md`](docs/BENCHMARKING.md) and [`docs/EXACT_ANY_PRIZE.md`](docs/EXACT_ANY_PRIZE.md) for the claim hierarchy and limitations.
 
+## v2.1.4 highlights
+
+### Exact-guided local refinement
+
+`exact-local` starts from the fast Coverage portfolio and searches one-number swap neighbours. The cheap exact Bonferroni lower bound is used only to shortlist candidates; a mutation is accepted **only** when the full exact dynamic-programming evaluator proves that it increases the integer count of six-main-number draws where at least one ticket wins a prize.
+
+The validated release budget is deliberately shallow and reproducible:
+
+```text
+2 search passes
+4 bound-ranked candidates evaluated exactly per pass
+1 deterministic exploration candidate per pass
+```
+
+If the starting Coverage portfolio already has the exact/global-optimal Division-4-or-better certificate, the search is not allowed to lose it.
+
+Independent confirmation used 16 new 10-game Coverage portfolios rooted at seed `20260823`:
+
+- 11/16 improved and 5/16 were unchanged;
+- no portfolio worsened;
+- mean gain: **91.75 exact winning-main sets**;
+- mean exact any-prize gain: about **+0.001126 percentage points**;
+- paired portfolio-seed bootstrap 95% interval: about **+0.000636 to +0.001664 points**;
+- every existing Division-4+ global-optimality certificate was preserved.
+
+**Coverage remains the fast balanced default.** `exact-local` is an optional higher-compute refinement. It is guaranteed non-worse than its own Coverage start under the exact any-prize objective, but it is not proof of the globally optimal portfolio.
+
 ## v2.1.3 highlights
 
 ### Exact fixed-portfolio any-prize probability
@@ -110,7 +137,8 @@ That reaches the universal sum-of-marginals upper bound, so the portfolio is glo
 
 The CLI keeps objectives explicit instead of pretending one heuristic is universally best:
 
-- `coverage` — generic quadruple → triple → pair subset diversity; **recommended balanced default**;
+- `coverage` — generic quadruple → triple → pair subset diversity; **recommended fast default**;
+- `exact-local` — higher-compute exact any-prize refinement of Coverage;
 - `any-prize-bound` — greedily minimises exact pairwise `>=3 main` event-intersection cost;
 - `division4-bound` — minimises exact pairwise `>=4 main` event intersections and can return a global-optimality certificate;
 - `random` — uniform QuickPick baseline;
@@ -137,7 +165,8 @@ The Python engine now includes:
 - exact two-ticket `>=k main` event-intersection probabilities;
 - rigorous Bonferroni portfolio lower bounds;
 - exact pairwise-disjoint Division-4+ certificates;
-- **exact fixed-portfolio any-prize union probability** via complement dynamic programming.
+- **exact fixed-portfolio any-prize union probability** via complement dynamic programming;
+- **exact-guided monotonic local search** for practical Coverage portfolios.
 
 ### Data integrity
 
@@ -147,7 +176,7 @@ The Python engine now includes:
 - SHA-256 provenance for both historical CSV files;
 - saved scraper fixtures for markup-regression tests;
 - scheduled refresh refuses to publish new data when secondary verification fails;
-- migration-aware refresh rebuilds old schema assets even when the CSV itself did not change.
+- migration-aware refresh rebuilds old or incomplete schema-v3 assets even when the CSV itself did not change.
 
 ### Web application
 
@@ -167,6 +196,7 @@ The GitHub Pages site includes:
 - data freshness and provenance display;
 - dedicated Benchmark Lab with client-side multi-seed exploratory runs;
 - **exact any-prize probability for the generated 10-game reference Coverage portfolio**;
+- **exact-local reference improvement/non-worsening display**;
 - Bonferroni and Division-4 certificates shown separately from simulations;
 - system/light/dark themes;
 - offline/PWA cache support.
@@ -188,18 +218,21 @@ PYTHONPATH=src python -m lotto_lab validate
 PYTHONPATH=src python -m lotto_lab stats
 
 PYTHONPATH=src python -m lotto_lab tickets --count 10 --mode coverage
+PYTHONPATH=src python -m lotto_lab tickets --count 10 --mode exact-local --json
 PYTHONPATH=src python -m lotto_lab tickets --count 10 --mode any-prize-bound --json
 PYTHONPATH=src python -m lotto_lab tickets --count 10 --mode division4-bound --json
 PYTHONPATH=src python -m lotto_lab tickets --count 10 --mode random
 PYTHONPATH=src python -m lotto_lab tickets --count 10 --mode anti-crowding
 
 PYTHONPATH=src python -m lotto_lab exact-any-prize --count 10 --mode coverage
-PYTHONPATH=src python -m lotto_lab exact-any-prize --count 10 --mode any-prize-bound
+PYTHONPATH=src python -m lotto_lab exact-any-prize --count 10 --mode exact-local
+PYTHONPATH=src python -m lotto_lab optimize-any-prize --count 10 --seed exact-local-example
 
 PYTHONPATH=src python -m lotto_lab simulate --count 10 --trials 50000
 PYTHONPATH=src python -m lotto_lab benchmark --count 10 --coverage-portfolios 50 --random-portfolios 200 --trials 5000
 PYTHONPATH=src python -m lotto_lab benchmark-objectives --count 10 --portfolios 24 --random-portfolios 96 --trials 5000
 PYTHONPATH=src python -m lotto_lab benchmark-exact-objectives --count 10 --portfolios 32 --random-portfolios 128
+PYTHONPATH=src python -m lotto_lab benchmark-local-search --count 10 --portfolios 16 --seed 20260823
 PYTHONPATH=src python -m lotto_lab backtest --count 10 --steps 120
 PYTHONPATH=src python -m lotto_lab verify-secondary --latest 10
 ```
@@ -214,7 +247,7 @@ The scheduled workflow runs after the Saturday draw. It:
 2. determines whether draw data or generated assets need rebuilding;
 3. cross-checks the newest draws against an independent source;
 4. stops on disagreement;
-5. rebuilds schema-v3 statistics, probability certificates, the exact 10-game reference any-prize result and SHA-256 provenance;
+5. rebuilds schema-v3 statistics, exact reference portfolio evidence, the exact-local refinement and SHA-256 provenance;
 6. commits only verified changes directly to `main`.
 
 It does not create recurring update branches or automated pull requests.
@@ -223,7 +256,7 @@ It does not create recurring update branches or automated pull requests.
 
 CI runs Ruff, Python compilation, the unit suite, tracked-dataset/stat regeneration, JSON validation, browser JavaScript syntax checks and static-site reference tests.
 
-v2.1.3 also has an exact confirmation workflow for probability-engine changes. It evaluates the larger 32/32/32/128 portfolio distribution so small-seed results are not promoted without confirmation.
+The exact confirmation and exact-local workflows keep the more expensive release evidence separate from ordinary fast unit checks. Exact-local development and confirmation use different root seeds.
 
 ```bash
 ruff check src tests

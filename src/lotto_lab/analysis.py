@@ -7,6 +7,7 @@ from itertools import combinations
 
 from .benchmark import benchmark_portfolio_distributions
 from .domain import BALL_COUNT, DIVISION_ONE_COMBINATIONS, MAIN_COUNT, SUPPLEMENTARY_COUNT, Draw
+from .optimizer import optimise_any_prize_exact
 from .portfolio import exact_any_prize_probability
 from .probability import (
     any_prize_probability,
@@ -74,6 +75,16 @@ def build_statistics(draws: Sequence[Draw], *, generated_at: datetime | None = N
     reference_seed = f"{ordered[-1].date.isoformat()}:{draw_count}:coverage-v3"
     reference_tickets = generate_coverage_tickets(10, seed=reference_seed)
     reference_exact_any_prize = exact_any_prize_probability(reference_tickets)
+    reference_local_search = optimise_any_prize_exact(
+        reference_tickets,
+        seed=f"{reference_seed}:exact-local-v214",
+        iterations=2,
+        exact_shortlist=4,
+        exploration_candidates=1,
+        preserve_division4_optimality=True,
+    )
+    reference_local_tickets = [tuple(ticket) for ticket in reference_local_search["tickets"]]
+    reference_local_search["metrics"] = ticket_metrics(reference_local_tickets)
     match_distribution = main_match_distribution()
     system_rows = [
         {
@@ -140,6 +151,16 @@ def build_statistics(draws: Sequence[Draw], *, generated_at: datetime | None = N
                 "Coverage mode maximises new 4-, 3- and 2-number subsets across multiple entries. "
                 "It does not change the odds of any individual six-number combination. The any-prize "
                 "probability shown here is exact for this fixed reference portfolio."
+            ),
+        },
+        "referenceExactLocalSearch": {
+            **reference_local_search,
+            "seed": f"{reference_seed}:exact-local-v214",
+            "note": (
+                "Exact-local starts from the reference Coverage portfolio, screens one-number swaps with "
+                "cheap combinatorial bounds, and accepts only exact any-prize improvements. Existing "
+                "Division-4+ global-optimality is preserved when present. It is a local refinement, not "
+                "a proof of the globally optimal any-prize portfolio."
             ),
         },
         "referenceSimulation": compare_strategies(10, trials=20_000, seed=20260822),

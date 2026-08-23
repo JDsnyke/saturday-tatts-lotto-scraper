@@ -1,5 +1,41 @@
 # Changelog
 
+## 2.1.4 — Exact-guided local portfolio search
+
+### Added
+
+- `exact-local` portfolio mode: start from Coverage, enumerate one-number swaps, screen with exact pair-intersection/Bonferroni structure, then accept only moves that increase the full exact any-prize winning-set count;
+- `lotto-lab optimize-any-prize` for an auditable before/after optimisation report;
+- paired exact local-search benchmark comparing each refined portfolio with the exact Coverage portfolio it started from;
+- explicit preservation of an existing Division-4-or-better global-optimality certificate;
+- move history with before/after ticket values and exact winning-set improvement;
+- generated `referenceExactLocalSearch` statistics and Benchmark Lab display;
+- dedicated holdout workflow using a different root seed from the development benchmark.
+
+### Holdout finding
+
+The release search budget was frozen at **2 passes / 4 bound-ranked exact candidates / 1 exploration candidate** before the independent confirmation run.
+
+On 16 new 10-game Coverage portfolios rooted at seed `20260823`:
+
+- **11/16 improved** and **5/16 were unchanged**;
+- no portfolio worsened because acceptance requires a strictly larger exact integer winning-set count;
+- mean improvement was **91.75 additional winning-main sets**;
+- mean exact any-prize improvement was about **+0.001126 percentage points**;
+- paired portfolio-seed bootstrap 95% interval was about **+0.000636 to +0.001664 points**;
+- every existing Division-4 global-optimality certificate was preserved;
+- Division 1 probability remained unchanged because the number of distinct standard games did not change.
+
+Coverage remains the fast balanced default. `exact-local` is an optional higher-compute refinement for practical smaller portfolios. It is guaranteed non-worse than its own Coverage starting point on the exact any-prize objective, but it is **not** a proof of global optimality.
+
+### Guardrails
+
+- no simulated draw outcomes train or score accepted mutations;
+- a cheap Bonferroni score only screens neighbours; the full exact DP decides acceptance;
+- development and confirmation seeds are separate;
+- the search cannot trade away an existing exact Division-4+ optimum by default;
+- local improvement is not described as a future-number prediction or Division 1 edge.
+
 ## 2.1.3 — Exact any-prize portfolio probability
 
 ### Added
