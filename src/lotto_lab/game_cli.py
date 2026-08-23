@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+from pathlib import Path
 
 from .alternative_catalog import (
     ALTERNATIVE_GAMES,
@@ -55,7 +56,6 @@ def _game_row(game: GameDefinition) -> dict:
     summary = _summary_for_game(game)
     computed = summary["computedTopPrize"]
     exact_any = summary["exactAnyPrize"]
-    snapshot = summary["raffleSnapshot"]
     return {
         "slug": game.slug,
         "name": summary["name"],
@@ -63,12 +63,42 @@ def _game_row(game: GameDefinition) -> dict:
         "mechanic": summary["mechanic"],
         "jurisdictions": summary["jurisdictions"],
         "schedule": summary["schedule"],
+        "description": summary["description"],
         "computedTopOdds": None if computed is None else computed["odds"],
         "officialTopOdds": summary["official_top_odds"],
         "exactAnyPrizeOdds": None if exact_any is None else exact_any["odds"],
         "officialAnyOdds": summary["official_any_odds"],
-        "raffleSnapshot": snapshot,
+        "drawsPerPurchase": summary["draws_per_purchase"],
+        "notes": summary["notes"],
+        "sources": summary["sources"],
+        "raffleSnapshot": summary["raffleSnapshot"],
     }
+
+
+def catalog_payload() -> dict:
+    """Return the public web/CLI catalog from the authoritative Python definitions."""
+    rows = [_game_row(game) for game in _all_games()]
+    return {
+        "schemaVersion": 1,
+        "checkedOn": "2026-08-23",
+        "games": rows,
+        "guardrails": {
+            "variableRaffles": (
+                "Ticket or entry capacity is metadata, not automatically an exact one-ticket odds "
+                "denominator. Use the draw's valid-entry rule and actual final entries."
+            ),
+            "unverifiedAnyPrize": sorted(UNVERIFIED_CURRENT_ANY_ODDS),
+            "historicalNumbers": (
+                "Hot, cold, overdue and frequency patterns are not treated as future-draw probability edges."
+            ),
+        },
+    }
+
+
+def _write_catalog(path: str) -> None:
+    target = Path(path)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(json.dumps(catalog_payload(), indent=2) + "\n", encoding="utf-8")
 
 
 def _print_game_table(rows: list[dict]) -> None:
@@ -118,6 +148,12 @@ def build_parser() -> argparse.ArgumentParser:
     odds = sub.add_parser("game-odds", help="Show exact/official odds metadata for one game")
     odds.add_argument("--game", choices=ALL_GAME_SLUGS, required=True)
 
+    export = sub.add_parser(
+        "game-catalog-json",
+        help="Export the public game catalog used by the static Games & Odds Lab",
+    )
+    export.add_argument("--output")
+
     keno = sub.add_parser("keno", help="Calculate exact Keno match probabilities for a Spot 1–10 selection")
     keno.add_argument("--spot", type=int, choices=range(1, 11), required=True)
 
@@ -145,6 +181,13 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "game-odds":
         print(json.dumps(_summary_for_game(_resolve_game(args.game)), indent=2))
+        return 0
+
+    if args.command == "game-catalog-json":
+        if args.output:
+            _write_catalog(args.output)
+        else:
+            print(json.dumps(catalog_payload(), indent=2))
         return 0
 
     if args.command == "keno":
