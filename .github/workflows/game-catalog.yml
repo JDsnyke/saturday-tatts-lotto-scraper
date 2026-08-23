@@ -49,13 +49,18 @@ jobs:
           path: /tmp/game_catalog.json
           if-no-files-found: error
           retention-days: 1
-      - name: Validate tracked web catalog is generated, if present
+      - name: Validate tracked web catalog matches generator
         run: |
-          if test -f assets/game_catalog.json; then
-            cmp /tmp/game_catalog.json assets/game_catalog.json
-          else
-            echo 'assets/game_catalog.json not yet bootstrapped; artifact contains canonical payload.'
-          fi
+          test -f assets/game_catalog.json
+          python - <<'PY'
+          import json
+
+          with open('/tmp/game_catalog.json', encoding='utf-8') as handle:
+              generated = json.load(handle)
+          with open('assets/game_catalog.json', encoding='utf-8') as handle:
+              tracked = json.load(handle)
+          assert tracked == generated, 'assets/game_catalog.json is stale; regenerate it from Python definitions'
+          PY
       - name: Validate public catalog guardrails
         run: |
           python - <<'PY'
@@ -74,9 +79,9 @@ jobs:
           assert rows['lotto-strike']['officialAnyOdds'] is None
           assert rows['lucky-lotteries-super']['officialAnyOdds'] is None
           assert rows['lucky-lotteries-mega']['officialAnyOdds'] is None
-          assert rows['mater-prize-home']['raffleSnapshot']['maximum_entries'] == 22_805_334
-          assert rows['mater-cars-for-cancer']['raffleSnapshot']['maximum_entries'] == 85_117
-          assert rows['endeavour-pay-day']['raffleSnapshot']['maximum_entries'] == 200_000
-          assert rows['endeavour-pay-day']['raffleSnapshot']['close_date'] is None
+          assert rows['mater-prize-home']['raffleSnapshot']['maximumEntries'] == 22_805_334
+          assert rows['mater-cars-for-cancer']['raffleSnapshot']['maximumEntries'] == 85_117
+          assert rows['endeavour-pay-day']['raffleSnapshot']['maximumEntries'] == 200_000
+          assert rows['endeavour-pay-day']['raffleSnapshot']['closeDate'] is None
           assert rows['yourtown-prize-home']['computedTopOdds'] is None
           PY
