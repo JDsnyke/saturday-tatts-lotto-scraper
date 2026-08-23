@@ -42,13 +42,19 @@ jobs:
         run: |
           python -m lotto_lab game-catalog-json --output /tmp/game_catalog.json
           python -m json.tool /tmp/game_catalog.json >/dev/null
-          cat /tmp/game_catalog.json
+      - name: Upload generated catalog
+        uses: actions/upload-artifact@v4
+        with:
+          name: game-catalog-json
+          path: /tmp/game_catalog.json
+          if-no-files-found: error
+          retention-days: 1
       - name: Validate tracked web catalog is generated, if present
         run: |
           if test -f assets/game_catalog.json; then
             cmp /tmp/game_catalog.json assets/game_catalog.json
           else
-            echo 'assets/game_catalog.json not yet bootstrapped; generated payload printed above.'
+            echo 'assets/game_catalog.json not yet bootstrapped; artifact contains canonical payload.'
           fi
       - name: Validate public catalog guardrails
         run: |
