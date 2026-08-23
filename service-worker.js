@@ -1,25 +1,31 @@
-const CACHE_NAME = 'australian-lottery-lab-v3-0-1-ui';
+const CACHE_NAME = 'australian-lottery-lab-bulma-v1';
+const BULMA_URL = 'https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css';
+const LUCIDE_URL = 'https://unpkg.com/lucide@1.33.0/dist/umd/lucide.js';
 const STATIC_ASSETS = [
   './',
   './index.html',
   './benchmark.html',
   './games.html',
-  './assets/app.css',
+  './assets/ui.js',
   './assets/app.js',
-  './assets/benchmark.css',
   './assets/benchmark.js',
   './assets/certificates.js',
-  './assets/games.css',
   './assets/games.js',
   './assets/favicon.svg',
   './assets/site.webmanifest',
   './assets/lotto_stats.json',
   './assets/data_provenance.json',
   './assets/game_catalog.json',
+  BULMA_URL,
+  LUCIDE_URL,
 ];
 
 self.addEventListener('install', event => {
-  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(STATIC_ASSETS)).then(() => self.skipWaiting()));
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => cache.addAll(STATIC_ASSETS))
+      .then(() => self.skipWaiting())
+  );
 });
 
 self.addEventListener('activate', event => {
@@ -33,12 +39,16 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
-  if (url.origin !== self.location.origin) return;
+  const isLocal = url.origin === self.location.origin;
+  const isLibrary = event.request.url === BULMA_URL || event.request.url === LUCIDE_URL;
+  if (!isLocal && !isLibrary) return;
 
-  const isData =
+  const isData = isLocal && (
     url.pathname.endsWith('/assets/lotto_stats.json') ||
     url.pathname.endsWith('/assets/data_provenance.json') ||
-    url.pathname.endsWith('/assets/game_catalog.json');
+    url.pathname.endsWith('/assets/game_catalog.json')
+  );
+
   if (isData) {
     event.respondWith(
       fetch(event.request)

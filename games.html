@@ -1,196 +1,87 @@
 <!doctype html>
-<html lang="en" data-theme="system">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
-  <meta name="theme-color" content="#f5f6f3">
+  <meta name="theme-color" content="#ffffff">
   <meta name="description" content="Operator-aware catalog and exact probability tools for Australian lottery games.">
-  <title>Games & Odds · Lottery Lab</title>
+  <title>Games &amp; Odds · Lottery Lab</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="assets/site.webmanifest">
-  <link rel="stylesheet" href="assets/app.css">
-  <link rel="stylesheet" href="assets/games.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css">
+  <script defer src="https://unpkg.com/lucide@1.33.0/dist/umd/lucide.js"></script>
+  <script defer src="assets/ui.js"></script>
   <script defer src="assets/games.js"></script>
 </head>
 <body>
-  <a class="skip-link" href="#main">Skip to content</a>
-
-  <header class="site-header" id="top">
-    <a class="brand" href="games.html" aria-label="Lottery Lab games and odds">
-      <span class="brand-orbit" aria-hidden="true"><span>AU</span></span>
-      <span class="brand-copy"><strong>Lottery Lab</strong><small>Games &amp; odds</small></span>
-    </a>
-    <nav class="header-nav" aria-label="Primary navigation">
-      <a href="index.html">Saturday</a>
-      <a href="games.html" aria-current="page">Games &amp; odds</a>
-      <a href="benchmark.html">Benchmarks</a>
-      <a href="#calculators">Calculators</a>
-      <a href="https://github.com/JDsnyke/saturday-tatts-lotto-scraper">GitHub</a>
-    </nav>
-    <div class="header-actions">
-      <span class="data-pill"><span class="status-dot"></span><span>Rules checked 23 Aug 2026</span></span>
+  <nav class="navbar is-spaced has-shadow" role="navigation" aria-label="Primary navigation">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="games.html"><strong>Lottery Lab</strong>&nbsp;<span class="tag is-link is-light">Games &amp; odds</span></a>
+      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="games-navbar"><span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span></a>
     </div>
-  </header>
-
-  <main id="main">
-    <section class="hero section-shell games-hero">
-      <div class="hero-copy">
-        <div class="eyebrow">Australian game catalogue</div>
-        <h1>Game rules and odds, side by side</h1>
-        <p class="hero-lead">Compare current Australian lottery mechanics without forcing unlike products into the same formula. Jurisdiction, operator source and variable raffle capacity stay visible.</p>
-        <div class="hero-actions">
-          <a class="button primary" href="#catalog">Browse games</a>
-          <a class="button secondary" href="#calculators">Open calculators</a>
-          <a class="button secondary" href="index.html">Saturday portfolio</a>
-        </div>
-        <div class="principle-strip" aria-label="Catalog principles">
-          <span>Exact when derivable</span>
-          <span>Variable when it really varies</span>
-          <span>Jurisdiction-aware</span>
-          <span>Operator sources</span>
-        </div>
+    <div id="games-navbar" class="navbar-menu">
+      <div class="navbar-start">
+        <a class="navbar-item" href="index.html"><span class="icon"><i data-lucide="ticket"></i></span><span>Saturday</span></a>
+        <a class="navbar-item is-selected" href="games.html" aria-current="page"><span class="icon"><i data-lucide="grid-2x2"></i></span><span>Games &amp; odds</span></a>
+        <a class="navbar-item" href="benchmark.html"><span class="icon"><i data-lucide="chart-no-axes-combined"></i></span><span>Benchmarks</span></a>
+        <a class="navbar-item" href="#calculators"><span class="icon"><i data-lucide="calculator"></i></span><span>Calculators</span></a>
       </div>
+      <div class="navbar-end">
+        <div class="navbar-item"><span id="catalog-status" class="tag is-info is-light is-skeleton">Loading rules</span></div>
+        <div class="navbar-item"><button id="theme-toggle" class="button is-light" type="button" aria-label="Change theme"><span class="icon"><i id="theme-icon" data-lucide="monitor"></i></span><span>Theme</span></button></div>
+      </div>
+    </div>
+  </nav>
 
-      <aside class="hero-console glass" aria-labelledby="catalog-rule-title">
-        <div class="console-head"><span class="card-kicker">Comparison rule</span><span class="live-chip">Context matters</span></div>
-        <h2 id="catalog-rule-title">Odds are only one part of value</h2>
-        <div class="odds-number">Different games, different maths</div>
-        <div class="console-grid">
-          <div><span>Powerball</span><strong>2 independent pools</strong></div>
-          <div><span>Lucky Lotteries</span><strong>Raffle mechanics</strong></div>
-          <div><span>Keno</span><strong>Spot-size dependent</strong></div>
-          <div><span>Scratch games</span><strong>Print-run dependent</strong></div>
-        </div>
-        <p class="console-note">Top-prize odds do not capture ticket price, prize size, payout rules, sharing, annuity terms or prize inventory. This page compares the probability model first.</p>
-      </aside>
+  <main>
+    <section class="hero is-link is-medium">
+      <div class="hero-body"><div class="container"><div class="columns is-vcentered is-variable is-8">
+        <div class="column is-three-fifths"><span class="tag is-link is-light mb-4">Australian game catalogue</span><h1 class="title is-1">Game rules and odds, side by side</h1><p class="subtitle is-4">Compare current Australian lottery mechanics without forcing unlike products into the same formula. Jurisdiction, operator source and variable raffle capacity stay visible.</p><div class="buttons"><a class="button is-light is-medium" href="#catalog"><span class="icon"><i data-lucide="list-filter"></i></span><span>Browse games</span></a><a class="button is-link is-inverted is-outlined is-medium" href="#calculators"><span class="icon"><i data-lucide="calculator"></i></span><span>Calculators</span></a></div></div>
+        <div class="column"><div class="box"><h2 class="title is-4">Different games, different maths</h2><div class="content"><ul><li><strong>Powerball:</strong> two independent pools</li><li><strong>Lucky Lotteries:</strong> raffle mechanics</li><li><strong>Keno:</strong> spot-size dependent</li><li><strong>Scratch games:</strong> print-run dependent</li></ul></div><div class="notification is-info is-light">Top-prize odds do not capture ticket price, prize size, payout rules, sharing, annuity terms or prize inventory.</div></div></div>
+      </div></div></div>
     </section>
 
-    <section class="section-shell" id="catalog">
-      <div class="section-heading">
-        <div><span class="eyebrow">Catalogue</span><h2>Current games and alternatives</h2></div>
-        <p>Computed values follow directly from a verified draw mechanism. Reported values stay operator-sourced where the product cannot be reduced to one fixed combination denominator.</p>
+    <section class="section" id="catalog"><div class="container">
+      <div class="mb-5"><span class="tag is-link is-light">Catalogue</span><h2 class="title is-2 mt-3">Current games and alternatives</h2><p class="subtitle is-5">Computed values follow a verified draw mechanism. Variable or reported products remain operator-sourced.</p></div>
+      <div class="box"><div class="columns is-multiline">
+        <div class="column"><div class="field"><label class="label" for="game-operator">Operator</label><div class="control"><div class="select is-fullwidth"><select id="game-operator"><option value="">All operators</option></select></div></div></div></div>
+        <div class="column"><div class="field"><label class="label" for="game-mechanic">Mechanic</label><div class="control"><div class="select is-fullwidth"><select id="game-mechanic"><option value="">All mechanics</option></select></div></div></div></div>
+        <div class="column"><div class="field"><label class="label" for="game-jurisdiction">Jurisdiction</label><div class="control"><div class="select is-fullwidth"><select id="game-jurisdiction"><option value="">All jurisdictions</option><option>QLD</option><option>NSW</option><option>ACT</option><option>VIC</option><option>TAS</option><option>SA</option><option>NT</option><option>WA</option></select></div></div></div></div>
+        <div class="column"><div class="field"><label class="label" for="game-sort">Sort</label><div class="control"><div class="select is-fullwidth"><select id="game-sort"><option value="name">Name</option><option value="odds">Easiest top-prize odds first</option></select></div></div></div></div>
+      </div></div>
+      <div class="level"><div class="level-left"><strong id="game-count">Loading…</strong></div><div class="level-right"><p class="is-size-7 has-text-grey">Official reported odds are rounded where the operator publishes them that way.</p></div></div>
+      <div id="game-grid" class="columns is-multiline" aria-live="polite">
+        <div class="column is-half"><div class="card is-skeleton"><div class="card-content">Loading game</div></div></div>
+        <div class="column is-half"><div class="card is-skeleton"><div class="card-content">Loading game</div></div></div>
+        <div class="column is-half"><div class="card is-skeleton"><div class="card-content">Loading game</div></div></div>
+        <div class="column is-half"><div class="card is-skeleton"><div class="card-content">Loading game</div></div></div>
       </div>
+    </div></section>
 
-      <div class="catalog-toolbar glass" aria-label="Game filters">
-        <label>Operator
-          <select id="game-operator"><option value="">All operators</option></select>
-        </label>
-        <label>Mechanic
-          <select id="game-mechanic"><option value="">All mechanics</option></select>
-        </label>
-        <label>Jurisdiction
-          <select id="game-jurisdiction">
-            <option value="">All jurisdictions</option>
-            <option>QLD</option><option>NSW</option><option>ACT</option><option>VIC</option>
-            <option>TAS</option><option>SA</option><option>NT</option><option>WA</option>
-          </select>
-        </label>
-        <label>Sort
-          <select id="game-sort">
-            <option value="name">Name</option>
-            <option value="odds">Easiest top-prize odds first</option>
-          </select>
-        </label>
+    <section class="section" id="calculators"><div class="container">
+      <div class="mb-5"><span class="tag is-primary is-light">Calculators</span><h2 class="title is-2 mt-3">Use the probability model that matches the game</h2><p class="subtitle is-5">Repeated draws, Keno spots and ordered digits are different experiments.</p></div>
+      <div class="columns is-multiline">
+        <div class="column is-one-third"><article class="card"><div class="card-content"><div class="media"><div class="media-left"><span class="icon is-large"><i data-lucide="calendar-range"></i></span></div><div class="media-content"><p class="title is-5">Set for Life</p><p class="subtitle is-7">Repeated independent draws</p></div></div><div class="content"><p>A standard purchase covers seven consecutive daily draws. Cumulative probability is <code>1-(1-p)^d</code>.</p><div class="field"><label class="label" for="sfl-draws">Number of draws</label><div class="control"><input id="sfl-draws" class="input" type="number" min="1" max="365" value="7" inputmode="numeric"></div></div><hr><p class="heading">Single draw</p><p class="title is-5" id="sfl-single">—</p><p class="heading" id="sfl-label">—</p><p class="title is-5" id="sfl-cumulative">—</p><p class="help" id="sfl-probability">—</p></div></div></article></div>
+        <div class="column is-one-third"><article class="card"><div class="card-content"><div class="media"><div class="media-left"><span class="icon is-large"><i data-lucide="circle-dot"></i></span></div><div class="media-content"><p class="title is-5">Keno · South Australia</p><p class="subtitle is-7">Hypergeometric Spot probability</p></div></div><div class="content"><p>For a fixed Spot selection, exact matches follow a hypergeometric distribution because 20 numbers are drawn without replacement from 80.</p><div class="field"><label class="label" for="keno-spot">Spot size</label><div class="control"><input id="keno-spot" class="input" type="number" min="1" max="10" value="10" inputmode="numeric"></div></div><hr><p class="heading" id="keno-label">—</p><p class="title is-5" id="keno-result">—</p><p class="help" id="keno-probability">—</p></div></div></article></div>
+        <div class="column is-one-third"><article class="card"><div class="card-content"><div class="media"><div class="media-left"><span class="icon is-large"><i data-lucide="hash"></i></span></div><div class="media-content"><p class="title is-5">Lotterywest Cash 3</p><p class="subtitle is-7">Exact vs Any Order</p></div></div><div class="content"><p>Exact Order has 1,000 possible strings. Any Order depends on whether the multiset has 1, 3 or 6 distinct permutations.</p><div class="field"><label class="label" for="cash3-digits">Three digits</label><div class="control"><input id="cash3-digits" class="input" type="text" maxlength="3" value="223" inputmode="numeric" pattern="[0-9]{3}"></div></div><hr><p class="heading">Exact Order</p><p class="title is-5">1 in 1,000</p><p class="heading">Any Order</p><p class="title is-5" id="cash3-any">—</p><p class="help" id="cash3-orders">—</p></div></div></article></div>
       </div>
-      <div class="catalog-summary"><strong id="game-count">Loading…</strong><span>Official reported odds are rounded where the operator publishes them that way.</span></div>
-      <div class="game-grid" id="game-grid" aria-live="polite"></div>
-    </section>
+    </div></section>
 
-    <section class="section-shell" id="calculators">
-      <div class="section-heading">
-        <div><span class="eyebrow">Calculators</span><h2>Use the probability model that matches the game</h2></div>
-        <p>Repeated draws, Keno spots and ordered digits are different experiments. These tools keep those distinctions explicit.</p>
+    <section class="section" id="mechanics"><div class="container">
+      <div class="mb-5"><span class="tag is-warning is-light">Mechanics</span><h2 class="title is-2 mt-3">Several probability families</h2><p class="subtitle is-5">The Saturday portfolio optimiser stays specialised; the shared catalogue models each probability experiment first.</p></div>
+      <div class="columns is-multiline">
+        <div class="column is-one-quarter-desktop is-half-tablet"><div class="box"><span class="icon"><i data-lucide="circle-dot-dashed"></i></span><h3 class="title is-5 mt-3">One-pool draws</h3><p>Saturday Lotto, Weekday Windfall, Oz Lotto, Set for Life and Millionaire Medley.</p></div></div>
+        <div class="column is-one-quarter-desktop is-half-tablet"><div class="box"><span class="icon"><i data-lucide="split"></i></span><h3 class="title is-5 mt-3">Two pools</h3><p>Powerball combines a seven-number main selection with a separate Powerball pool.</p></div></div>
+        <div class="column is-one-quarter-desktop is-half-tablet"><div class="box"><span class="icon"><i data-lucide="list-ordered"></i></span><h3 class="title is-5 mt-3">Ordered games</h3><p>Super 66, Cash 3 and Lotto Strike require order-sensitive probability models.</p></div></div>
+        <div class="column is-one-quarter-desktop is-half-tablet"><div class="box"><span class="icon"><i data-lucide="ticket-check"></i></span><h3 class="title is-5 mt-3">Variable products</h3><p>Raffles and scratch products need pool or print-run-specific metadata.</p></div></div>
       </div>
-      <div class="calculator-grid">
-        <article class="calc-card glass">
-          <span class="eyebrow">Set for Life</span>
-          <h3>Single draw vs repeated draws</h3>
-          <p>A standard Set for Life purchase covers seven consecutive daily draws. The per-draw Division 1 chance remains 1 in 38,320,568; cumulative probability across independent draws is <code>1-(1-p)^d</code>.</p>
-          <div class="calculator-controls">
-            <label>Number of draws
-              <input id="sfl-draws" type="number" min="1" max="365" value="7" inputmode="numeric">
-            </label>
-          </div>
-          <div class="calc-output">
-            <span>Single draw</span><strong id="sfl-single">—</strong>
-            <span id="sfl-label">—</span><strong id="sfl-cumulative">—</strong>
-            <small id="sfl-probability">—</small>
-          </div>
-        </article>
+      <article class="message is-info"><div class="message-header"><p><span class="icon"><i data-lucide="scale"></i></span> Interpretation</p></div><div class="message-body">Easier top-prize odds do not automatically mean better value. Ticket cost, prize amounts, payout rules, sharing and annuity terms also matter.</div></article>
+    </div></section>
 
-        <article class="calc-card glass">
-          <span class="eyebrow">Keno · South Australia</span>
-          <h3>All-Spot match probability</h3>
-          <p>For a fixed Spot selection, exact matches follow a hypergeometric distribution because 20 numbers are drawn without replacement from 80.</p>
-          <div class="calculator-controls">
-            <label>Spot size
-              <input id="keno-spot" type="number" min="1" max="10" value="10" inputmode="numeric">
-            </label>
-          </div>
-          <div class="calc-output">
-            <span id="keno-label">—</span><strong id="keno-result">—</strong>
-            <small id="keno-probability">—</small>
-          </div>
-        </article>
-
-        <article class="calc-card glass">
-          <span class="eyebrow">Lotterywest Cash 3</span>
-          <h3>Exact vs Any Order</h3>
-          <p>Exact Order has 1,000 possible three-digit strings. Any Order depends on whether the selected multiset has 1, 3 or 6 distinct permutations.</p>
-          <div class="calculator-controls">
-            <label>Three digits
-              <input id="cash3-digits" type="text" maxlength="3" value="223" inputmode="numeric" pattern="[0-9]{3}">
-            </label>
-          </div>
-          <div class="calc-output">
-            <span>Exact Order</span><strong>1 in 1,000</strong>
-            <span>Any Order</span><strong id="cash3-any">—</strong>
-            <small id="cash3-orders">—</small>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <section class="section-shell" id="mechanics">
-      <div class="section-heading">
-        <div><span class="eyebrow">Mechanics</span><h2>One catalogue, several probability families</h2></div>
-        <p>The Saturday portfolio optimiser stays specialised. The shared catalogue models each probability experiment before any strategy is discussed.</p>
-      </div>
-      <div class="mechanic-grid">
-        <article class="mechanic-card glass"><span class="claim exact">Combination</span><h3>One-pool draw</h3><p>Saturday Lotto, Weekday Windfall, Oz Lotto, Set for Life and Millionaire Medley use hypergeometric main/supplementary match distributions with game-specific prize mappings.</p></article>
-        <article class="mechanic-card glass"><span class="claim exact">Two pools</span><h3>Powerball</h3><p>The seven-number main selection and the separate one-from-20 Powerball result multiply into a joint distribution.</p></article>
-        <article class="mechanic-card glass"><span class="claim exact">Ordered</span><h3>Digits and positions</h3><p>Super 66 and Cash 3 use ordered digits; Lotto Strike uses ordered numbers sampled without replacement. Combination formulas would be wrong.</p></article>
-        <article class="mechanic-card glass"><span class="claim guardrail">Variable</span><h3>Raffles and instant games</h3><p>Lucky Lotteries, charity raffles and scratch products need pool or print-run-specific metadata. Where a fixed experiment is not established, the lab reports rather than invents.</p></article>
-      </div>
-
-      <div class="research-note glass" style="margin-top:16px">
-        <div><span class="research-icon" aria-hidden="true">i</span></div>
-        <div>
-          <span class="eyebrow">Interpretation</span>
-          <h3>Easier top-prize odds do not automatically mean better value.</h3>
-          <p>Ticket cost, prize amounts, payout rules, jackpot sharing, annuity terms and prize inventory all matter. The project does not treat lottery play as an investment.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="section-shell">
-      <div class="section-heading">
-        <div><span class="eyebrow">Sources</span><h2>Operator rules first</h2></div>
-        <p>Core mechanics and published odds were rechecked against current operator pages on 23 August 2026. A lower-division rule stays uncomputed when a current authoritative source has not been captured.</p>
-      </div>
-      <div class="method-grid">
-        <article class="method-card"><span class="claim exact">The Lott</span><h3>Current odds</h3><p>Official Help Centre odds cross-check current Division 1 and jackpot denominators.</p></article>
-        <article class="method-card"><span class="claim exact">Lotterywest</span><h3>Division tables</h3><p>WA game pages independently verify Oz Lotto, Powerball, Set for Life, Millionaire Medley and Cash 3 mechanics.</p></article>
-        <article class="method-card"><span class="claim guardrail">Jurisdiction</span><h3>Availability matters</h3><p>Lotto Strike is NSW/ACT-limited, The Lott Keno is SA-only, and Lotterywest-specific games are WA products.</p></article>
-      </div>
-    </section>
+    <section class="section"><div class="container"><div class="mb-5"><span class="tag is-success is-light">Sources</span><h2 class="title is-2 mt-3">Operator rules first</h2><p class="subtitle is-5">Core mechanics and published odds were rechecked against current operator pages. Unsupported lower-division rules stay uncomputed.</p></div><div class="columns"><div class="column"><div class="box"><h3 class="title is-5">The Lott</h3><p>Official Help Centre odds cross-check current Division 1 and jackpot denominators.</p></div></div><div class="column"><div class="box"><h3 class="title is-5">Lotterywest</h3><p>WA game pages independently verify national and WA-specific mechanics.</p></div></div><div class="column"><div class="box"><h3 class="title is-5">Jurisdiction</h3><p>Availability is kept explicit rather than implied nationally.</p></div></div></div></div></section>
   </main>
 
-  <footer class="site-footer section-shell">
-    <div><strong>Lottery Lab</strong><p>Open-source Australian lottery probability research. Not affiliated with The Lott or Lotterywest.</p></div>
-    <div class="footer-links"><a href="index.html">Saturday</a><a href="benchmark.html">Benchmarks</a><a href="https://github.com/JDsnyke/saturday-tatts-lotto-scraper">GitHub</a></div>
-    <p class="responsible">Lottery outcomes are random. More entries cost more money. Use the tools to understand probability, not to justify spending beyond a fixed entertainment budget.</p>
-  </footer>
+  <footer class="footer"><div class="content has-text-centered"><p><strong>Lottery Lab</strong> · Open-source Australian lottery probability research. Not affiliated with The Lott or Lotterywest.</p><p><a href="index.html">Saturday</a> · <a href="benchmark.html">Benchmarks</a> · <a href="https://github.com/JDsnyke/saturday-tatts-lotto-scraper">GitHub</a></p><p class="is-size-7">Lottery outcomes are random. More entries cost more money.</p></div></footer>
 </body>
 </html>

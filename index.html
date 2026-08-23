@@ -1,256 +1,196 @@
 <!doctype html>
-<html lang="en" data-theme="system">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
-  <meta name="theme-color" content="#f5f6f3">
+  <meta name="theme-color" content="#ffffff">
   <meta name="description" content="Saturday Lotto probability, portfolio coverage, draw history and diagnostics with transparent evidence labels.">
   <title>Saturday Lotto · Lottery Lab</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="assets/site.webmanifest">
-  <link rel="stylesheet" href="assets/app.css">
-  <script>document.documentElement.classList.add('js')</script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css">
+  <script defer src="https://unpkg.com/lucide@1.33.0/dist/umd/lucide.js"></script>
+  <script defer src="assets/ui.js"></script>
   <script defer src="assets/app.js"></script>
 </head>
 <body>
-  <a class="skip-link" href="#main">Skip to content</a>
-
-  <header class="site-header" id="top">
-    <a class="brand" href="index.html" aria-label="Lottery Lab home">
-      <span class="brand-orbit" aria-hidden="true"><span>6</span></span>
-      <span class="brand-copy"><strong>Lottery Lab</strong><small>Saturday Lotto</small></span>
-    </a>
-    <nav class="header-nav" aria-label="Primary navigation">
-      <a href="index.html" aria-current="page">Saturday</a>
-      <a href="games.html">Games &amp; odds</a>
-      <a href="benchmark.html">Benchmarks</a>
-      <a href="#tickets">Portfolio</a>
-      <a href="#draws">Draw history</a>
-    </nav>
-    <div class="header-actions">
-      <span class="data-pill" id="header-data-status"><span class="status-dot"></span><span>Loading data</span></span>
-      <button class="icon-button" id="theme-toggle" type="button" aria-label="Change colour theme" title="Change colour theme"><span id="theme-icon" aria-hidden="true">◐</span></button>
+  <nav class="navbar is-spaced has-shadow" role="navigation" aria-label="Primary navigation">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="index.html"><strong>Lottery Lab</strong>&nbsp;<span class="tag is-primary is-light">Saturday Lotto</span></a>
+      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="main-navbar"><span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span></a>
     </div>
-  </header>
+    <div id="main-navbar" class="navbar-menu">
+      <div class="navbar-start">
+        <a class="navbar-item is-selected" href="index.html" aria-current="page"><span class="icon"><i data-lucide="ticket"></i></span><span>Saturday</span></a>
+        <a class="navbar-item" href="games.html"><span class="icon"><i data-lucide="grid-2x2"></i></span><span>Games &amp; odds</span></a>
+        <a class="navbar-item" href="benchmark.html"><span class="icon"><i data-lucide="chart-no-axes-combined"></i></span><span>Benchmarks</span></a>
+        <a class="navbar-item" href="#tickets"><span class="icon"><i data-lucide="layers-3"></i></span><span>Portfolio</span></a>
+        <a class="navbar-item" href="#draws"><span class="icon"><i data-lucide="history"></i></span><span>Draw history</span></a>
+      </div>
+      <div class="navbar-end">
+        <div class="navbar-item"><span id="header-data-status" class="tag is-info is-light is-skeleton">Loading data</span></div>
+        <div class="navbar-item"><button id="theme-toggle" class="button is-light" type="button" aria-label="Change theme"><span class="icon"><i id="theme-icon" data-lucide="monitor"></i></span><span>Theme</span></button></div>
+      </div>
+    </div>
+  </nav>
 
   <main id="main">
-    <section class="hero section-shell">
-      <div class="hero-copy reveal">
-        <div class="eyebrow">Saturday Lotto / TattsLotto</div>
-        <h1>Saturday Lotto probability &amp; portfolio tools</h1>
-        <p class="hero-lead">Exact odds, multi-entry coverage, draw history and diagnostics. Historical frequencies are available for auditing, but they never score or rank future numbers.</p>
-        <div class="hero-actions">
-          <a class="button primary" href="#planner">Open probability planner</a>
-          <a class="button secondary" href="#tickets">Build portfolio</a>
-        </div>
-        <div class="principle-strip" aria-label="Project principles">
-          <span>Exact odds</span>
-          <span>Portfolio overlap</span>
-          <span>Source-checked data</span>
-          <span>No predictive scoring</span>
-        </div>
-      </div>
-
-      <aside class="hero-console glass reveal" aria-labelledby="hero-console-title">
-        <div class="console-head"><span class="card-kicker">Standard game</span><span class="live-chip">Exact</span></div>
-        <h2 id="hero-console-title">Division 1 odds</h2>
-        <div class="odds-number" id="hero-odds">1 in 8,145,060</div>
-        <div class="probability-track"><span id="hero-probability-bar"></span></div>
-        <div class="console-grid">
-          <div><span>Probability</span><strong id="hero-probability">0.00001228%</strong></div>
-          <div><span>Any prize</span><strong id="hero-any-prize">≈ 1 in 42</strong></div>
-          <div><span>Draw</span><strong>6 + 2 / 45</strong></div>
-          <div><span>Number-selection edge</span><strong>None for Div 1</strong></div>
-        </div>
-        <p class="console-note">Every six-number combination has the same Division 1 chance. Portfolio structure only changes overlap between the games you own.</p>
-      </aside>
-    </section>
-
-    <section class="section-shell metric-grid reveal" aria-label="Dataset summary">
-      <article class="metric-card"><span>Validated draws</span><strong id="metric-draws">—</strong><small id="metric-range">Loading dataset…</small></article>
-      <article class="metric-card"><span>Latest recorded draw</span><strong id="metric-latest">—</strong><small id="metric-freshness">Checking freshness…</small></article>
-      <article class="metric-card"><span>Distribution entropy</span><strong id="metric-entropy">—</strong><small>1.0000 = perfectly even history</small></article>
-      <article class="metric-card"><span>Largest historical |z|</span><strong id="metric-z">—</strong><small>Audit signal, not a forecast</small></article>
-    </section>
-
-    <section class="section-shell thesis reveal" role="note" aria-labelledby="thesis-title">
-      <div class="thesis-mark" aria-hidden="true">≠</div>
-      <div>
-        <span class="eyebrow">Historical data</span>
-        <h2 id="thesis-title">Historical frequency is descriptive, not predictive.</h2>
-        <p>Frequency, streaks and pair counts help inspect the dataset. They are deliberately excluded from ticket generation because a fair next draw does not remember the previous ones.</p>
-      </div>
-    </section>
-
-    <section class="section-shell" id="planner">
-      <div class="section-heading reveal">
-        <div><span class="eyebrow">Planner</span><h2>Entries, systems and repeated draws</h2></div>
-        <p>Compare distinct standard games, System entries and repeated independent draws without mixing those different kinds of exposure.</p>
-      </div>
-      <div class="planner-layout">
-        <aside class="control-card glass reveal">
-          <div class="control-group">
-            <label for="planner-games">Distinct standard games <output id="planner-games-output" for="planner-games">10</output></label>
-            <input id="planner-games" type="range" min="1" max="200" value="10" step="1">
-          </div>
-          <div class="control-group">
-            <label for="planner-draws">Independent draws <output id="planner-draws-output" for="planner-draws">1</output></label>
-            <input id="planner-draws" type="range" min="1" max="520" value="1" step="1">
-          </div>
-          <div class="control-divider"><span>or compare a system</span></div>
-          <div class="control-group">
-            <label for="system-size">System numbers</label>
-            <select id="system-size" class="select-input">
-              <option value="6">System 6</option><option value="7">System 7</option><option value="8" selected>System 8</option><option value="9">System 9</option><option value="10">System 10</option><option value="11">System 11</option><option value="12">System 12</option><option value="13">System 13</option><option value="14">System 14</option><option value="15">System 15</option><option value="16">System 16</option><option value="17">System 17</option><option value="18">System 18</option><option value="19">System 19</option><option value="20">System 20</option>
-            </select>
-          </div>
-          <p class="microcopy">A System <em>k</em> entry contains C(<em>k</em>, 6) standard six-number combinations. It does not make an underlying combination more likely.</p>
-        </aside>
-
-        <div class="planner-results reveal">
-          <div class="planner-kpis">
-            <article class="result-card glass"><span>Per-draw Div 1 chance</span><strong id="planner-per-draw">—</strong><small id="planner-per-draw-odds">—</small></article>
-            <article class="result-card glass"><span>Across selected draws</span><strong id="planner-cumulative">—</strong><small id="planner-cumulative-odds">—</small></article>
-            <article class="result-card glass accent"><span id="system-label">System 8 contains</span><strong id="system-combinations">28</strong><small>standard combinations</small></article>
-          </div>
-          <div class="glass data-table-card">
-            <div class="table-heading"><div><strong>Exact standard-game prize probabilities</strong><small>Six winning, two supplementary and 37 other balls.</small></div><span class="badge">Exact</span></div>
-            <div class="table-wrap"><table><thead><tr><th>Division</th><th>Requirement</th><th>Probability</th><th>Odds</th></tr></thead><tbody id="prize-table-body"></tbody></table></div>
-          </div>
-          <div class="glass match-card">
-            <div class="table-heading"><div><strong>Main-number match distribution</strong><small>Exactly 0–6 winning numbers for one standard game.</small></div></div>
-            <div class="match-bars" id="match-bars" aria-label="Probability distribution for main-number matches"></div>
+    <section class="hero is-primary is-medium">
+      <div class="hero-body">
+        <div class="container">
+          <div class="columns is-variable is-8 is-vcentered">
+            <div class="column is-three-fifths">
+              <p class="tag is-primary is-light mb-4">Saturday Lotto / TattsLotto</p>
+              <h1 class="title is-1">Saturday Lotto probability &amp; portfolio tools</h1>
+              <p class="subtitle is-4">Exact odds, multi-entry coverage, draw history and diagnostics. Historical frequencies are descriptive and never rank future numbers.</p>
+              <div class="buttons">
+                <a class="button is-light is-medium" href="#planner"><span class="icon"><i data-lucide="calculator"></i></span><span>Probability planner</span></a>
+                <a class="button is-primary is-inverted is-outlined is-medium" href="#tickets"><span class="icon"><i data-lucide="layers-3"></i></span><span>Build portfolio</span></a>
+              </div>
+              <div class="tags mt-5"><span class="tag">Exact odds</span><span class="tag">Portfolio overlap</span><span class="tag">Source-checked data</span><span class="tag">No predictive scoring</span></div>
+            </div>
+            <div class="column">
+              <div class="box">
+                <div class="level is-mobile"><div class="level-left"><strong>Standard game</strong></div><div class="level-right"><span class="tag is-success is-light">Exact</span></div></div>
+                <p class="heading">Division 1 odds</p>
+                <p class="title is-2 has-skeleton" id="hero-odds">1 in 8,145,060</p>
+                <progress id="hero-probability-bar" class="progress is-primary" value="1" max="100">1%</progress>
+                <div class="columns is-mobile is-multiline">
+                  <div class="column is-half"><p class="heading">Probability</p><p class="title is-5" id="hero-probability">0.00001228%</p></div>
+                  <div class="column is-half"><p class="heading">Any prize</p><p class="title is-5" id="hero-any-prize">≈ 1 in 42</p></div>
+                  <div class="column is-half"><p class="heading">Draw</p><p class="title is-5">6 + 2 / 45</p></div>
+                  <div class="column is-half"><p class="heading">Selection edge</p><p class="title is-5">None for Div 1</p></div>
+                </div>
+                <div class="notification is-info is-light mb-0">Every six-number combination has the same Division 1 chance. Portfolio structure only changes overlap between the games you own.</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="section-shell" id="tickets">
-      <div class="section-heading reveal">
-        <div><span class="eyebrow">Portfolio</span><h2>Build lower-overlap ticket sets</h2></div>
-        <p>Coverage searches for games that add new quadruples, triples and pairs. QuickPick is the unbiased baseline. Anti-crowding stays separate because it concerns possible prize sharing, not draw probability.</p>
+    <section class="section">
+      <div class="container">
+        <div class="columns is-multiline">
+          <div class="column is-one-quarter-desktop is-half-tablet"><div class="box"><p class="heading">Validated draws</p><p class="title is-4 is-skeleton" id="metric-draws">0000</p><p class="is-size-7 has-text-grey" id="metric-range">Loading dataset…</p></div></div>
+          <div class="column is-one-quarter-desktop is-half-tablet"><div class="box"><p class="heading">Latest draw</p><p class="title is-4 is-skeleton" id="metric-latest">0000-00-00</p><p class="is-size-7 has-text-grey" id="metric-freshness">Checking freshness…</p></div></div>
+          <div class="column is-one-quarter-desktop is-half-tablet"><div class="box"><p class="heading">Distribution entropy</p><p class="title is-4 is-skeleton" id="metric-entropy">0.0000</p><p class="is-size-7 has-text-grey">1.0000 = perfectly even history</p></div></div>
+          <div class="column is-one-quarter-desktop is-half-tablet"><div class="box"><p class="heading">Largest historical |z|</p><p class="title is-4 is-skeleton" id="metric-z">0.00</p><p class="is-size-7 has-text-grey">Audit signal, not a forecast</p></div></div>
+        </div>
+        <article class="message is-warning"><div class="message-header"><p><span class="icon"><i data-lucide="info"></i></span> Historical data</p></div><div class="message-body"><strong>Historical frequency is descriptive, not predictive.</strong> Frequency, streaks and pair counts help inspect the dataset. They are excluded from ticket generation because a fair next draw does not remember previous draws.</div></article>
       </div>
-      <div class="ticket-layout">
-        <aside class="control-card glass reveal sticky-card">
-          <div class="control-group"><label for="ticket-count">Number of games <output id="ticket-count-output" for="ticket-count">10</output></label><input id="ticket-count" type="range" min="1" max="40" value="10" step="1"></div>
-          <fieldset class="mode-fieldset"><legend>Generation mode</legend>
-            <label class="choice-card"><input type="radio" name="mode" value="coverage" checked><span class="choice-copy"><strong>Combinatorial coverage <em>Recommended</em></strong><small>Adds new quadruples, triples and pairs, then reduces overlap.</small></span></label>
-            <label class="choice-card"><input type="radio" name="mode" value="random"><span class="choice-copy"><strong>Uniform QuickPick</strong><small>Cryptographically random, distinct six-number combinations.</small></span></label>
-            <label class="choice-card experimental"><input type="radio" name="mode" value="anti-crowding"><span class="choice-copy"><strong>Anti-crowding <em>Experimental</em></strong><small>Avoids common human patterns. Same draw odds.</small></span></label>
-          </fieldset>
-          <button class="button primary wide" id="generate-tickets" type="button">Generate portfolio</button>
-          <div class="button-row"><button class="button tertiary" id="copy-share" type="button">Copy link</button><button class="button tertiary" id="download-tickets" type="button">Export CSV</button></div>
-          <p class="microcopy" id="mode-disclaimer">Coverage changes portfolio overlap, not the probability of an individual combination.</p>
-        </aside>
+    </section>
 
-        <div class="ticket-results reveal">
-          <div class="coverage-grid">
-            <article class="mini-metric glass"><span>Unique numbers</span><strong id="coverage-unique">—</strong><small>out of 45</small></article>
-            <article class="mini-metric glass"><span>Max game overlap</span><strong id="coverage-overlap">—</strong><small>shared numbers</small></article>
-            <article class="mini-metric glass"><span>Triple efficiency</span><strong id="coverage-triples">—</strong><small>unique / placed</small></article>
-            <article class="mini-metric glass"><span>Quad efficiency</span><strong id="coverage-quads">—</strong><small>unique / placed</small></article>
-            <article class="mini-metric glass"><span>Div 1 chance</span><strong id="coverage-probability">—</strong><small>same for any distinct set</small></article>
-            <article class="mini-metric glass"><span>Simulated any-prize</span><strong id="coverage-any-prize">—</strong><small id="coverage-any-prize-ci">local estimate</small></article>
+    <section class="section" id="planner">
+      <div class="container">
+        <div class="mb-5"><p class="tag is-info is-light">Planner</p><h2 class="title is-2 mt-3">Entries, systems and repeated draws</h2><p class="subtitle is-5">Compare distinct standard games, System entries and repeated independent draws without mixing different kinds of exposure.</p></div>
+        <div class="columns is-variable is-6">
+          <div class="column is-one-third"><div class="box">
+            <div class="field"><label class="label" for="planner-games">Distinct standard games</label><div class="control"><input id="planner-games" class="input" type="number" min="1" max="200" value="10" step="1"></div><p class="help">Current value: <output id="planner-games-output" for="planner-games">10</output></p></div>
+            <div class="field"><label class="label" for="planner-draws">Independent draws</label><div class="control"><input id="planner-draws" class="input" type="number" min="1" max="520" value="1" step="1"></div><p class="help">Current value: <output id="planner-draws-output" for="planner-draws">1</output></p></div>
+            <div class="field"><label class="label" for="system-size">System numbers</label><div class="control"><div class="select is-fullwidth"><select id="system-size"><option value="6">System 6</option><option value="7">System 7</option><option value="8" selected>System 8</option><option value="9">System 9</option><option value="10">System 10</option><option value="11">System 11</option><option value="12">System 12</option><option value="13">System 13</option><option value="14">System 14</option><option value="15">System 15</option><option value="16">System 16</option><option value="17">System 17</option><option value="18">System 18</option><option value="19">System 19</option><option value="20">System 20</option></select></div></div></div>
+            <div class="notification is-light">A System <em>k</em> entry contains C(<em>k</em>, 6) standard six-number combinations. It does not make an underlying combination more likely.</div>
+          </div></div>
+          <div class="column">
+            <div class="columns is-multiline">
+              <div class="column is-one-third"><div class="box"><p class="heading">Per-draw Div 1 chance</p><p class="title is-5" id="planner-per-draw">—</p><p class="help" id="planner-per-draw-odds">—</p></div></div>
+              <div class="column is-one-third"><div class="box"><p class="heading">Across selected draws</p><p class="title is-5" id="planner-cumulative">—</p><p class="help" id="planner-cumulative-odds">—</p></div></div>
+              <div class="column is-one-third"><div class="box"><p class="heading" id="system-label">System 8 contains</p><p class="title is-5" id="system-combinations">28</p><p class="help">standard combinations</p></div></div>
+            </div>
+            <div class="box"><div class="level"><div class="level-left"><div><h3 class="title is-5 mb-1">Exact standard-game prize probabilities</h3><p class="is-size-7 has-text-grey">Six winning, two supplementary and 37 other balls.</p></div></div><div class="level-right"><span class="tag is-success is-light">Exact</span></div></div><div class="table-container"><table class="table is-fullwidth is-striped is-hoverable"><thead><tr><th>Division</th><th>Requirement</th><th>Probability</th><th>Odds</th></tr></thead><tbody id="prize-table-body"></tbody></table></div></div>
+            <div class="box"><h3 class="title is-5">Main-number match distribution</h3><p class="is-size-7 has-text-grey mb-4">Exactly 0–6 winning numbers for one standard game.</p><div id="match-bars" aria-label="Probability distribution for main-number matches"><div class="skeleton-lines"><div></div><div></div><div></div><div></div></div></div></div>
           </div>
-          <div class="portfolio-meter glass">
-            <div><span>Pair coverage</span><strong id="pair-coverage-label">—</strong></div><div class="meter"><span id="pair-coverage-meter"></span></div>
-            <div><span>Triple coverage</span><strong id="triple-coverage-label">—</strong></div><div class="meter"><span id="triple-coverage-meter"></span></div>
-            <div><span>Quadruple coverage</span><strong id="quad-coverage-label">—</strong></div><div class="meter"><span id="quad-coverage-meter"></span></div>
-          </div>
-          <div class="ticket-grid" id="ticket-grid" aria-live="polite"></div>
         </div>
       </div>
     </section>
 
-    <section class="section-shell" id="evidence">
-      <div class="section-heading reveal">
-        <div><span class="eyebrow">Evidence</span><h2>Exact results and benchmark evidence</h2></div>
-        <p>Reference simulations and walk-forward checks remain visible, while exact portfolio results live in the dedicated benchmark page.</p>
-      </div>
-      <div class="evidence-grid reveal">
-        <article class="evidence-card glass">
-          <div class="evidence-head"><div><span class="card-kicker">Monte Carlo</span><h3>Coverage vs seeded QuickPick</h3></div><span class="badge" id="sim-trials">— trials</span></div>
-          <div class="compare-bars">
-            <div class="compare-row"><div><span>Coverage any prize</span><strong id="sim-coverage-any">—</strong></div><div class="compare-track"><span id="sim-coverage-bar"></span></div><small id="sim-coverage-ci">—</small></div>
-            <div class="compare-row"><div><span>QuickPick any prize</span><strong id="sim-random-any">—</strong></div><div class="compare-track"><span id="sim-random-bar"></span></div><small id="sim-random-ci">—</small></div>
+    <section class="section" id="tickets">
+      <div class="container">
+        <div class="mb-5"><p class="tag is-primary is-light">Portfolio</p><h2 class="title is-2 mt-3">Build lower-overlap ticket sets</h2><p class="subtitle is-5">Coverage adds new quadruples, triples and pairs. QuickPick is the unbiased baseline. Anti-crowding concerns possible prize sharing, not draw probability.</p></div>
+        <div class="columns is-variable is-6">
+          <div class="column is-one-third"><div class="box">
+            <div class="field"><label class="label" for="ticket-count">Number of games</label><div class="control"><input id="ticket-count" class="input" type="number" min="1" max="40" value="10" step="1"></div><p class="help">Current value: <output id="ticket-count-output" for="ticket-count">10</output></p></div>
+            <div class="field"><label class="label">Generation mode</label><div class="control"><label class="radio"><input type="radio" name="mode" value="coverage" checked> Combinatorial coverage</label></div><p class="help mb-3">Adds new quadruples, triples and pairs, then reduces overlap.</p><div class="control"><label class="radio"><input type="radio" name="mode" value="random"> Uniform QuickPick</label></div><p class="help mb-3">Random distinct six-number combinations.</p><div class="control"><label class="radio"><input type="radio" name="mode" value="anti-crowding"> Anti-crowding</label></div><p class="help">Experimental prize-sharing heuristic. Same draw odds.</p></div>
+            <div class="buttons"><button class="button is-primary is-fullwidth" id="generate-tickets" type="button"><span class="icon"><i data-lucide="wand-sparkles"></i></span><span>Generate portfolio</span></button><button class="button is-light" id="copy-share" type="button"><span class="icon"><i data-lucide="link"></i></span><span>Copy link</span></button><button class="button is-light" id="download-tickets" type="button"><span class="icon"><i data-lucide="download"></i></span><span>CSV</span></button></div>
+            <div class="notification is-light" id="mode-disclaimer">Coverage changes portfolio overlap, not the probability of an individual combination.</div>
+          </div></div>
+          <div class="column">
+            <div class="columns is-multiline">
+              <div class="column is-one-third"><div class="box"><p class="heading">Unique numbers</p><p class="title is-5" id="coverage-unique">—</p><p class="help">out of 45</p></div></div>
+              <div class="column is-one-third"><div class="box"><p class="heading">Max game overlap</p><p class="title is-5" id="coverage-overlap">—</p><p class="help">shared numbers</p></div></div>
+              <div class="column is-one-third"><div class="box"><p class="heading">Triple efficiency</p><p class="title is-5" id="coverage-triples">—</p><p class="help">unique / placed</p></div></div>
+              <div class="column is-one-third"><div class="box"><p class="heading">Quad efficiency</p><p class="title is-5" id="coverage-quads">—</p><p class="help">unique / placed</p></div></div>
+              <div class="column is-one-third"><div class="box"><p class="heading">Div 1 chance</p><p class="title is-5" id="coverage-probability">—</p><p class="help">same for any distinct set</p></div></div>
+              <div class="column is-one-third"><div class="box"><p class="heading">Simulated any-prize</p><p class="title is-5" id="coverage-any-prize">—</p><p class="help" id="coverage-any-prize-ci">local estimate</p></div></div>
+            </div>
+            <div class="box">
+              <div class="level is-mobile"><div class="level-left"><span>Pair coverage</span></div><div class="level-right"><strong id="pair-coverage-label">—</strong></div></div><progress id="pair-coverage-meter" class="progress is-primary" value="0" max="100">0%</progress>
+              <div class="level is-mobile"><div class="level-left"><span>Triple coverage</span></div><div class="level-right"><strong id="triple-coverage-label">—</strong></div></div><progress id="triple-coverage-meter" class="progress is-info" value="0" max="100">0%</progress>
+              <div class="level is-mobile"><div class="level-left"><span>Quadruple coverage</span></div><div class="level-right"><strong id="quad-coverage-label">—</strong></div></div><progress id="quad-coverage-meter" class="progress is-success" value="0" max="100">0%</progress>
+            </div>
+            <div id="ticket-grid" class="columns is-multiline" aria-live="polite"><div class="column is-half"><div class="box is-skeleton">Loading portfolio</div></div><div class="column is-half"><div class="box is-skeleton">Loading portfolio</div></div></div>
           </div>
-          <p class="microcopy">One reproducible reference pair is descriptive, not proof of a universal strategy edge.</p>
-        </article>
-        <article class="evidence-card glass">
-          <div class="evidence-head"><div><span class="card-kicker">Walk-forward</span><h3>Recent out-of-sample draws</h3></div><span class="badge" id="backtest-steps">— draws</span></div>
-          <div class="comparison-table" id="backtest-table"></div>
-          <p class="microcopy">Historical frequency and recency are not supplied to either generator.</p>
-        </article>
-      </div>
-      <div class="research-note glass reveal">
-        <div><span class="research-icon" aria-hidden="true">i</span></div>
-        <div><span class="eyebrow">Anti-crowding</span><h3>Potential prize sharing is a different question from winning probability.</h3><p>Research finds that human selections cluster around birthdays, number 7, memorable sequences and regular patterns. The current anti-crowding score remains experimental because it is not calibrated to Saturday Lotto player-level ticket data.</p><div class="research-links"><a href="https://www.cambridge.org/core/journals/judgment-and-decision-making/article/number-preferences-in-lotteries/47BA27051627CEED421AD3AEE255521E" target="_blank" rel="noopener">Number-preference research ↗</a><a href="https://www.sciencedirect.com/science/article/pii/S0165176525003568" target="_blank" rel="noopener">Cost of number 7 ↗</a><a href="https://mediacentre.thelott.com/media-releases/how-aussies-number-picking-patterns-could-slash-their-lottery-winnings/" target="_blank" rel="noopener">Australian player-pattern evidence ↗</a></div></div>
-      </div>
-    </section>
-
-    <section class="section-shell" id="draws">
-      <div class="section-heading reveal">
-        <div><span class="eyebrow">History</span><h2>Browse past draws</h2></div>
-        <p>Filter the validated record by date or number. The historical dataset is for exploration and auditing, not predictive weighting.</p>
-      </div>
-      <div class="explorer glass reveal">
-        <div class="explorer-controls">
-          <label><span>Search</span><input id="draw-search" type="search" placeholder="Date or number…" autocomplete="off"></label>
-          <label><span>From</span><input id="draw-from" type="date"></label>
-          <label><span>To</span><input id="draw-to" type="date"></label>
-          <label><span>Contains number</span><select id="draw-number" class="select-input"><option value="">Any</option></select></label>
-          <button class="button tertiary" id="reset-draw-filters" type="button">Reset</button>
-          <button class="button tertiary" id="download-draws" type="button">Export CSV</button>
         </div>
-        <div class="explorer-summary"><strong id="draw-result-count">—</strong><span>matching draws</span></div>
-        <div class="draw-list" id="draw-list" aria-live="polite"></div>
-        <button class="button secondary load-more" id="load-more-draws" type="button">Show more</button>
       </div>
     </section>
 
-    <section class="section-shell" id="diagnostics">
-      <div class="section-heading reveal">
-        <div><span class="eyebrow">Diagnostics</span><h2>Inspect the historical distribution</h2></div>
-        <p>These views describe past variation and are isolated from ticket generation.</p>
-      </div>
-      <div class="tabs reveal" role="tablist" aria-label="Diagnostic views">
-        <button class="tab active" role="tab" aria-selected="true" aria-controls="panel-frequency" id="tab-frequency" data-tab="frequency">Frequency</button>
-        <button class="tab" role="tab" aria-selected="false" aria-controls="panel-pairs" id="tab-pairs" data-tab="pairs">Pairs</button>
-        <button class="tab" role="tab" aria-selected="false" aria-controls="panel-quality" id="tab-quality" data-tab="quality">Data quality</button>
-      </div>
-      <div class="tab-panel glass reveal active" id="panel-frequency" role="tabpanel" aria-labelledby="tab-frequency">
-        <div class="panel-toolbar"><div><strong>Main-number appearances</strong><small>Use arrow keys when a bar is focused.</small></div><div class="legend"><span class="legend-line"></span> equal-chance expectation</div></div>
-        <div class="frequency-chart" id="frequency-chart" role="list" aria-label="Historical main-number frequency chart"></div>
-        <div class="chart-live" id="chart-live" aria-live="polite"></div>
-      </div>
-      <div class="tab-panel glass" id="panel-pairs" role="tabpanel" aria-labelledby="tab-pairs" hidden><div class="panel-toolbar"><div><strong>Most common historical pairs</strong><small>Observed co-occurrence versus equal-draw expectation.</small></div></div><div class="pair-grid" id="pair-grid"></div></div>
-      <div class="tab-panel glass" id="panel-quality" role="tabpanel" aria-labelledby="tab-quality" hidden>
-        <div class="quality-grid"><div><span>Stats generated</span><strong id="quality-generated">—</strong></div><div><span>χ² vs equal counts</span><strong id="quality-chi">—</strong></div><div><span>Main observations</span><strong id="quality-main">—</strong></div><div><span>Secondary verification</span><strong id="quality-secondary">—</strong></div></div>
-        <div class="provenance-grid"><article><span>Winning CSV SHA-256</span><code id="hash-winning">—</code></article><article><span>Supplementary CSV SHA-256</span><code id="hash-supp">—</code></article></div>
-        <div class="data-warning" id="data-warning" hidden></div>
+    <section class="section" id="evidence">
+      <div class="container">
+        <div class="mb-5"><p class="tag is-link is-light">Evidence</p><h2 class="title is-2 mt-3">Exact results and benchmark evidence</h2><p class="subtitle is-5">Reference simulations and walk-forward checks remain visible; exact portfolio results live in Benchmarks.</p></div>
+        <div class="columns">
+          <div class="column"><div class="box"><div class="level"><div class="level-left"><h3 class="title is-5">Coverage vs seeded QuickPick</h3></div><div class="level-right"><span class="tag" id="sim-trials">— trials</span></div></div><p class="heading">Coverage any prize</p><p class="title is-5" id="sim-coverage-any">—</p><progress id="sim-coverage-bar" class="progress is-primary" value="0" max="100">0%</progress><p class="help mb-4" id="sim-coverage-ci">—</p><p class="heading">QuickPick any prize</p><p class="title is-5" id="sim-random-any">—</p><progress id="sim-random-bar" class="progress is-info" value="0" max="100">0%</progress><p class="help" id="sim-random-ci">—</p></div></div>
+          <div class="column"><div class="box"><div class="level"><div class="level-left"><h3 class="title is-5">Recent out-of-sample draws</h3></div><div class="level-right"><span class="tag" id="backtest-steps">— draws</span></div></div><div id="backtest-table"><div class="skeleton-lines"><div></div><div></div><div></div></div></div></div></div>
+        </div>
+        <article class="message is-info"><div class="message-header"><p><span class="icon"><i data-lucide="users"></i></span> Anti-crowding</p></div><div class="message-body">Potential prize sharing is a different question from winning probability. Human selections cluster around birthdays and familiar patterns, but the current anti-crowding score remains experimental and is not Australia-calibrated.</div></article>
       </div>
     </section>
 
-    <section class="section-shell method-section" id="method">
-      <div class="section-heading reveal"><div><span class="eyebrow">Method</span><h2>What each result means</h2></div><p>Exact mathematics, simulation, historical description and experimental ideas are kept separate.</p></div>
-      <div class="method-grid">
-        <article class="method-card reveal"><span class="claim exact">Exact</span><h3>Combination probability</h3><p>C(45,6) defines the standard-game Division 1 sample space. Distinct combinations add linearly within one draw.</p></article>
-        <article class="method-card reveal"><span class="claim exact">Exact</span><h3>Subset coverage</h3><p>Pair, triple and quadruple coverage is counted directly. Repeated subsets are measurable portfolio redundancy.</p></article>
-        <article class="method-card reveal"><span class="claim simulated">Simulated</span><h3>Portfolio outcomes</h3><p>Monte Carlo estimates unresolved lower-division portfolio behaviour and reports Wilson 95% intervals.</p></article>
-        <article class="method-card reveal"><span class="claim descriptive">Descriptive</span><h3>Historical diagnostics</h3><p>Frequency, pairs, entropy and z-scores inspect past variation but do not weight future tickets.</p></article>
-        <article class="method-card reveal"><span class="claim experimental">Experimental</span><h3>Anti-crowding</h3><p>Human-choice research may inform conditional prize-sharing risk; the heuristic is not Australia-calibrated.</p></article>
-        <article class="method-card reveal"><span class="claim guardrail">Guardrail</span><h3>No predictive scoring</h3><p>No hot, cold, due, pair-lift, recency or machine-learning score is presented as a next-draw probability edge.</p></article>
+    <section class="section" id="draws">
+      <div class="container">
+        <div class="mb-5"><p class="tag is-info is-light">History</p><h2 class="title is-2 mt-3">Browse past draws</h2><p class="subtitle is-5">Filter the validated historical record. These data are for exploration and auditing, not predictive weighting.</p></div>
+        <div class="box">
+          <div class="columns is-multiline">
+            <div class="column is-one-third"><div class="field"><label class="label" for="draw-search">Search</label><div class="control has-icons-left"><input id="draw-search" class="input" type="search" placeholder="Date or number…" autocomplete="off"><span class="icon is-left"><i data-lucide="search"></i></span></div></div></div>
+            <div class="column"><div class="field"><label class="label" for="draw-from">From</label><div class="control"><input id="draw-from" class="input" type="date"></div></div></div>
+            <div class="column"><div class="field"><label class="label" for="draw-to">To</label><div class="control"><input id="draw-to" class="input" type="date"></div></div></div>
+            <div class="column"><div class="field"><label class="label" for="draw-number">Contains</label><div class="control"><div class="select is-fullwidth"><select id="draw-number"><option value="">Any</option></select></div></div></div></div>
+          </div>
+          <div class="buttons"><button class="button is-light" id="reset-draw-filters" type="button"><span class="icon"><i data-lucide="rotate-ccw"></i></span><span>Reset</span></button><button class="button is-light" id="download-draws" type="button"><span class="icon"><i data-lucide="download"></i></span><span>Export CSV</span></button></div>
+          <p class="mb-4"><strong id="draw-result-count">—</strong> matching draws</p>
+          <div id="draw-list" aria-live="polite"><div class="skeleton-lines"><div></div><div></div><div></div><div></div></div></div>
+          <button class="button is-light mt-4" id="load-more-draws" type="button">Show more</button>
+        </div>
       </div>
     </section>
+
+    <section class="section" id="diagnostics">
+      <div class="container">
+        <div class="mb-5"><p class="tag is-warning is-light">Diagnostics</p><h2 class="title is-2 mt-3">Inspect the historical distribution</h2><p class="subtitle is-5">These views describe past variation and are isolated from ticket generation.</p></div>
+        <div class="tabs is-boxed"><ul><li class="is-active"><a href="#panel-frequency" data-tab="frequency"><span class="icon"><i data-lucide="bar-chart-3"></i></span><span>Frequency</span></a></li><li><a href="#panel-pairs" data-tab="pairs"><span class="icon"><i data-lucide="waypoints"></i></span><span>Pairs</span></a></li><li><a href="#panel-quality" data-tab="quality"><span class="icon"><i data-lucide="shield-check"></i></span><span>Data quality</span></a></li></ul></div>
+        <div class="box" id="panel-frequency"><h3 class="title is-5">Main-number appearances</h3><div id="frequency-chart" aria-label="Historical main-number frequency table"><div class="skeleton-lines"><div></div><div></div><div></div></div></div><p class="help" id="chart-live" aria-live="polite"></p></div>
+        <div class="box is-hidden" id="panel-pairs"><h3 class="title is-5">Most common historical pairs</h3><div id="pair-grid" class="columns is-multiline"><div class="column"><div class="box is-skeleton">Loading pairs</div></div></div></div>
+        <div class="box is-hidden" id="panel-quality"><div class="columns is-multiline"><div class="column is-one-quarter"><p class="heading">Stats generated</p><p class="title is-6" id="quality-generated">—</p></div><div class="column is-one-quarter"><p class="heading">χ² vs equal counts</p><p class="title is-6" id="quality-chi">—</p></div><div class="column is-one-quarter"><p class="heading">Main observations</p><p class="title is-6" id="quality-main">—</p></div><div class="column is-one-quarter"><p class="heading">Secondary verification</p><p class="title is-6" id="quality-secondary">—</p></div></div><div class="content"><p><strong>Winning CSV SHA-256</strong><br><code id="hash-winning">—</code></p><p><strong>Supplementary CSV SHA-256</strong><br><code id="hash-supp">—</code></p></div><div class="notification is-warning is-light" id="data-warning" hidden></div></div>
+      </div>
+    </section>
+
+    <section class="section" id="method">
+      <div class="container">
+        <div class="mb-5"><p class="tag is-dark is-light">Method</p><h2 class="title is-2 mt-3">What each result means</h2><p class="subtitle is-5">Exact mathematics, simulation, historical description and experimental ideas are kept separate.</p></div>
+        <div class="columns is-multiline">
+          <div class="column is-one-third"><div class="box"><span class="tag is-success is-light">Exact</span><h3 class="title is-5 mt-3">Combination probability</h3><p>C(45,6) defines the standard-game Division 1 sample space.</p></div></div>
+          <div class="column is-one-third"><div class="box"><span class="tag is-success is-light">Exact</span><h3 class="title is-5 mt-3">Subset coverage</h3><p>Pair, triple and quadruple coverage is counted directly.</p></div></div>
+          <div class="column is-one-third"><div class="box"><span class="tag is-info is-light">Simulated</span><h3 class="title is-5 mt-3">Portfolio outcomes</h3><p>Monte Carlo estimates unresolved lower-division portfolio behaviour.</p></div></div>
+          <div class="column is-one-third"><div class="box"><span class="tag is-light">Descriptive</span><h3 class="title is-5 mt-3">Historical diagnostics</h3><p>Frequency, pairs, entropy and z-scores inspect past variation only.</p></div></div>
+          <div class="column is-one-third"><div class="box"><span class="tag is-warning is-light">Experimental</span><h3 class="title is-5 mt-3">Anti-crowding</h3><p>Human-choice research may inform conditional prize-sharing risk.</p></div></div>
+          <div class="column is-one-third"><div class="box"><span class="tag is-danger is-light">Guardrail</span><h3 class="title is-5 mt-3">No predictive scoring</h3><p>No hot, cold, due, recency or ML score is presented as a next-draw probability edge.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section"><div class="container"><div id="toast" class="notification is-info is-light is-hidden" role="status" aria-live="polite"></div></div></section>
   </main>
 
-  <footer class="site-footer section-shell">
-    <div><strong>Lottery Lab</strong><p>Open-source probability and data-quality tooling. Not affiliated with The Lott.</p></div>
-    <div class="footer-links"><a href="games.html">Games &amp; odds</a><a href="benchmark.html">Benchmarks</a><a href="https://github.com/JDsnyke/saturday-tatts-lotto-scraper">GitHub</a><a href="https://github.com/JDsnyke/saturday-tatts-lotto-scraper/blob/main/docs/METHODOLOGY.md">Method</a></div>
-    <p class="responsible">Lottery products involve financial risk. More entries increase spend as well as probability. Set a budget you are comfortable losing; analysis cannot turn a negative-expectation random game into an investment.</p>
-  </footer>
-
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <footer class="footer"><div class="content has-text-centered"><p><strong>Lottery Lab</strong> · Open-source probability and data-quality tooling. Not affiliated with The Lott.</p><p><a href="games.html">Games &amp; odds</a> · <a href="benchmark.html">Benchmarks</a> · <a href="https://github.com/JDsnyke/saturday-tatts-lotto-scraper">GitHub</a> · <a href="https://github.com/JDsnyke/saturday-tatts-lotto-scraper/blob/main/docs/METHODOLOGY.md">Method</a></p><p class="is-size-7">Lottery products involve financial risk. More entries increase spend as well as probability.</p></div></footer>
 </body>
 </html>

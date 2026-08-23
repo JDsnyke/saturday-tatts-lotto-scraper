@@ -39,12 +39,27 @@ jobs:
           test -f benchmark.html
           test -f games.html
           test -f service-worker.js
-          test -f assets/app.css
+          test -f assets/ui.js
           test -f assets/app.js
+          test -f assets/benchmark.js
+          test -f assets/certificates.js
+          test -f assets/games.js
           test -f assets/game_catalog.json
           test -f assets/lotto_stats.json
+          test ! -f assets/app.css
+          test ! -f assets/games.css
+          test ! -f assets/benchmark.css
+          grep -q 'bulma@1.0.4/css/bulma.min.css' index.html
+          grep -q 'bulma@1.0.4/css/bulma.min.css' games.html
+          grep -q 'bulma@1.0.4/css/bulma.min.css' benchmark.html
+          grep -q 'lucide@1.33.0/dist/umd/lucide.js' index.html
+          grep -q 'lucide@1.33.0/dist/umd/lucide.js' games.html
+          grep -q 'lucide@1.33.0/dist/umd/lucide.js' benchmark.html
+          ! grep -R -n 'style=' index.html games.html benchmark.html assets/ui.js assets/app.js assets/games.js assets/benchmark.js assets/certificates.js
+          node --check assets/ui.js
           node --check assets/app.js
           node --check assets/benchmark.js
+          node --check assets/certificates.js
           node --check assets/games.js
           node --check service-worker.js
           python -m json.tool assets/game_catalog.json >/dev/null
