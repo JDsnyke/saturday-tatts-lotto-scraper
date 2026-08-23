@@ -209,43 +209,50 @@ jobs:
           PY
       - name: Validate browser JavaScript
         run: |
+          node --check assets/ui.js
           node --check assets/app.js
           node --check assets/benchmark.js
           node --check assets/certificates.js
           node --check assets/games.js
           node --check service-worker.js
-      - name: Validate static site references
+      - name: Validate Bulma-only static site
         run: |
           test -f index.html
           test -f benchmark.html
           test -f games.html
-          test -f assets/app.css
+          test -f assets/ui.js
           test -f assets/app.js
-          test -f assets/benchmark.css
           test -f assets/benchmark.js
           test -f assets/certificates.js
-          test -f assets/games.css
           test -f assets/games.js
           test -f assets/lotto_stats.json
           test -f assets/data_provenance.json
           test -f assets/site.webmanifest
           test -f service-worker.js
-          grep -q 'assets/app.css' index.html
+          test ! -f assets/app.css
+          test ! -f assets/benchmark.css
+          test ! -f assets/games.css
+          grep -q 'bulma@1.0.4/css/bulma.min.css' index.html
+          grep -q 'bulma@1.0.4/css/bulma.min.css' benchmark.html
+          grep -q 'bulma@1.0.4/css/bulma.min.css' games.html
+          grep -q 'lucide@1.33.0/dist/umd/lucide.js' index.html
+          grep -q 'lucide@1.33.0/dist/umd/lucide.js' benchmark.html
+          grep -q 'lucide@1.33.0/dist/umd/lucide.js' games.html
+          grep -q 'assets/ui.js' index.html
           grep -q 'assets/app.js' index.html
-          grep -q 'assets/site.webmanifest' index.html
-          grep -q 'assets/benchmark.css' benchmark.html
           grep -q 'assets/benchmark.js' benchmark.html
           grep -q 'assets/certificates.js' benchmark.html
           grep -q 'id="certificates"' benchmark.html
           grep -q 'id="cert-any-exact"' benchmark.html
           grep -q 'exactAnyPrize' assets/certificates.js
-          grep -q 'assets/games.css' games.html
           grep -q 'assets/games.js' games.html
           grep -q 'id="game-grid"' games.html
           grep -q 'id="keno-spot"' games.html
           grep -q 'games.html' assets/site.webmanifest
+          grep -q 'assets/ui.js' service-worker.js
           grep -q 'assets/games.js' service-worker.js
           grep -q 'assets/certificates.js' service-worker.js
           grep -q 'benchmark.html' service-worker.js
           grep -q 'games.html' service-worker.js
           grep -q 'service-worker.js' assets/app.js
+          ! grep -R -n 'style=' index.html games.html benchmark.html assets/ui.js assets/app.js assets/games.js assets/benchmark.js assets/certificates.js
