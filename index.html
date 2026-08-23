@@ -4,9 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
-  <meta name="theme-color" content="#07101f">
-  <meta name="description" content="Saturday Lotto Lab: exact probability, portfolio coverage, historical diagnostics and transparent lottery research for Saturday Lotto / TattsLotto.">
-  <title>Saturday Lotto Lab · Probability & Coverage Research</title>
+  <meta name="theme-color" content="#f5f6f3">
+  <meta name="description" content="Saturday Lotto probability, portfolio coverage, draw history and diagnostics with transparent evidence labels.">
+  <title>Saturday Lotto · Lottery Lab</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="assets/site.webmanifest">
   <link rel="stylesheet" href="assets/app.css">
@@ -15,21 +15,18 @@
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
-  <div class="noise" aria-hidden="true"></div>
-  <div class="aurora aurora-a" aria-hidden="true"></div>
-  <div class="aurora aurora-b" aria-hidden="true"></div>
 
   <header class="site-header" id="top">
-    <a class="brand" href="#top" aria-label="Saturday Lotto Lab home">
+    <a class="brand" href="index.html" aria-label="Lottery Lab home">
       <span class="brand-orbit" aria-hidden="true"><span>6</span></span>
-      <span class="brand-copy"><strong>Saturday Lotto</strong><small>Probability Lab</small></span>
+      <span class="brand-copy"><strong>Lottery Lab</strong><small>Saturday Lotto</small></span>
     </a>
     <nav class="header-nav" aria-label="Primary navigation">
-      <a href="#planner">Planner</a>
-      <a href="#tickets">Ticket Lab</a>
-      <a href="#evidence">Evidence</a>
-      <a href="#draws">Draws</a>
-      <a href="#diagnostics">Diagnostics</a>
+      <a href="index.html" aria-current="page">Saturday</a>
+      <a href="games.html">Games &amp; odds</a>
+      <a href="benchmark.html">Benchmarks</a>
+      <a href="#tickets">Portfolio</a>
+      <a href="#draws">Draw history</a>
     </nav>
     <div class="header-actions">
       <span class="data-pill" id="header-data-status"><span class="status-dot"></span><span>Loading data</span></span>
@@ -40,33 +37,33 @@
   <main id="main">
     <section class="hero section-shell">
       <div class="hero-copy reveal">
-        <div class="eyebrow"><span class="status-dot"></span> Probability first · evidence labelled</div>
-        <h1>Improve what can<br><span>actually be improved.</span></h1>
-        <p class="hero-lead">Every distinct six-number combination has the same chance of being drawn. The useful optimisation problem is different: own more unique combinations, reduce redundant overlap across multiple games, quantify lower-division coverage, and avoid confusing historical noise with prediction.</p>
+        <div class="eyebrow">Saturday Lotto / TattsLotto</div>
+        <h1>Saturday Lotto probability &amp; portfolio tools</h1>
+        <p class="hero-lead">Exact odds, multi-entry coverage, draw history and diagnostics. Historical frequencies are available for auditing, but they never score or rank future numbers.</p>
         <div class="hero-actions">
-          <a class="button primary" href="#planner">Plan probabilities <span aria-hidden="true">→</span></a>
-          <a class="button secondary" href="#tickets">Build a portfolio</a>
+          <a class="button primary" href="#planner">Open probability planner</a>
+          <a class="button secondary" href="#tickets">Build portfolio</a>
         </div>
         <div class="principle-strip" aria-label="Project principles">
-          <span><b>01</b> Exact combinatorics</span>
-          <span><b>02</b> Out-of-sample tests</span>
-          <span><b>03</b> Source cross-checks</span>
-          <span><b>04</b> No hot-number scoring</span>
+          <span>Exact odds</span>
+          <span>Portfolio overlap</span>
+          <span>Source-checked data</span>
+          <span>No predictive scoring</span>
         </div>
       </div>
 
       <aside class="hero-console glass reveal" aria-labelledby="hero-console-title">
-        <div class="console-head"><span class="card-kicker">One standard game</span><span class="live-chip">CURRENT RULESET</span></div>
-        <h2 id="hero-console-title">Division 1</h2>
+        <div class="console-head"><span class="card-kicker">Standard game</span><span class="live-chip">Exact</span></div>
+        <h2 id="hero-console-title">Division 1 odds</h2>
         <div class="odds-number" id="hero-odds">1 in 8,145,060</div>
         <div class="probability-track"><span id="hero-probability-bar"></span></div>
         <div class="console-grid">
           <div><span>Probability</span><strong id="hero-probability">0.00001228%</strong></div>
           <div><span>Any prize</span><strong id="hero-any-prize">≈ 1 in 42</strong></div>
-          <div><span>Draw matrix</span><strong>6 + 2 / 45</strong></div>
-          <div><span>Selection edge</span><strong>None for Div 1</strong></div>
+          <div><span>Draw</span><strong>6 + 2 / 45</strong></div>
+          <div><span>Number-selection edge</span><strong>None for Div 1</strong></div>
         </div>
-        <p class="console-note">Selecting “better” numbers cannot improve Division 1 odds in a fair draw. A portfolio can, however, be structured to reduce repeated lower-order subsets.</p>
+        <p class="console-note">Every six-number combination has the same Division 1 chance. Portfolio structure only changes overlap between the games you own.</p>
       </aside>
     </section>
 
@@ -80,16 +77,16 @@
     <section class="section-shell thesis reveal" role="note" aria-labelledby="thesis-title">
       <div class="thesis-mark" aria-hidden="true">≠</div>
       <div>
-        <span class="eyebrow">The governing rule</span>
-        <h2 id="thesis-title">History can test randomness. It cannot make a fair future combination “due”.</h2>
-        <p>Frequency, recency, streaks and historical pair counts remain useful for data auditing and randomness diagnostics. They are deliberately excluded from ticket probability weights. The optimisation tools below focus on quantities that can be measured objectively.</p>
+        <span class="eyebrow">Historical data</span>
+        <h2 id="thesis-title">Historical frequency is descriptive, not predictive.</h2>
+        <p>Frequency, streaks and pair counts help inspect the dataset. They are deliberately excluded from ticket generation because a fair next draw does not remember the previous ones.</p>
       </div>
     </section>
 
     <section class="section-shell" id="planner">
       <div class="section-heading reveal">
-        <div><span class="eyebrow">Probability Planner</span><h2>Measure the effect of entries, systems and time</h2></div>
-        <p>Change the number of distinct standard games or choose a System entry. The calculator separates per-draw probability from cumulative probability across repeated independent draws.</p>
+        <div><span class="eyebrow">Planner</span><h2>Entries, systems and repeated draws</h2></div>
+        <p>Compare distinct standard games, System entries and repeated independent draws without mixing those different kinds of exposure.</p>
       </div>
       <div class="planner-layout">
         <aside class="control-card glass reveal">
@@ -108,7 +105,7 @@
               <option value="6">System 6</option><option value="7">System 7</option><option value="8" selected>System 8</option><option value="9">System 9</option><option value="10">System 10</option><option value="11">System 11</option><option value="12">System 12</option><option value="13">System 13</option><option value="14">System 14</option><option value="15">System 15</option><option value="16">System 16</option><option value="17">System 17</option><option value="18">System 18</option><option value="19">System 19</option><option value="20">System 20</option>
             </select>
           </div>
-          <p class="microcopy">A System <em>k</em> entry contains C(<em>k</em>, 6) standard six-number combinations. It does not make any underlying combination more likely.</p>
+          <p class="microcopy">A System <em>k</em> entry contains C(<em>k</em>, 6) standard six-number combinations. It does not make an underlying combination more likely.</p>
         </aside>
 
         <div class="planner-results reveal">
@@ -118,7 +115,7 @@
             <article class="result-card glass accent"><span id="system-label">System 8 contains</span><strong id="system-combinations">28</strong><small>standard combinations</small></article>
           </div>
           <div class="glass data-table-card">
-            <div class="table-heading"><div><strong>Exact standard-game prize probabilities</strong><small>Derived from six winning, two supplementary and 37 other balls.</small></div><span class="badge">Exact</span></div>
+            <div class="table-heading"><div><strong>Exact standard-game prize probabilities</strong><small>Six winning, two supplementary and 37 other balls.</small></div><span class="badge">Exact</span></div>
             <div class="table-wrap"><table><thead><tr><th>Division</th><th>Requirement</th><th>Probability</th><th>Odds</th></tr></thead><tbody id="prize-table-body"></tbody></table></div>
           </div>
           <div class="glass match-card">
@@ -131,19 +128,19 @@
 
     <section class="section-shell" id="tickets">
       <div class="section-heading reveal">
-        <div><span class="eyebrow">Ticket Lab 2.1</span><h2>Optimise a multi-entry portfolio</h2></div>
-        <p>Coverage mode searches for entries that add the most new four-, three- and two-number subsets. QuickPick is the unbiased baseline. Anti-crowding is experimental and targets possible prize-sharing only.</p>
+        <div><span class="eyebrow">Portfolio</span><h2>Build lower-overlap ticket sets</h2></div>
+        <p>Coverage searches for games that add new quadruples, triples and pairs. QuickPick is the unbiased baseline. Anti-crowding stays separate because it concerns possible prize sharing, not draw probability.</p>
       </div>
       <div class="ticket-layout">
         <aside class="control-card glass reveal sticky-card">
           <div class="control-group"><label for="ticket-count">Number of games <output id="ticket-count-output" for="ticket-count">10</output></label><input id="ticket-count" type="range" min="1" max="40" value="10" step="1"></div>
           <fieldset class="mode-fieldset"><legend>Generation mode</legend>
-            <label class="choice-card"><input type="radio" name="mode" value="coverage" checked><span class="choice-copy"><strong>Combinatorial coverage <em>Recommended for structure</em></strong><small>Maximises new quadruples, triples and pairs, then reduces overlap.</small></span></label>
+            <label class="choice-card"><input type="radio" name="mode" value="coverage" checked><span class="choice-copy"><strong>Combinatorial coverage <em>Recommended</em></strong><small>Adds new quadruples, triples and pairs, then reduces overlap.</small></span></label>
             <label class="choice-card"><input type="radio" name="mode" value="random"><span class="choice-copy"><strong>Uniform QuickPick</strong><small>Cryptographically random, distinct six-number combinations.</small></span></label>
-            <label class="choice-card experimental"><input type="radio" name="mode" value="anti-crowding"><span class="choice-copy"><strong>Anti-crowding <em>Experimental</em></strong><small>Avoids birthday-heavy, 7, consecutive and evenly spaced patterns. Same draw odds.</small></span></label>
+            <label class="choice-card experimental"><input type="radio" name="mode" value="anti-crowding"><span class="choice-copy"><strong>Anti-crowding <em>Experimental</em></strong><small>Avoids common human patterns. Same draw odds.</small></span></label>
           </fieldset>
           <button class="button primary wide" id="generate-tickets" type="button">Generate portfolio</button>
-          <div class="button-row"><button class="button tertiary" id="copy-share" type="button">Copy share link</button><button class="button tertiary" id="download-tickets" type="button">CSV</button></div>
+          <div class="button-row"><button class="button tertiary" id="copy-share" type="button">Copy link</button><button class="button tertiary" id="download-tickets" type="button">Export CSV</button></div>
           <p class="microcopy" id="mode-disclaimer">Coverage changes portfolio overlap, not the probability of an individual combination.</p>
         </aside>
 
@@ -168,8 +165,8 @@
 
     <section class="section-shell" id="evidence">
       <div class="section-heading reveal">
-        <div><span class="eyebrow">Strategy Evidence</span><h2>Test structure, not superstition</h2></div>
-        <p>Reference Monte Carlo and walk-forward results compare portfolio structures. Confidence intervals and sample sizes remain visible so a noisy advantage cannot be mistaken for certainty.</p>
+        <div><span class="eyebrow">Evidence</span><h2>Exact results and benchmark evidence</h2></div>
+        <p>Reference simulations and walk-forward checks remain visible, while exact portfolio results live in the dedicated benchmark page.</p>
       </div>
       <div class="evidence-grid reveal">
         <article class="evidence-card glass">
@@ -178,24 +175,24 @@
             <div class="compare-row"><div><span>Coverage any prize</span><strong id="sim-coverage-any">—</strong></div><div class="compare-track"><span id="sim-coverage-bar"></span></div><small id="sim-coverage-ci">—</small></div>
             <div class="compare-row"><div><span>QuickPick any prize</span><strong id="sim-random-any">—</strong></div><div class="compare-track"><span id="sim-random-bar"></span></div><small id="sim-random-ci">—</small></div>
           </div>
-          <p class="microcopy">This is one reproducible reference pair of portfolios. It is not sufficient on its own to establish a universal strategy edge.</p>
+          <p class="microcopy">One reproducible reference pair is descriptive, not proof of a universal strategy edge.</p>
         </article>
         <article class="evidence-card glass">
           <div class="evidence-head"><div><span class="card-kicker">Walk-forward</span><h3>Recent out-of-sample draws</h3></div><span class="badge" id="backtest-steps">— draws</span></div>
           <div class="comparison-table" id="backtest-table"></div>
-          <p class="microcopy">No historical frequency or recency signal is supplied to either generator. The previous draw date is used only as a reproducible seed.</p>
+          <p class="microcopy">Historical frequency and recency are not supplied to either generator.</p>
         </article>
       </div>
       <div class="research-note glass reveal">
-        <div><span class="research-icon" aria-hidden="true">⌁</span></div>
-        <div><span class="eyebrow">Experimental payout research</span><h3>Anti-crowding affects potential sharing, not winning probability.</h3><p>Published lottery research finds that human selections cluster around birthdays, number 7, memorable sequences and aesthetic patterns. In pari-mutuel games, popular combinations can produce more co-winners if drawn. The current anti-crowding score is deliberately labelled experimental because it is not calibrated to Saturday Lotto player-level ticket data.</p><div class="research-links"><a href="https://www.cambridge.org/core/journals/judgment-and-decision-making/article/number-preferences-in-lotteries/47BA27051627CEED421AD3AEE255521E" target="_blank" rel="noopener">Number-preference research ↗</a><a href="https://www.sciencedirect.com/science/article/pii/S0165176525003568" target="_blank" rel="noopener">Cost of number 7 ↗</a><a href="https://mediacentre.thelott.com/media-releases/how-aussies-number-picking-patterns-could-slash-their-lottery-winnings/" target="_blank" rel="noopener">Australian player-pattern evidence ↗</a></div></div>
+        <div><span class="research-icon" aria-hidden="true">i</span></div>
+        <div><span class="eyebrow">Anti-crowding</span><h3>Potential prize sharing is a different question from winning probability.</h3><p>Research finds that human selections cluster around birthdays, number 7, memorable sequences and regular patterns. The current anti-crowding score remains experimental because it is not calibrated to Saturday Lotto player-level ticket data.</p><div class="research-links"><a href="https://www.cambridge.org/core/journals/judgment-and-decision-making/article/number-preferences-in-lotteries/47BA27051627CEED421AD3AEE255521E" target="_blank" rel="noopener">Number-preference research ↗</a><a href="https://www.sciencedirect.com/science/article/pii/S0165176525003568" target="_blank" rel="noopener">Cost of number 7 ↗</a><a href="https://mediacentre.thelott.com/media-releases/how-aussies-number-picking-patterns-could-slash-their-lottery-winnings/" target="_blank" rel="noopener">Australian player-pattern evidence ↗</a></div></div>
       </div>
     </section>
 
     <section class="section-shell" id="draws">
       <div class="section-heading reveal">
-        <div><span class="eyebrow">Draw Explorer</span><h2>Search the historical record</h2></div>
-        <p>Filter the validated dataset by date or number. Historical draws are provided for exploration and auditing, not for predictive weighting.</p>
+        <div><span class="eyebrow">History</span><h2>Browse past draws</h2></div>
+        <p>Filter the validated record by date or number. The historical dataset is for exploration and auditing, not predictive weighting.</p>
       </div>
       <div class="explorer glass reveal">
         <div class="explorer-controls">
@@ -214,8 +211,8 @@
 
     <section class="section-shell" id="diagnostics">
       <div class="section-heading reveal">
-        <div><span class="eyebrow">Historical Diagnostics</span><h2>Audit the distribution</h2></div>
-        <p>These views describe historical variation. They are intentionally isolated from ticket generation so descriptive noise cannot leak into future-draw probability claims.</p>
+        <div><span class="eyebrow">Diagnostics</span><h2>Inspect the historical distribution</h2></div>
+        <p>These views describe past variation and are isolated from ticket generation.</p>
       </div>
       <div class="tabs reveal" role="tablist" aria-label="Diagnostic views">
         <button class="tab active" role="tab" aria-selected="true" aria-controls="panel-frequency" id="tab-frequency" data-tab="frequency">Frequency</button>
@@ -236,21 +233,21 @@
     </section>
 
     <section class="section-shell method-section" id="method">
-      <div class="section-heading reveal"><div><span class="eyebrow">Method & Guardrails</span><h2>A hierarchy of claims</h2></div><p>The site labels what is exact mathematics, what is simulation evidence, what is historical description, and what remains experimental.</p></div>
+      <div class="section-heading reveal"><div><span class="eyebrow">Method</span><h2>What each result means</h2></div><p>Exact mathematics, simulation, historical description and experimental ideas are kept separate.</p></div>
       <div class="method-grid">
-        <article class="method-card reveal"><span class="method-number">01</span><span class="claim exact">Exact</span><h3>Combination probability</h3><p>C(45,6) defines the standard-game Division 1 sample space. Distinct combinations add linearly within one draw.</p></article>
-        <article class="method-card reveal"><span class="method-number">02</span><span class="claim exact">Exact</span><h3>Subset coverage</h3><p>Pair, triple and quadruple coverage is counted directly. Repeated subsets are measurable portfolio redundancy.</p></article>
-        <article class="method-card reveal"><span class="method-number">03</span><span class="claim simulated">Simulated</span><h3>Portfolio outcomes</h3><p>Monte Carlo estimates lower-division portfolio behaviour and reports Wilson 95% confidence intervals.</p></article>
-        <article class="method-card reveal"><span class="method-number">04</span><span class="claim descriptive">Descriptive</span><h3>Historical diagnostics</h3><p>Frequency, pairs, entropy and z-scores inspect past variation but do not weight future tickets.</p></article>
-        <article class="method-card reveal"><span class="method-number">05</span><span class="claim experimental">Experimental</span><h3>Anti-crowding</h3><p>Human-choice research may inform conditional prize-sharing risk; the current heuristic is not Australia-calibrated.</p></article>
-        <article class="method-card reveal"><span class="method-number">06</span><span class="claim guardrail">Guardrail</span><h3>No prediction theatre</h3><p>No “hot”, “cold”, “due”, pair-lift, recency or machine-learning score is presented as a next-draw probability edge.</p></article>
+        <article class="method-card reveal"><span class="claim exact">Exact</span><h3>Combination probability</h3><p>C(45,6) defines the standard-game Division 1 sample space. Distinct combinations add linearly within one draw.</p></article>
+        <article class="method-card reveal"><span class="claim exact">Exact</span><h3>Subset coverage</h3><p>Pair, triple and quadruple coverage is counted directly. Repeated subsets are measurable portfolio redundancy.</p></article>
+        <article class="method-card reveal"><span class="claim simulated">Simulated</span><h3>Portfolio outcomes</h3><p>Monte Carlo estimates unresolved lower-division portfolio behaviour and reports Wilson 95% intervals.</p></article>
+        <article class="method-card reveal"><span class="claim descriptive">Descriptive</span><h3>Historical diagnostics</h3><p>Frequency, pairs, entropy and z-scores inspect past variation but do not weight future tickets.</p></article>
+        <article class="method-card reveal"><span class="claim experimental">Experimental</span><h3>Anti-crowding</h3><p>Human-choice research may inform conditional prize-sharing risk; the heuristic is not Australia-calibrated.</p></article>
+        <article class="method-card reveal"><span class="claim guardrail">Guardrail</span><h3>No predictive scoring</h3><p>No hot, cold, due, pair-lift, recency or machine-learning score is presented as a next-draw probability edge.</p></article>
       </div>
     </section>
   </main>
 
   <footer class="site-footer section-shell">
-    <div><strong>Saturday Lotto Lab</strong><p>Open-source probability and data-quality tooling. Not affiliated with The Lott.</p></div>
-    <div class="footer-links"><a href="https://github.com/JDsnyke/saturday-tatts-lotto-scraper">GitHub</a><a href="https://github.com/JDsnyke/saturday-tatts-lotto-scraper/blob/main/ROADMAP.md">Roadmap</a><a href="https://github.com/JDsnyke/saturday-tatts-lotto-scraper/blob/main/docs/METHODOLOGY.md">Methodology</a></div>
+    <div><strong>Lottery Lab</strong><p>Open-source probability and data-quality tooling. Not affiliated with The Lott.</p></div>
+    <div class="footer-links"><a href="games.html">Games &amp; odds</a><a href="benchmark.html">Benchmarks</a><a href="https://github.com/JDsnyke/saturday-tatts-lotto-scraper">GitHub</a><a href="https://github.com/JDsnyke/saturday-tatts-lotto-scraper/blob/main/docs/METHODOLOGY.md">Method</a></div>
     <p class="responsible">Lottery products involve financial risk. More entries increase spend as well as probability. Set a budget you are comfortable losing; analysis cannot turn a negative-expectation random game into an investment.</p>
   </footer>
 

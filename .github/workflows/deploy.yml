@@ -5,9 +5,14 @@ on:
     branches: [main]
     paths:
       - 'index.html'
+      - 'benchmark.html'
+      - 'games.html'
+      - 'service-worker.js'
       - 'assets/**'
       - 'README.md'
       - 'ROADMAP.md'
+      - 'GITHUB_PAGES.md'
+      - '.nojekyll'
       - '.github/workflows/deploy.yml'
   workflow_dispatch:
 
@@ -28,6 +33,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+      - name: Validate static site payload
+        run: |
+          test -f index.html
+          test -f benchmark.html
+          test -f games.html
+          test -f service-worker.js
+          test -f assets/app.css
+          test -f assets/app.js
+          test -f assets/game_catalog.json
+          test -f assets/lotto_stats.json
+          node --check assets/app.js
+          node --check assets/benchmark.js
+          node --check assets/games.js
+          node --check service-worker.js
+          python -m json.tool assets/game_catalog.json >/dev/null
+          python -m json.tool assets/lotto_stats.json >/dev/null
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5
         with:
