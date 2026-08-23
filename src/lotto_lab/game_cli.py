@@ -3,7 +3,12 @@ from __future__ import annotations
 import argparse
 import json
 
-from .game_catalog import GAMES, list_games
+from .alternative_catalog import (
+    ALTERNATIVE_GAMES,
+    alternative_snapshot,
+    list_alternative_games,
+)
+from .game_catalog import GAMES, GameDefinition, list_games
 from .game_probability import (
     cash3_any_order_probability,
     game_odds_summary,
@@ -12,13 +17,47 @@ from .game_probability import (
     odds_from_fraction,
 )
 
+UNVERIFIED_CURRENT_ANY_ODDS = {
+    "weekday-windfall",
+    "lotto-strike",
+    "lucky-lotteries-super",
+    "lucky-lotteries-mega",
+}
 
-def _game_row(slug: str) -> dict:
-    summary = game_odds_summary(slug)
+ALL_GAME_SLUGS = tuple(sorted((*GAMES, *ALTERNATIVE_GAMES)))
+
+
+def _all_games() -> list[GameDefinition]:
+    return sorted(
+        [*list_games(), *list_alternative_games()],
+        key=lambda game: (game.operator, game.name),
+    )
+
+
+def _resolve_game(slug: str) -> GameDefinition:
+    if slug in GAMES:
+        return GAMES[slug]
+    if slug in ALTERNATIVE_GAMES:
+        return ALTERNATIVE_GAMES[slug]
+    raise KeyError(f"unknown game: {slug}")
+
+
+def _summary_for_game(game: GameDefinition) -> dict:
+    summary = game_odds_summary(game)
+    if game.slug in UNVERIFIED_CURRENT_ANY_ODDS:
+        summary["official_any_odds"] = None
+        summary["officialAnyProbability"] = None
+    summary["raffleSnapshot"] = alternative_snapshot(game.slug)
+    return summary
+
+
+def _game_row(game: GameDefinition) -> dict:
+    summary = _summary_for_game(game)
     computed = summary["computedTopPrize"]
     exact_any = summary["exactAnyPrize"]
+    snapshot = summary["raffleSnapshot"]
     return {
-        "slug": slug,
+        "slug": game.slug,
         "name": summary["name"],
         "operator": summary["operator"],
         "mechanic": summary["mechanic"],
@@ -28,6 +67,7 @@ def _game_row(slug: str) -> dict:
         "officialTopOdds": summary["official_top_odds"],
         "exactAnyPrizeOdds": None if exact_any is None else exact_any["odds"],
         "officialAnyOdds": summary["official_any_odds"],
+        "raffleSnapshot": snapshot,
     }
 
 
@@ -76,7 +116,7 @@ def build_parser() -> argparse.ArgumentParser:
     games.add_argument("--json", action="store_true")
 
     odds = sub.add_parser("game-odds", help="Show exact/official odds metadata for one game")
-    odds.add_argument("--game", choices=tuple(sorted(GAMES)), required=True)
+    odds.add_argument("--game", choices=ALL_GAME_SLUGS, required=True)
 
     keno = sub.add_parser("keno", help="Calculate exact Keno match probabilities for a Spot 1–10 selection")
     keno.add_argument("--spot", type=int, choices=range(1, 11), required=True)
@@ -90,13 +130,13 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
 
     if args.command == "games":
-        games = list_games()
+        games = _all_games()
         if args.operator:
             term = args.operator.casefold()
             games = [game for game in games if term in game.operator.casefold()]
         if args.mechanic:
             games = [game for game in games if game.mechanic == args.mechanic]
-        rows = [_game_row(game.slug) for game in games]
+        rows = [_game_row(game) for game in games]
         if args.json:
             print(json.dumps(rows, indent=2))
         else:
@@ -104,7 +144,7 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     if args.command == "game-odds":
-        print(json.dumps(game_odds_summary(args.game), indent=2))
+        print(json.dumps(_summary_for_game(_resolve_game(args.game)), indent=2))
         return 0
 
     if args.command == "keno":
