@@ -3,23 +3,44 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+PAGES = ("index.html", "games.html", "benchmark.html")
 
 
 class UiRedesignTests(unittest.TestCase):
-    def test_shared_ui_drops_decorative_gradient_layer(self):
-        css = (ROOT / "assets/app.css").read_text(encoding="utf-8")
-        self.assertNotIn("radial-gradient", css)
-        self.assertNotIn("linear-gradient", css)
-        self.assertIn(".noise, .aurora { display: none", css)
-        self.assertIn("--border:", css)
-        self.assertIn("--panel:", css)
-        self.assertIn("--panel-soft:", css)
+    def test_no_custom_design_stylesheets_remain(self):
+        for name in ("assets/app.css", "assets/games.css", "assets/benchmark.css"):
+            self.assertFalse((ROOT / name).exists(), name)
+
+    def test_bulma_features_are_used_directly(self):
+        pages = "\n".join((ROOT / name).read_text(encoding="utf-8") for name in PAGES)
+        self.assertIn("bulma@1.0.4/css/bulma.min.css", pages)
+        self.assertIn("navbar", pages)
+        self.assertIn("hero", pages)
+        self.assertIn("columns", pages)
+        self.assertIn("card", pages)
+        self.assertIn("notification", pages)
+        self.assertIn("progress", pages)
+        self.assertIn("is-skeleton", pages)
+        self.assertIn("skeleton-lines", pages)
+
+    def test_theme_switcher_uses_bulma_data_theme_contract(self):
+        script = (ROOT / "assets/ui.js").read_text(encoding="utf-8")
+        self.assertIn("setAttribute('data-theme', value)", script)
+        self.assertIn("removeAttribute('data-theme')", script)
+        self.assertIn("['system', 'light', 'dark']", script)
+        self.assertNotIn("style.", script)
+
+    def test_lucide_is_the_icon_system(self):
+        pages = "\n".join((ROOT / name).read_text(encoding="utf-8") for name in PAGES)
+        script = (ROOT / "assets/ui.js").read_text(encoding="utf-8")
+        self.assertIn("lucide@1.33.0/dist/umd/lucide.js", pages)
+        self.assertIn("data-lucide=", pages)
+        self.assertIn("lucide.createIcons", script)
+        for symbol in ("◐", "Δ", "Σ", "✓"):
+            self.assertNotIn(symbol, pages)
 
     def test_old_generated_homepage_slogans_are_removed(self):
-        pages = "\n".join(
-            (ROOT / name).read_text(encoding="utf-8")
-            for name in ("index.html", "games.html", "benchmark.html")
-        )
+        pages = "\n".join((ROOT / name).read_text(encoding="utf-8") for name in PAGES)
         for phrase in (
             "Improve what can",
             "Not just the jackpot ads",
@@ -30,20 +51,11 @@ class UiRedesignTests(unittest.TestCase):
 
     def test_pages_deployment_tracks_all_user_facing_surfaces(self):
         workflow = (ROOT / ".github/workflows/deploy.yml").read_text(encoding="utf-8")
-        for path in (
-            "index.html",
-            "benchmark.html",
-            "games.html",
-            "service-worker.js",
-            "assets/**",
-        ):
+        for path in ("index.html", "benchmark.html", "games.html", "service-worker.js", "assets/**"):
             self.assertIn(path, workflow)
         self.assertIn("Validate static site payload", workflow)
-
-    def test_page_specific_css_no_longer_duplicates_design_system(self):
-        for name in ("assets/games.css", "assets/benchmark.css"):
-            css = (ROOT / name).read_text(encoding="utf-8")
-            self.assertLess(len(css), 500, name)
+        self.assertIn("test ! -f assets/app.css", workflow)
+        self.assertIn("! grep -R -n 'style='", workflow)
 
     def test_pwa_metadata_matches_neutral_redesign(self):
         manifest = json.loads((ROOT / "assets/site.webmanifest").read_text(encoding="utf-8"))
@@ -56,7 +68,6 @@ class UiRedesignTests(unittest.TestCase):
         self.assertNotIn("linearGradient", favicon)
         self.assertNotIn("feDropShadow", favicon)
         self.assertNotIn("sparkle", favicon.casefold())
-        self.assertIn('fill="#0b6b4f"', favicon)
 
 
 if __name__ == "__main__":
