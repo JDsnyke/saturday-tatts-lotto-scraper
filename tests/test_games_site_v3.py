@@ -25,6 +25,18 @@ class GamesSiteTests(unittest.TestCase):
         self.assertIn('id="cash3-digits"', page)
         self.assertIn('id="sfl-draws"', page)
 
+    def test_primary_navigation_exposes_all_research_surfaces(self):
+        index = (ROOT / "index.html").read_text(encoding="utf-8")
+        games = (ROOT / "games.html").read_text(encoding="utf-8")
+        benchmark = (ROOT / "benchmark.html").read_text(encoding="utf-8")
+        for page in (index, games, benchmark):
+            self.assertIn('href="index.html"', page)
+            self.assertIn('href="games.html"', page)
+            self.assertIn('href="benchmark.html"', page)
+        self.assertIn('aria-current="page">Saturday</a>', index)
+        self.assertIn('aria-current="page">Games &amp; odds</a>', games)
+        self.assertIn('aria-current="page">Benchmarks</a>', benchmark)
+
     def test_browser_catalog_is_generated_not_hard_coded(self):
         script = (ROOT / "assets/games.js").read_text(encoding="utf-8")
         payload = json.loads((ROOT / "assets/game_catalog.json").read_text(encoding="utf-8"))
@@ -73,7 +85,7 @@ class GamesSiteTests(unittest.TestCase):
         self.assertIn("./assets/games.css", worker)
         self.assertIn("./assets/games.js", worker)
         self.assertIn("./assets/game_catalog.json", worker)
-        self.assertIn("australian-lottery-lab-v3-0-0", worker)
+        self.assertIn("australian-lottery-lab-v3-0-1-ui", worker)
 
 
 if __name__ == "__main__":
