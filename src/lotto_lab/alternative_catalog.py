@@ -91,8 +91,8 @@ ALTERNATIVE_GAMES: dict[str, GameDefinition] = {
         description="Mater Foundation Prize Home art union with draw-specific entry capacity and bundles.",
         sources=(MATER_HOME_327,),
         notes=(
-            "Prize Home 327 terms show the number of available entries can vary materially with bundle "
-            "purchases, so the permitted/possible entry count is not represented as a fixed one-ticket odds denominator.",
+            "Prize Home 327 terms show available entries can vary materially with bundle purchases, "
+            "so the possible entry count is not represented as a fixed one-ticket odds denominator.",
         ),
     ),
     "mater-cars-for-cancer": GameDefinition(
@@ -106,7 +106,7 @@ ALTERNATIVE_GAMES: dict[str, GameDefinition] = {
         sources=(MATER_CARS_130,),
         notes=(
             "Current Lottery 130 permits up to 85,117 tickets at $30 each. The cap is useful scarcity "
-            "metadata but is not promoted as exact odds unless the draw's valid-entry mechanics make it exact.",
+            "metadata but is not promoted as exact odds unless the valid-entry mechanics make it exact.",
         ),
     ),
     "dream-home-art-union": GameDefinition(
@@ -122,8 +122,8 @@ ALTERNATIVE_GAMES: dict[str, GameDefinition] = {
         ),
         sources=(DREAM_HOME_CURRENT, DREAM_HOME_FAQ),
         notes=(
-            "Draw 434 opened 15 August 2026 and is scheduled to be drawn 20 October 2026. Entry capacity "
-            "and bonus-entry structures are draw-specific and must be taken from that draw's terms before odds are computed.",
+            "Draw 434 is scheduled for 20 October 2026. Entry capacity and bonus-entry structures are "
+            "draw-specific and must be sourced from that draw's terms before odds are computed.",
         ),
     ),
     "endeavour-prize-home": GameDefinition(
@@ -147,7 +147,9 @@ ALTERNATIVE_GAMES: dict[str, GameDefinition] = {
         mechanic="variable-raffle",
         jurisdictions=("Australia — eligibility and draw terms apply",),
         schedule="Recurring cash/vehicle prize draws",
-        description="Lower-cost fixed-capacity prize draws supporting Endeavour Foundation charitable causes.",
+        description=(
+            "Lower-cost fixed-capacity prize draws supporting Endeavour Foundation charitable causes."
+        ),
         sources=(ENDEAVOUR_PAYDAY_221,),
         notes=(
             "Pay Day 221 is limited to 200,000 tickets at $5 each and is drawn 8 October 2026. "
@@ -217,21 +219,20 @@ ALTERNATIVE_SNAPSHOTS: dict[str, RaffleSnapshot] = {
     ),
     "endeavour-prize-home": RaffleSnapshot(
         draw_id="468",
-        status="recently drawn",
+        status="sold out / drawn",
         draw_date="2026-08-20",
         ticket_price_from=10.0,
         first_prize_value=3_700_000.0,
         first_prize_label="$3.7M Maleny Home of the Year",
         source=ENDEAVOUR_HOME_468,
         probability_note=(
-            "Bundle purchases include bonus tickets. This snapshot demonstrates the product family but "
+            "Bundle purchases included bonus tickets. This snapshot demonstrates the product family but "
             "does not treat dollars spent as a fixed probability denominator."
         ),
     ),
     "endeavour-pay-day": RaffleSnapshot(
         draw_id="221",
-        status="open/current on source check",
-        close_date="2026-10-01",
+        status="current on source check",
         draw_date="2026-10-08",
         ticket_price_from=5.0,
         maximum_entries=200_000,
