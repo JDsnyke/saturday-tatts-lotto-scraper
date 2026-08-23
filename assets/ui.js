@@ -2,9 +2,9 @@
   const THEME_KEY = 'lotto-theme';
   const themes = ['system', 'light', 'dark'];
 
-  function refreshIcons(root = document) {
+  function refreshIcons() {
     if (!window.lucide?.createIcons) return;
-    window.lucide.createIcons({ attrs: { 'aria-hidden': 'true' }, nameAttr: 'data-lucide' });
+    window.lucide.createIcons();
   }
 
   function applyTheme(theme) {
