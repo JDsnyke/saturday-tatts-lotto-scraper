@@ -1,13 +1,16 @@
-const CACHE_NAME = 'saturday-lotto-lab-v2-1-4';
+const CACHE_NAME = 'australian-lottery-lab-v3-games';
 const STATIC_ASSETS = [
   './',
   './index.html',
   './benchmark.html',
+  './games.html',
   './assets/app.css',
   './assets/app.js',
   './assets/benchmark.css',
   './assets/benchmark.js',
   './assets/certificates.js',
+  './assets/games.css',
+  './assets/games.js',
   './assets/favicon.svg',
   './assets/site.webmanifest',
   './assets/lotto_stats.json',
