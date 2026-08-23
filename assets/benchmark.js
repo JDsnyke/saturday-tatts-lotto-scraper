@@ -1,13 +1,12 @@
 (() => {
   const nf = new Intl.NumberFormat('en-AU');
-  const pct = (value, digits = 2) =>
-    new Intl.NumberFormat('en-AU', {
-      style: 'percent',
-      minimumFractionDigits: digits,
-      maximumFractionDigits: digits,
-    }).format(Number(value) || 0);
-
+  const pct = (value, digits = 2) => new Intl.NumberFormat('en-AU', {
+    style: 'percent',
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
+  }).format(Number(value) || 0);
   const $ = selector => document.querySelector(selector);
+
   const comb = (n, k) => {
     if (k < 0 || k > n) return 0;
     k = Math.min(k, n - k);
@@ -38,8 +37,7 @@
 
   function randomTicket(rng) {
     return shuffle(Array.from({ length: 45 }, (_, index) => index + 1), rng)
-      .slice(0, 6)
-      .sort((a, b) => a - b);
+      .slice(0, 6).sort((a, b) => a - b);
   }
 
   function randomPortfolio(count, rng) {
@@ -48,10 +46,7 @@
     while (tickets.length < count) {
       const ticket = randomTicket(rng);
       const key = ticket.join(',');
-      if (!seen.has(key)) {
-        seen.add(key);
-        tickets.push(ticket);
-      }
+      if (!seen.has(key)) { seen.add(key); tickets.push(ticket); }
     }
     return tickets;
   }
@@ -59,10 +54,7 @@
   function subsetKeys(ticket, size) {
     const keys = [];
     function visit(start, selected) {
-      if (selected.length === size) {
-        keys.push(selected.join(':'));
-        return;
-      }
+      if (selected.length === size) { keys.push(selected.join(':')); return; }
       for (let index = start; index < ticket.length; index += 1) {
         visit(index + 1, [...selected, ticket[index]]);
       }
@@ -76,7 +68,6 @@
     const seen = new Set();
     const usage = new Map(Array.from({ length: 45 }, (_, index) => [index + 1, 0]));
     const covered = { 2: new Set(), 3: new Set(), 4: new Set() };
-
     for (let game = 0; game < count; game += 1) {
       let best = null;
       let bestScore = null;
@@ -87,23 +78,13 @@
         const new4 = subsetKeys(candidate, 4).filter(value => !covered[4].has(value)).length;
         const new3 = subsetKeys(candidate, 3).filter(value => !covered[3].has(value)).length;
         const new2 = subsetKeys(candidate, 2).filter(value => !covered[2].has(value)).length;
-        const maxOverlap = Math.max(
-          0,
-          ...tickets.map(ticket => ticket.filter(value => candidate.includes(value)).length),
-        );
+        const maxOverlap = Math.max(0, ...tickets.map(ticket => ticket.filter(value => candidate.includes(value)).length));
         const usageCost = candidate.reduce((total, value) => total + usage.get(value), 0);
         const score = [new4, new3, new2, -maxOverlap, -usageCost, rng()];
-        if (!bestScore) {
-          best = candidate;
-          bestScore = score;
-          continue;
-        }
+        if (!bestScore) { best = candidate; bestScore = score; continue; }
         for (let index = 0; index < score.length; index += 1) {
           if (score[index] === bestScore[index]) continue;
-          if (score[index] > bestScore[index]) {
-            best = candidate;
-            bestScore = score;
-          }
+          if (score[index] > bestScore[index]) { best = candidate; bestScore = score; }
           break;
         }
       }
@@ -111,9 +92,7 @@
       tickets.push(best);
       seen.add(best.join(','));
       best.forEach(value => usage.set(value, usage.get(value) + 1));
-      [2, 3, 4].forEach(size => {
-        subsetKeys(best, size).forEach(key => covered[size].add(key));
-      });
+      [2, 3, 4].forEach(size => subsetKeys(best, size).forEach(key => covered[size].add(key)));
     }
     return tickets;
   }
@@ -136,18 +115,13 @@
       let best = 0;
       for (const ticket of ticketSets) {
         let matches = 0;
-        ticket.forEach(value => {
-          if (draw.has(value)) matches += 1;
-        });
+        ticket.forEach(value => { if (draw.has(value)) matches += 1; });
         if (matches > best) best = matches;
       }
       if (best >= 3) anyPrize += 1;
       if (best >= 4) division4OrBetter += 1;
     }
-    return {
-      anyPrizeRate: anyPrize / draws.length,
-      division4OrBetterRate: division4OrBetter / draws.length,
-    };
+    return { anyPrizeRate: anyPrize / draws.length, division4OrBetterRate: division4OrBetter / draws.length };
   }
 
   function quantile(values, probability) {
@@ -162,24 +136,17 @@
 
   function summary(values) {
     const mean = values.reduce((total, value) => total + value, 0) / values.length;
-    return {
-      mean,
-      p05: quantile(values, 0.05),
-      median: quantile(values, 0.5),
-      p95: quantile(values, 0.95),
-    };
+    return { mean, p05: quantile(values, 0.05), median: quantile(values, 0.5), p95: quantile(values, 0.95) };
   }
 
   function superiority(coverage, baseline, direction = 'higher') {
     let wins = 0;
     let total = 0;
-    coverage.forEach(a => {
-      baseline.forEach(b => {
-        total += 1;
-        if (a === b) wins += 0.5;
-        else if ((direction === 'higher' && a > b) || (direction === 'lower' && a < b)) wins += 1;
-      });
-    });
+    coverage.forEach(a => baseline.forEach(b => {
+      total += 1;
+      if (a === b) wins += 0.5;
+      else if ((direction === 'higher' && a > b) || (direction === 'lower' && a < b)) wins += 1;
+    }));
     return wins / total;
   }
 
@@ -188,79 +155,27 @@
     const comparison = metric.comparison || {};
     const ci = comparison.bootstrapMeanDifferenceCi95;
     const format = value => pct(value, digits);
-    return `<div class="benchmark-row">
-      <div><strong>${label}</strong><small>${comparison.direction === 'lower' ? 'lower is better' : 'higher is better'}</small></div>
-      <span>${format(metric.coverage?.mean)}</span>
-      <span>${format(metric.random?.mean)}</span>
-      <span>${pct(comparison.probabilityOfSuperiority, 1)}</span>
-      <span>${ci ? `${format(ci[0])} → ${format(ci[1])}` : '—'}</span>
-    </div>`;
+    return `<tr><td><strong>${label}</strong><br><small>${comparison.direction === 'lower' ? 'lower is better' : 'higher is better'}</small></td><td>${format(metric.coverage?.mean)}</td><td>${format(metric.random?.mean)}</td><td>${pct(comparison.probabilityOfSuperiority, 1)}</td><td>${ci ? `${format(ci[0])} → ${format(ci[1])}` : '—'}</td></tr>`;
   }
 
   function renderReference(benchmark) {
     const target = $('#benchmark-reference');
     if (!target) return;
     if (!benchmark?.metrics) {
-      target.innerHTML = `<div class="benchmark-empty">
-        <strong>Reference benchmark pending generated stats.</strong>
-        <p>The current static data asset predates this benchmark. Use the local benchmark below now; the scheduled verified refresh will populate the reproducible repository benchmark.</p>
-      </div>`;
+      target.innerHTML = '<div class="notification is-light">Reference benchmark pending generated stats. Use the local benchmark below until the scheduled verified refresh publishes it.</div>';
       return;
     }
     const metrics = benchmark.metrics;
     target.innerHTML = `
-      <div class="benchmark-meta">
-        <span>${nf.format(benchmark.coveragePortfolios)} coverage portfolios</span>
-        <span>${nf.format(benchmark.randomPortfolios)} QuickPick portfolios</span>
-        <span>${nf.format(benchmark.simulatedDraws)} shared draws</span>
-        <span>seed ${benchmark.seed}</span>
-      </div>
-      <div class="benchmark-table">
-        <div class="benchmark-row benchmark-head">
-          <strong>Metric</strong><span>Coverage mean</span><span>QuickPick mean</span><span>P(superior)</span><span>95% CI of favourable Δ</span>
-        </div>
+      <div class="tags"><span class="tag">${nf.format(benchmark.coveragePortfolios)} coverage portfolios</span><span class="tag">${nf.format(benchmark.randomPortfolios)} QuickPick portfolios</span><span class="tag">${nf.format(benchmark.simulatedDraws)} shared draws</span><span class="tag">seed ${benchmark.seed}</span></div>
+      <div class="table-container"><table class="table is-fullwidth is-striped is-hoverable"><thead><tr><th>Metric</th><th>Coverage mean</th><th>QuickPick mean</th><th>P(superior)</th><th>95% CI of favourable Δ</th></tr></thead><tbody>
         ${metricRow('Triple efficiency', metrics.tripleCoverageEfficiency, 2)}
         ${metricRow('Quad efficiency', metrics.quadCoverageEfficiency, 2)}
         ${metricRow('Any-prize rate', metrics.anyPrizeRate, 2)}
         ${metricRow('Div 4+ rate', metrics.division4OrBetterRate, 3)}
-      </div>
-      <p class="microcopy">${benchmark.note || ''}</p>`;
-  }
-
-  function injectPanel() {
-    const evidence = $('#evidence');
-    if (!evidence || $('#portfolio-benchmark')) return;
-    const note = evidence.querySelector('.research-note');
-    const panel = document.createElement('div');
-    panel.id = 'portfolio-benchmark';
-    panel.className = 'benchmark-panel glass reveal visible';
-    panel.innerHTML = `
-      <div class="benchmark-heading">
-        <div>
-          <span class="eyebrow">Multi-seed benchmark</span>
-          <h3>Coverage portfolios vs a distribution of QuickPicks</h3>
-          <p>Independent portfolio seeds are evaluated on the same simulated draws. This tests whether diversification survives baseline variability instead of comparing two lucky or unlucky seeds.</p>
-        </div>
-        <span class="badge">Distribution test</span>
-      </div>
-      <div id="benchmark-reference" aria-live="polite"></div>
-      <div class="benchmark-local">
-        <div class="benchmark-controls">
-          <label>Games <input id="bench-games" type="number" min="2" max="20" value="10"></label>
-          <label>Coverage sets <input id="bench-coverage" type="number" min="2" max="24" value="8"></label>
-          <label>QuickPick sets <input id="bench-random" type="number" min="4" max="80" value="32"></label>
-          <label>Shared draws <input id="bench-trials" type="number" min="300" max="2500" step="100" value="1000"></label>
-          <label>Seed <input id="bench-seed" type="number" value="20260822"></label>
-          <button class="button primary" id="run-local-benchmark" type="button">Run local benchmark</button>
-          <button class="button tertiary" id="download-local-benchmark" type="button" disabled>JSON</button>
-        </div>
-        <div class="benchmark-progress" id="benchmark-progress" hidden><span></span></div>
-        <div id="benchmark-local-result" class="benchmark-local-result">
-          <p class="microcopy">Runs entirely in your browser and does not use historical number frequencies.</p>
-        </div>
-      </div>`;
-    if (note) note.before(panel);
-    else evidence.append(panel);
+      </tbody></table></div>
+      <div class="notification is-light">${benchmark.note || ''}</div>`;
+    window.clearSkeletons?.(target);
   }
 
   async function loadReference() {
@@ -276,19 +191,18 @@
   }
 
   function setProgress(value) {
-    const wrap = $('#benchmark-progress');
-    if (!wrap) return;
-    wrap.hidden = value <= 0 || value >= 1;
-    wrap.querySelector('span').style.width = `${Math.max(0, Math.min(1, value)) * 100}%`;
+    const progress = $('#benchmark-progress');
+    if (!progress) return;
+    const clamped = Math.max(0, Math.min(1, value));
+    progress.value = clamped * 100;
+    progress.classList.toggle('is-hidden', clamped <= 0 || clamped >= 1);
   }
 
   function localMetric(label, coverageValues, randomValues, digits = 2) {
-    const c = summary(coverageValues);
-    const r = summary(randomValues);
     return {
       label,
-      coverage: c,
-      random: r,
+      coverage: summary(coverageValues),
+      random: summary(randomValues),
       superiority: superiority(coverageValues, randomValues),
       digits,
     };
@@ -296,22 +210,11 @@
 
   function renderLocal(result) {
     const target = $('#benchmark-local-result');
-    const rows = result.metrics.map(metric => `<div class="benchmark-row">
-      <div><strong>${metric.label}</strong><small>local exploratory run</small></div>
-      <span>${pct(metric.coverage.mean, metric.digits)}</span>
-      <span>${pct(metric.random.mean, metric.digits)}</span>
-      <span>${pct(metric.superiority, 1)}</span>
-      <span>${pct(metric.coverage.p05, metric.digits)}–${pct(metric.coverage.p95, metric.digits)}</span>
-    </div>`).join('');
-    target.innerHTML = `<div class="benchmark-meta">
-      <span>${result.coveragePortfolios} coverage</span><span>${result.randomPortfolios} QuickPick</span>
-      <span>${nf.format(result.draws)} shared draws</span><span>seed ${result.seed}</span>
-    </div>
-    <div class="benchmark-table">
-      <div class="benchmark-row benchmark-head"><strong>Metric</strong><span>Coverage mean</span><span>QuickPick mean</span><span>P(superior)</span><span>Coverage 5–95%</span></div>
-      ${rows}
-    </div>
-    <p class="microcopy">Local results are exploratory and smaller than the precomputed repository benchmark. Same-sized distinct portfolios retain identical Division 1 probability.</p>`;
+    const rows = result.metrics.map(metric => `<tr><td><strong>${metric.label}</strong><br><small>local exploratory run</small></td><td>${pct(metric.coverage.mean, metric.digits)}</td><td>${pct(metric.random.mean, metric.digits)}</td><td>${pct(metric.superiority, 1)}</td><td>${pct(metric.coverage.p05, metric.digits)}–${pct(metric.coverage.p95, metric.digits)}</td></tr>`).join('');
+    target.innerHTML = `
+      <div class="tags"><span class="tag">${result.coveragePortfolios} coverage</span><span class="tag">${result.randomPortfolios} QuickPick</span><span class="tag">${nf.format(result.draws)} shared draws</span><span class="tag">seed ${result.seed}</span></div>
+      <div class="table-container"><table class="table is-fullwidth is-striped"><thead><tr><th>Metric</th><th>Coverage mean</th><th>QuickPick mean</th><th>P(superior)</th><th>Coverage 5–95%</th></tr></thead><tbody>${rows}</tbody></table></div>
+      <div class="notification is-warning is-light">Local results are exploratory and smaller than the precomputed repository benchmark. Same-sized distinct portfolios retain identical Division 1 probability.</div>`;
   }
 
   async function runLocal() {
@@ -323,9 +226,9 @@
     const trials = Math.max(300, Math.min(2500, Number($('#bench-trials').value) || 1000));
     const seed = Number($('#bench-seed').value) || 20260822;
     button.disabled = true;
-    button.textContent = 'Benchmarking…';
+    button.classList.add('is-loading');
     download.disabled = true;
-    $('#benchmark-local-result').innerHTML = '<p class="microcopy">Generating independently seeded portfolios…</p>';
+    $('#benchmark-local-result').innerHTML = '<div class="notification is-light is-skeleton">Generating independently seeded portfolios…</div>';
     setProgress(0.05);
     await new Promise(resolve => setTimeout(resolve, 20));
 
@@ -337,11 +240,7 @@
       const rng = mulberry32((seed + 10007 * (index + 1)) >>> 0);
       const tickets = coveragePortfolio(games, rng);
       const outcomes = outcomeRates(tickets, draws);
-      coverageRows.push({
-        triple: coverageEfficiency(tickets, 3),
-        quad: coverageEfficiency(tickets, 4),
-        ...outcomes,
-      });
+      coverageRows.push({ triple: coverageEfficiency(tickets, 3), quad: coverageEfficiency(tickets, 4), ...outcomes });
       setProgress(0.05 + 0.4 * ((index + 1) / coverageCount));
       if (index % 2 === 1) await new Promise(resolve => setTimeout(resolve, 0));
     }
@@ -349,11 +248,7 @@
       const rng = mulberry32((seed + 70001 + 20011 * (index + 1)) >>> 0);
       const tickets = randomPortfolio(games, rng);
       const outcomes = outcomeRates(tickets, draws);
-      randomRows.push({
-        triple: coverageEfficiency(tickets, 3),
-        quad: coverageEfficiency(tickets, 4),
-        ...outcomes,
-      });
+      randomRows.push({ triple: coverageEfficiency(tickets, 3), quad: coverageEfficiency(tickets, 4), ...outcomes });
       setProgress(0.45 + 0.5 * ((index + 1) / randomCount));
       if (index % 4 === 3) await new Promise(resolve => setTimeout(resolve, 0));
     }
@@ -376,7 +271,7 @@
     setProgress(1);
     renderLocal(result);
     button.disabled = false;
-    button.textContent = 'Run local benchmark';
+    button.classList.remove('is-loading');
     download.disabled = false;
   }
 
@@ -393,7 +288,6 @@
   }
 
   function setup() {
-    injectPanel();
     loadReference();
     $('#run-local-benchmark')?.addEventListener('click', runLocal);
     $('#download-local-benchmark')?.addEventListener('click', downloadLocal);
