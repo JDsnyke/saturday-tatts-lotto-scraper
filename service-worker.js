@@ -1,4 +1,4 @@
-const CACHE_NAME = 'australian-lottery-lab-v3-games';
+const CACHE_NAME = 'australian-lottery-lab-v3-0-0';
 const STATIC_ASSETS = [
   './',
   './index.html',
@@ -15,6 +15,7 @@ const STATIC_ASSETS = [
   './assets/site.webmanifest',
   './assets/lotto_stats.json',
   './assets/data_provenance.json',
+  './assets/game_catalog.json',
 ];
 
 self.addEventListener('install', event => {
@@ -34,7 +35,10 @@ self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
   if (url.origin !== self.location.origin) return;
 
-  const isData = url.pathname.endsWith('/assets/lotto_stats.json') || url.pathname.endsWith('/assets/data_provenance.json');
+  const isData =
+    url.pathname.endsWith('/assets/lotto_stats.json') ||
+    url.pathname.endsWith('/assets/data_provenance.json') ||
+    url.pathname.endsWith('/assets/game_catalog.json');
   if (isData) {
     event.respondWith(
       fetch(event.request)
