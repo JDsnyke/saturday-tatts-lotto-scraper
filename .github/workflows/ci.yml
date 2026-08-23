@@ -28,6 +28,48 @@ jobs:
         env:
           PYTHONPATH: src
         run: python -m unittest discover -s tests -v
+      - name: Validate multi-game catalog CLI
+        env:
+          PYTHONPATH: src
+        run: |
+          python -m lotto_lab games --json > /tmp/games.json
+          python -m json.tool /tmp/games.json >/dev/null
+          python -m lotto_lab game-odds --game powerball > /tmp/powerball.json
+          python -m lotto_lab keno --spot 10 > /tmp/keno.json
+          python -m lotto_lab cash3 --digits 223 > /tmp/cash3.json
+          python -m json.tool /tmp/powerball.json >/dev/null
+          python -m json.tool /tmp/keno.json >/dev/null
+          python -m json.tool /tmp/cash3.json >/dev/null
+          python - <<'PY'
+          import json
+
+          with open('/tmp/games.json', encoding='utf-8') as handle:
+              games = {row['slug']: row for row in json.load(handle)}
+          assert games['saturday-lotto']['computedTopOdds'] == 8_145_060
+          assert games['oz-lotto']['computedTopOdds'] == 62_891_499
+          assert games['powerball']['computedTopOdds'] == 134_490_400
+          assert games['set-for-life']['computedTopOdds'] == 38_320_568
+          assert games['super-66']['computedTopOdds'] == 1_000_000
+          assert games['lotto-strike']['computedTopOdds'] == 3_575_880
+          assert games['cash-3']['computedTopOdds'] == 1_000
+          assert games['lucky-lotteries-mega']['computedTopOdds'] is None
+          assert games['keno-sa']['computedTopOdds'] is None
+
+          with open('/tmp/powerball.json', encoding='utf-8') as handle:
+              powerball = json.load(handle)
+          assert powerball['computedTopMatchesOfficial'] is True
+          assert powerball['computedTopPrize']['denominator'] == 134_490_400
+
+          with open('/tmp/keno.json', encoding='utf-8') as handle:
+              keno = json.load(handle)
+          assert keno['spot'] == 10
+          assert 8_900_000 < keno['allSpotOdds'] < 8_920_000
+
+          with open('/tmp/cash3.json', encoding='utf-8') as handle:
+              cash3 = json.load(handle)
+          assert cash3['distinctOrderings'] == 3
+          assert 333 < cash3['anyOrderOdds'] < 334
+          PY
       - name: Validate existing dataset and generated assets
         env:
           PYTHONPATH: src
@@ -170,16 +212,20 @@ jobs:
           node --check assets/app.js
           node --check assets/benchmark.js
           node --check assets/certificates.js
+          node --check assets/games.js
           node --check service-worker.js
       - name: Validate static site references
         run: |
           test -f index.html
           test -f benchmark.html
+          test -f games.html
           test -f assets/app.css
           test -f assets/app.js
           test -f assets/benchmark.css
           test -f assets/benchmark.js
           test -f assets/certificates.js
+          test -f assets/games.css
+          test -f assets/games.js
           test -f assets/lotto_stats.json
           test -f assets/data_provenance.json
           test -f assets/site.webmanifest
@@ -193,6 +239,13 @@ jobs:
           grep -q 'id="certificates"' benchmark.html
           grep -q 'id="cert-any-exact"' benchmark.html
           grep -q 'exactAnyPrize' assets/certificates.js
+          grep -q 'assets/games.css' games.html
+          grep -q 'assets/games.js' games.html
+          grep -q 'id="game-grid"' games.html
+          grep -q 'id="keno-spot"' games.html
+          grep -q 'games.html' assets/site.webmanifest
+          grep -q 'assets/games.js' service-worker.js
           grep -q 'assets/certificates.js' service-worker.js
           grep -q 'benchmark.html' service-worker.js
+          grep -q 'games.html' service-worker.js
           grep -q 'service-worker.js' assets/app.js
