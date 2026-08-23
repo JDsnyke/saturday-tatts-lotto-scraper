@@ -75,9 +75,53 @@ def _game_row(game: GameDefinition) -> dict:
     }
 
 
+def _public_snapshot(snapshot: dict | None) -> dict | None:
+    if snapshot is None:
+        return None
+    source = snapshot.get("source") or {}
+    return {
+        "drawId": snapshot["draw_id"],
+        "status": snapshot["status"],
+        "drawDate": snapshot["draw_date"],
+        "closeDate": snapshot["close_date"],
+        "ticketPriceFrom": snapshot["ticket_price_from"],
+        "maximumEntries": snapshot["maximum_entries"],
+        "minimumPossibleEntries": snapshot["minimum_possible_entries"],
+        "firstPrizeValue": snapshot["first_prize_value"],
+        "firstPrizeLabel": snapshot["first_prize_label"],
+        "probabilityNote": snapshot["probability_note"],
+        "sourceUrl": source.get("url"),
+    }
+
+
+def _public_game_row(game: GameDefinition) -> dict:
+    row = _game_row(game)
+    sources = row["sources"]
+    primary_source = sources[0] if sources else None
+    notes = row["notes"]
+    return {
+        "slug": row["slug"],
+        "name": row["name"],
+        "operator": row["operator"],
+        "mechanic": row["mechanic"],
+        "jurisdictions": row["jurisdictions"],
+        "schedule": row["schedule"],
+        "description": row["description"],
+        "computedTopOdds": row["computedTopOdds"],
+        "officialTopOdds": row["officialTopOdds"],
+        "exactAnyPrizeOdds": row["exactAnyPrizeOdds"],
+        "officialAnyOdds": row["officialAnyOdds"],
+        "drawsPerPurchase": row["drawsPerPurchase"],
+        "note": notes[0] if notes else None,
+        "sourceUrl": None if primary_source is None else primary_source["url"],
+        "sourceCheckedOn": None if primary_source is None else primary_source["checked_on"],
+        "raffleSnapshot": _public_snapshot(row["raffleSnapshot"]),
+    }
+
+
 def catalog_payload() -> dict:
-    """Return the public web/CLI catalog from the authoritative Python definitions."""
-    rows = [_game_row(game) for game in _all_games()]
+    """Return the compact web catalog generated from authoritative Python definitions."""
+    rows = [_public_game_row(game) for game in _all_games()]
     return {
         "schemaVersion": 1,
         "checkedOn": "2026-08-23",
