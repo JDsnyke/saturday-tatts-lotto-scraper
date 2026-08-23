@@ -418,7 +418,7 @@ GAMES: dict[str, GameDefinition] = {
         official_top_odds=1_000,
         notes=(
             "The computed 1-in-1,000 value is for Exact Order. Any Order odds depend on whether the chosen "
-            "multiset has 3 or 6 distinct permutations.",
+            "multiset has 1, 3 or 6 distinct permutations.",
         ),
     ),
     "scratch-n-win": GameDefinition(
