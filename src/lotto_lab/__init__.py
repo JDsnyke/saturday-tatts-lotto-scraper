@@ -1,3 +1,3 @@
-"""Saturday Lotto Lab probability and coverage toolkit."""
+"""Australian lottery probability, portfolio and game-catalog research toolkit."""
 
-__version__ = "2.1.4"
+__version__ = "3.0.0"

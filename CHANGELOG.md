@@ -1,5 +1,51 @@
 # Changelog
 
+## 3.0.0 — Australian multi-game foundation
+
+### Added
+
+- operator-aware `GameDefinition`, `PrizePattern` and source-provenance layer for materially different Australian lottery mechanics;
+- sourced catalog entries across The Lott, Lotterywest and Australian charity/art-union alternatives;
+- exact generic one-pool and two-pool match distributions;
+- exact top-prize combinatorics for Saturday/Weekday 6/45, Oz Lotto, Powerball, Set for Life, Super 66, Lotto Strike and Cash 3 Exact Order;
+- exact Keno Spot match distribution and Cash 3 Any Order permutation calculation;
+- seven-draw cumulative Set for Life probability output while retaining per-draw odds separately;
+- `games`, `game-odds`, `game-catalog-json`, `keno` and `cash3` CLI commands routed separately from the mature Saturday command parser;
+- Games & Odds Lab static page with operator/mechanic/jurisdiction filters and Set for Life, Keno and Cash 3 calculators;
+- sourced alternative snapshots for yourtown Prize Home, Mater Prize Home, Mater Cars for Cancer, Dream Home Art Union, Endeavour Foundation Prize Home and Endeavour Pay Day;
+- generated `assets/game_catalog.json` as the single web data source, replacing duplicated odds embedded in JavaScript;
+- dedicated Multi-game catalog workflow that regenerates the public catalog and verifies tracked semantic equality;
+- `docs/GAME_CATALOG.md` evidence/source taxonomy;
+- PWA Games & Odds shortcut and offline catalog caching.
+
+### Probability / provenance rules
+
+- draw mechanics and prize mappings are separate: two games may share the same ball geometry but use different lower-division conditions;
+- Powerball is modelled as two independent pools, not a one-pool choose-k game;
+- Lotto Strike uses ordered sampling without replacement;
+- Super 66 and Cash 3 are ordered-digit games;
+- Keno uses hypergeometric Spot mathematics rather than Lotto-combination logic;
+- Lucky Lotteries remains raffle-style metadata and is not converted into a fake choose-k model;
+- charity/art-union maximum ticket capacity is stored as capacity metadata, **not automatically exact one-ticket odds**;
+- scratch-ticket families retain variable print-run/game odds rather than a fabricated universal top-prize denominator;
+- public aggregate any-prize figures are masked for Weekday Windfall, Lotto Strike and both Lucky Lotteries products until those aggregate figures are current-source re-verified.
+
+### Source-audit corrections
+
+- removed an unverified Endeavour Pay Day sales-close date rather than confusing a separate terms/eligibility date with ticket sales closure;
+- retained Pay Day 221's verified 8 October 2026 draw date, $5 ticket price and 200,000-ticket cap;
+- regression-tested Mater Prize Home 327's 13,455,147–22,805,334 possible-entry range rather than collapsing its bundle-dependent entries to a single denominator;
+- regression-tested Mater Cars for Cancer 130's 85,117 maximum ticket supply;
+- encoded yourtown's explicit rule that First Prize odds depend on tickets actually sold.
+
+### Guardrails
+
+- no historical hot/cold/overdue signal is introduced into any new game;
+- an easier jackpot denominator is not described as better expected value;
+- repeated-draw exposure such as Set for Life is not compared with a single draw without labelling the difference;
+- Saturday-specific portfolio optimisation is not silently applied to Powerball, Oz Lotto, Keno or raffle products;
+- offshore lottery resellers are not treated as Australian lottery alternatives.
+
 ## 2.1.4 — Exact-guided local portfolio search
 
 ### Added

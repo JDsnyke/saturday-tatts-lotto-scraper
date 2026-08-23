@@ -1,7 +1,7 @@
 {
-  "name": "Saturday Lotto Probability Lab",
-  "short_name": "Lotto Lab",
-  "description": "Exact probability, portfolio coverage and historical diagnostics for Saturday Lotto / TattsLotto.",
+  "name": "Australian Lottery Probability Lab",
+  "short_name": "Lottery Lab",
+  "description": "Exact probability, portfolio research and operator-aware game mechanics for Australian lotteries.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -17,9 +17,15 @@
   ],
   "shortcuts": [
     {
+      "name": "Games & Odds Lab",
+      "short_name": "Games",
+      "description": "Compare The Lott, Lotterywest and distinct Australian lottery mechanics.",
+      "url": "../games.html"
+    },
+    {
       "name": "Multi-seed Benchmark",
       "short_name": "Benchmark",
-      "description": "Compare coverage portfolios against QuickPick distributions.",
+      "description": "Compare Saturday Lotto coverage portfolios against QuickPick distributions.",
       "url": "../benchmark.html"
     }
   ]

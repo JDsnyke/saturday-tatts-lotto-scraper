@@ -1,193 +1,178 @@
-# Saturday Lotto Lab Roadmap
+# Australian Lottery Probability Lab Roadmap
 
 This is the living engineering/research tracker. The governing rule is: **improve measurable probability, coverage, data quality or decision clarity without presenting historical noise as a future-draw edge.**
 
-## v2.0 — Probability-first foundation ✅
+The changelog preserves release-level history; this file focuses on completed capabilities and genuinely open research.
 
-- [x] Remove frequency-weighted prediction.
-- [x] Add exact `C(45,6) = 8,145,060` Division 1 combinatorics.
-- [x] Add distinct QuickPick and balanced multi-entry generation.
-- [x] Add strict draw validation and canonical ordering.
-- [x] Replace order-sensitive shell statistics with Python diagnostics.
-- [x] Add z-scores, entropy, χ² descriptive diagnostic and pair counts.
-- [x] Replace the old page with a responsive theme-aware static dashboard.
-- [x] Add unit tests, Ruff and CI.
-- [x] Remove dependency-PR churn and automated update branches.
+## v2 — Saturday Lotto probability-first foundation ✅
 
-## v2.1 — Objective odds & portfolio structure
+### Probability and data
 
-### Exact probability
+- [x] Remove frequency-weighted future-number prediction.
+- [x] Exact `C(45,6) = 8,145,060` Division 1 combinatorics.
+- [x] Exact System-entry equivalence and 0–6 main-match distribution.
+- [x] Exact standard-game prize probabilities.
+- [x] Strict historical draw validation and canonical ordering.
+- [x] Descriptive z-scores, entropy, χ² and pair diagnostics with non-predictive labelling.
+- [x] Primary scraper, secondary newest-draw cross-check and SHA-256 provenance.
+- [x] Block scheduled publication on secondary-source disagreement.
+- [ ] Prefer an official/regulator machine-readable historical source if one becomes reliably available.
+- [ ] Persist source URL/draw ID per historical row rather than only recent verification metadata.
 
-- [x] Exact Division 1 probability for any number of distinct standard games.
-- [x] Cumulative Division 1 probability across repeated independent draws.
-- [x] Exact System 6–20 standard-combination equivalence.
-- [x] Exact 0–6 main-number match distribution.
-- [x] Exact Division 1–6 standard-game probabilities.
-- [x] Exact any-prize probability for a standard game.
-- [x] Exact two-ticket intersection probability for any ≥k-main event.
-- [x] Rigorous portfolio Bonferroni lower bound `S1 - S2` from exact pair intersections.
-- [x] Exact global-optimality certificate when portfolio events are pairwise disjoint.
-- [x] Prove that max pairwise game overlap ≤1 makes Division-4-or-better events pairwise disjoint.
-- [x] Exact fixed-portfolio any-prize union probability via complement dynamic programming.
-- [x] Independent direct/inclusion-exclusion regression checks for the exact DP.
-- [x] Embed the exact any-prize result for the generated 10-game reference Coverage portfolio.
-- [ ] Improve exact-evaluation scaling beyond the current conservative 12-ticket default cap if a demonstrably efficient state-compression method is found.
+### Saturday portfolio probability
 
-### Better portfolio construction
+- [x] Pair/triple/quadruple Coverage generator.
+- [x] Exact two-ticket `>=k` event intersections.
+- [x] Bonferroni `S1-S2` union lower bound.
+- [x] Prove max ticket overlap `<=1` globally maximises Division-4-or-better union probability for the applicable portfolio size.
+- [x] Exact fixed-portfolio any-prize probability via complement dynamic programming.
+- [x] Exact multi-seed strategy benchmark.
+- [x] Confirm Coverage materially improves exact any-prize union probability versus ordinary QuickPick in the fixed 10-game benchmark while leaving Division 1 unchanged.
+- [x] Exact-guided one-swap local search with monotonic exact acceptance.
+- [x] Preserve an existing Division-4+ global-optimality certificate during exact-local refinement.
+- [x] Freeze exact-local search budget before independent-seed confirmation.
+- [ ] Improve exact-evaluation scaling beyond the conservative 12-ticket default if state compression can be demonstrated without weakening exactness.
+- [ ] Benchmark larger neighbourhoods / simulated annealing / constraint or integer optimisation against Coverage and exact-local using the exact objective.
+- [ ] Investigate symmetry reduction / canonical portfolio representations.
+- [ ] Determine whether a provable or tightly bounded global any-prize optimum is tractable for useful 10-game portfolios.
 
-- [x] Replace pair-first heuristic with explicit pair/triple/quadruple subset coverage.
-- [x] Greedy candidate search prioritising new quads → triples → pairs.
-- [x] Report subset placement count, unique count, repeats, efficiency and universe coverage.
-- [x] Retain distinct-combination and overlap guarantees.
-- [x] Compare optimiser performance against a **distribution** of independently seeded random portfolios.
-- [x] Add an Any-prize-bound objective that minimises exact pair-event intersection cost.
-- [x] Add a Division-4-bound objective that can return a global-optimality certificate.
-- [x] Keep generic subset-diversity Coverage as a separate objective rather than silently replacing it.
-- [x] Evaluate completed portfolios with the exact any-prize union rather than only a second-order bound.
-- [x] Implement one-swap exact-guided local search starting from Coverage.
-- [x] Use the Bonferroni bound only for screening and require the full exact DP for acceptance.
-- [x] Preserve an existing Division-4+ global-optimality certificate during exact-local search.
-- [x] Confirm exact-local on an independent root seed after freezing the search budget.
-- [ ] Benchmark simulated annealing / larger neighbourhoods / constraint or integer optimisation against exact-local and Coverage.
-- [ ] Investigate symmetry reduction / canonical portfolio representations to avoid evaluating equivalent portfolio structures repeatedly.
-- [ ] Determine whether a provable or tightly bounded global optimum is tractable for useful 10-game any-prize portfolios.
-- [ ] Determine useful ticket-count ranges where a pairwise-disjoint ≥4-main packing can be constructed reliably.
+### Saturday evidence guardrails
 
-### Evidence
+- [x] Multi-seed portfolio distributions rather than single lucky seeds.
+- [x] Shared simulated draws for metrics that remain simulation-based.
+- [x] Bootstrap strategy-difference intervals across portfolio seeds.
+- [x] Exact mathematics suppresses contradictory Monte Carlo inference when true equality is known.
+- [x] Reject simulated-training optimiser after held-out failure.
+- [x] Keep Coverage as the fast balanced default; exact-local is optional higher-compute refinement.
+- [ ] Add nested resampling only for remaining metrics that genuinely depend on simulated draw samples.
+- [ ] Add benchmark regression thresholds only after enough exact releases establish stable ranges.
 
-- [x] Simulate actual prize divisions rather than main matches only.
-- [x] Wilson 95% intervals for Monte Carlo hit rates.
-- [x] Leakage-free walk-forward historical comparison.
-- [x] Surface sample sizes and limitations in UI.
-- [x] Bootstrap/repeated-seed confidence interval for strategy **difference** across portfolio seeds.
-- [x] Pre-register fixed benchmark seeds/ticket counts in `docs/BENCHMARKING.md`.
-- [x] Add probability-of-superiority and random-baseline quantiles.
-- [x] Use shared simulated draws across portfolio distributions to reduce comparison noise.
-- [x] Add objective benchmark: subset Coverage vs Any-prize-bound vs Division-4-bound vs QuickPick.
-- [x] Reject direct simulated-training optimisation after held-out prototypes overfit and failed to improve on Coverage.
-- [x] Add exact seed-matched any-prize objective benchmark so the same portfolio families can be evaluated without draw-sample noise.
-- [x] Add larger exact confirmation benchmark: 32 seeds per structured strategy vs 128 QuickPick seeds.
-- [x] Preserve the smaller favourable 12-seed result while using the larger confirmation run for the release recommendation.
-- [x] Confirm a strong exact Coverage-vs-QuickPick any-prize difference in the fixed 10-game benchmark.
-- [x] Add paired exact-local development and independent confirmation benchmarks.
-- [ ] Add nested resampling where strategy metrics still depend on simulated draw samples; it is unnecessary for exact any-prize probabilities.
-- [ ] Add benchmark regression thresholds only after enough exact benchmark releases establish stable expected ranges.
+### Conditional prize-sharing research
 
-### v2.1.4 exact-local confirmation finding
+- [x] Keep anti-crowding separate from draw probability.
+- [x] Experimental penalties for birthday-heavy / regular human-choice patterns.
+- [ ] Find or build a defensible Australian player-choice dataset.
+- [ ] Replace hand-set crowding penalties with empirically estimated choice likelihoods if data supports them.
+- [ ] Model conditional co-winner/prize-sharing distributions only with sourced popularity inputs.
 
-The exact-local release budget was frozen at **2 search passes / 4 bound-ranked exact candidates / 1 exploration candidate** before the independent confirmation run.
+## v3.0 — Reusable Australian lottery research platform ✅ foundation
 
-On 16 new 10-game Coverage portfolios rooted at seed `20260823`:
+### Game definitions and exact mechanics
 
-- **11/16 portfolios improved** and **5/16 were unchanged**;
-- mean gain: **91.75 exact any-prize winning-main sets**;
-- mean exact probability gain: about **+0.001126 percentage points**;
-- paired portfolio-seed bootstrap 95% interval: about **+0.000636 to +0.001664 points**;
-- no portfolio worsened;
-- all existing Division-4+ global-optimality certificates were preserved;
-- Division 1 remained exactly unchanged.
+- [x] Operator-aware `GameDefinition`, `PrizePattern` and `SourceRef` layer.
+- [x] One-pool combination engine.
+- [x] Two-pool Powerball engine.
+- [x] Ordered-digit top-prize engine.
+- [x] Ordered-without-replacement top-prize engine.
+- [x] Exact Keno Spot hypergeometric distribution.
+- [x] Cash 3 Any Order multiset-permutation probability.
+- [x] Reusable prize patterns kept separate from draw geometry.
+- [x] Repeated-draw cumulative probability for Set for Life while retaining per-draw odds separately.
 
-Coverage remains the fast balanced default. Exact-local is an optional higher-compute local refinement, not a proof of the global any-prize optimum.
+### Current conventional catalog
 
-### v2.1.3 exact confirmation finding
+- [x] Saturday Lotto / TattsLotto.
+- [x] Weekday Windfall.
+- [x] Oz Lotto.
+- [x] Powerball.
+- [x] Set for Life.
+- [x] Super 66.
+- [x] Lotto Strike.
+- [x] Lucky Lotteries Super Jackpot.
+- [x] Lucky Lotteries Mega Jackpot.
+- [x] South Australian Keno through The Lott.
+- [x] Instant Scratch-Its as a variable product family.
+- [x] Play For Purpose as a variable raffle family.
+- [x] Lotterywest Millionaire Medley.
+- [x] Lotterywest Cash 3.
+- [x] Lotterywest Scratch'n'Win as a variable product family.
+- [x] Keep jurisdiction limitations explicit.
 
-10-game portfolios; 32 seeds each for Coverage / Any-prize-bound / Division-4-bound; 128 QuickPick seeds; root seed `20260822`; 320 candidate games per greedy step; 2,000 portfolio-seed bootstrap resamples.
+### Australian alternative / art-union catalog
 
-Mean exact any-prize probability:
+- [x] yourtown Prize Home.
+- [x] Mater Prize Home current draw snapshot.
+- [x] Mater Cars for Cancer current draw snapshot.
+- [x] Dream Home Art Union / RSL Queensland snapshot.
+- [x] Endeavour Foundation Prize Home snapshot.
+- [x] Endeavour Pay Day snapshot.
+- [x] Store ticket/entry capacity separately from probability.
+- [x] Remove unverified sales-close dates rather than infer them from unrelated terms dates.
+- [x] Do not include offshore lottery resellers as Australian alternatives.
+- [ ] Add more Australian licensed charity/art-union operators only when current terms and eligibility can be sourced directly.
+- [ ] Build automated snapshot expiry/staleness reporting for draw-specific raffle entries.
+- [ ] Where operators publish final valid-entry counts, support post-draw exact first-prize denominator calculation with provenance.
 
-- Coverage: **23.00372595%**
-- Any-prize-bound: **23.00482171%**
-- Division-4-bound: **23.00703433%**
-- QuickPick: **21.44444742%**
+### Public source architecture
 
-Coverage vs QuickPick:
+- [x] Source-stamp definitions with `checked_on` date.
+- [x] Publicly mask stale/unreverified aggregate any-prize figures instead of carrying them forward.
+- [x] Generate `assets/game_catalog.json` from Python definitions.
+- [x] Remove duplicated hard-coded web odds table.
+- [x] Dedicated CI workflow regenerates and semantically compares the tracked public catalog.
+- [x] Games & Odds Lab consumes the generated catalog.
+- [x] PWA caches the generated catalog network-first.
+- [ ] Automate periodic operator-rule freshness checks without silently overwriting changed rules.
+- [ ] Add source adapters that capture rule revisions / effective dates where operators expose them.
 
-- exact mean difference: **+1.55927853 percentage points**;
-- portfolio-seed bootstrap 95% interval: **+1.47685128 to +1.65048178 points**;
-- probability-of-superiority: **1.000** in this fixed benchmark.
+## v3.1 — Game-specific portfolio mathematics
 
-Neither specialist structured generator showed a reliable exact any-prize advantage over Coverage in the larger confirmation run. Coverage therefore remains the recommended balanced default.
+Do not generalise the Saturday optimiser merely because a game has numbered balls. Each objective must match the game's actual winning events.
 
-A smaller 12-seed exact run initially favoured Any-prize-bound. That ordering did not remain convincing when expanded and is retained in the research record rather than used selectively.
+- [ ] **Oz Lotto:** exact multi-entry union evaluator and Coverage baseline for seven-number tickets.
+- [ ] **Set for Life:** exact multi-entry per-draw portfolio union plus clearly separate repeated-seven-draw exposure.
+- [ ] **Powerball:** two-pool portfolio model separating main-number overlap from Powerball allocation; determine optimal allocation of secondary-pool choices for fixed game count.
+- [ ] **Super 66:** ordered prefix/suffix overlap mathematics across multiple tickets.
+- [ ] **Lotto Strike:** ordered-position portfolio overlap and union probability.
+- [ ] **Cash 3:** Exact / Any Order portfolio union with duplicate-digit multiset effects.
+- [ ] **Keno:** prize-condition models by Spot size and supported jurisdiction/operator before any portfolio optimisation.
+- [ ] Establish exact or certified upper/lower bounds before introducing stochastic search for each new game.
 
-Division 1 remains exactly equal for all same-sized sets of distinct standard games.
+## v3.2 — Cross-game decision tools
 
-## v2.1 — Data provenance & auditability
+Cross-game comparison needs more than jackpot odds.
 
-- [x] Secondary-source draw-number and source URL capture.
-- [x] SHA-256 checksums for both tracked CSV datasets.
-- [x] Secondary verification report.
-- [x] Block scheduled publication on newest-draw disagreement.
-- [x] Data-health/freshness status in dashboard.
-- [x] Saved known-draw parser fixtures.
-- [x] Migration-aware regeneration when data assets use an older or incomplete schema-v3 payload.
-- [ ] Prefer an official/regulator machine-readable source if one becomes reliably available.
-- [ ] Persist primary source URL/draw ID per historical row rather than only verification metadata for recent draws.
+- [ ] Sourced ticket price / standard-entry cost by jurisdiction and product.
+- [ ] Sourced prize tables and fixed/pari-mutuel/annuity classification.
+- [ ] Jackpot-sharing and rollover semantics.
+- [ ] Expected-value calculations only when cost, prize amount, valid prize conditions and sharing/pool inputs are from the same current product/draw.
+- [ ] Compare probability per dollar only when entry structure makes the denominator meaningful.
+- [ ] Separate annuity face value from present-value assumptions; make discount-rate assumptions explicit.
+- [ ] Never rank variable raffles using maximum ticket capacity as though it were final sold/valid entries.
 
-## v2.2 — Conditional prize sharing / crowding research
+## v3.3 — Web and research experience
 
-- [x] Separate conditional payout-sharing logic from draw-probability logic.
-- [x] Add an explicitly experimental anti-crowding generator.
-- [x] Penalise birthday-heavy, 7, consecutive and highly regular patterns as research-informed features.
-- [x] Link the UI and methodology to supporting research.
-- [ ] Find or build a defensible Australian Saturday Lotto player-choice dataset.
-- [ ] Replace hand-set feature penalties with empirically estimated crowding likelihoods if data supports it.
-- [ ] Simulate conditional co-winner/prize-sharing distributions when ticket-popularity data is available.
-- [ ] Add expected-value analysis only when prize pool, division rules and player-count inputs are sourced and parameterised.
+- [x] Games & Odds Lab with operator/mechanic/jurisdiction filters.
+- [x] Mechanic-specific Set for Life, Keno and Cash 3 calculators.
+- [x] Saturday Benchmark Lab and exact certificate UI.
+- [x] PWA shortcuts for Games and Benchmark labs.
+- [ ] Add game-detail routes generated from catalog data.
+- [ ] Side-by-side comparison with evidence labels and jurisdiction warnings.
+- [ ] Add explicit catalog freshness/staleness badges per source family.
+- [ ] Compare two saved Saturday portfolios side by side.
+- [ ] Add Playwright smoke tests on a stable CI runner.
+- [ ] Modularise the legacy Saturday single-file browser bundle before deeper navigation integration.
 
-## v2.3 — Web experience
+## v4 — Formal diagnostics and reproducible research
 
-- [x] Probability Planner.
-- [x] System 6–20 calculator.
-- [x] Exact prize and main-match views.
-- [x] Upgraded portfolio metrics and local simulation.
-- [x] Draw search, date filters and number filters.
-- [x] Ticket and draw CSV export.
-- [x] Shareable ticket URLs using encoded local state only.
-- [x] Keyboard-accessible frequency chart details.
-- [x] Provenance/data-health UI.
-- [x] Offline/PWA caching.
-- [x] Static-site integration tests.
-- [x] Dedicated Benchmark Lab page with local multi-seed exploratory runs and JSON export.
-- [x] PWA shortcut to the Benchmark Lab.
-- [x] Certified Probability panel separating exact bounds from Monte Carlo evidence.
-- [x] Promote exact reference any-prize probability above the older Bonferroni bound in Benchmark Lab.
-- [x] Show the generated exact-local reference improvement/non-worsening result.
-- [x] Version the service-worker cache for v2.1.4 evidence UI.
-- [ ] Add richer accessible SVG charts and comparison views.
-- [ ] Add explicit PWA install/update UI.
-- [ ] Add Playwright browser smoke tests on a stable CI runner.
-- [ ] Compare two saved portfolios side-by-side, including exact any-prize comparison when both are within the practical evaluator range.
-- [ ] Integrate Benchmark Lab directly into the main navigation after the legacy single-file UI bundle is modularised.
-
-## v2.4 — Formal randomness diagnostics
-
-- [ ] Runs tests for derived binary/count sequences with appropriate calibration.
-- [ ] Serial/cross-lag correlation diagnostics.
-- [ ] Monte-Carlo-calibrated global goodness-of-fit statistics that respect within-draw dependence.
-- [ ] Multiple-testing controls and clear exploratory/confirmatory labelling.
-- [ ] Automated alert only for persistent, independently reproduced anomalies — never as a betting signal by default.
-
-## v3 — Reusable Australian lottery research platform
-
-- [ ] Game-definition layer for distinct Australian lottery mechanics.
-- [ ] Add The Lott catalog definitions: Saturday Lotto / Weekday Windfall, Oz Lotto, Powerball, Set for Life, Super 66, Lotto Strike, Lucky Lotteries and Keno.
-- [ ] Keep jurisdiction-limited games explicit rather than pretending every game is available nationally.
-- [ ] Reusable one-pool, two-pool, ordered-digit, ordered-draw, raffle-pool and Keno/spot probability engines.
-- [ ] Reusable prize-category definitions.
-- [ ] Separate alternative operators/products from The Lott and label eligibility/jurisdiction.
-- [ ] Source adapters with provenance contracts.
-- [ ] Reproducible research exports/notebooks.
-- [ ] Optional fully static precomputed benchmark datasets.
+- [ ] Runs tests with calibrated null distributions.
+- [ ] Serial/cross-lag diagnostics.
+- [ ] Monte-Carlo-calibrated global goodness-of-fit tests respecting within-draw dependence.
+- [ ] Multiple-testing controls and explicit exploratory/confirmatory labels.
+- [ ] Reproducible research exports / notebooks.
+- [ ] Optional static benchmark datasets for expensive exact analyses.
 
 ## Permanent guardrails
 
 - Do **not** rank future numbers using hot/cold/due/recency/pair-frequency scores without credible evidence of exploitable non-randomness.
 - Do **not** present machine learning as a magic predictor of independent fair draws.
-- Do **not** mix anti-crowding / payout-sharing research into the probability of a combination being drawn.
-- Do **not** claim a strategy advantage from one random seed, one backtest window or a small favourable benchmark that does not survive a larger confirmation run.
+- Do **not** mix anti-crowding / payout-sharing research into probability of being drawn.
+- Do **not** claim a strategy edge from one seed or small favourable benchmark that fails larger confirmation.
 - Do **not** call probability-of-superiority the probability that a strategy wins the lottery.
-- Do **not** train an optimiser on simulated draws and report its training performance as evidence; use held-out or exact evaluation and reject it if it fails to generalise.
-- Do **not** describe a Bonferroni lower bound as the exact union probability unless the event intersections required for exactness have been proved absent.
-- Do **not** equate exact evaluation of a completed portfolio with proof that the portfolio is globally optimal.
+- Do **not** report optimiser training performance as evidence; use held-out or exact evaluation.
+- Do **not** describe a Bonferroni lower bound as an exact union unless required intersections have been proved absent.
+- Do **not** equate exact evaluation of a completed portfolio with proof of global optimality.
+- Do **not** turn a raffle ticket/entry cap into exact odds unless final valid-entry mechanics justify it.
+- Do **not** compare repeated-draw purchases to single draws without labelling the exposure and spend difference.
+- Do **not** infer one game's lower-division rules from another game merely because their ball geometry matches.
 - Do **not** encourage higher spend; probability-vs-spend tools must show both sides of the trade-off.

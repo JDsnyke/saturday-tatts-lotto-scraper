@@ -1,0 +1,87 @@
+name: Multi-game catalog
+
+on:
+  pull_request:
+    paths:
+      - 'src/lotto_lab/game_catalog.py'
+      - 'src/lotto_lab/alternative_catalog.py'
+      - 'src/lotto_lab/game_probability.py'
+      - 'src/lotto_lab/game_cli.py'
+      - 'src/lotto_lab/__main__.py'
+      - 'assets/game_catalog.json'
+      - 'assets/games.js'
+      - 'games.html'
+      - 'tests/test_game_catalog_v3.py'
+      - 'tests/test_alternative_catalog_v3.py'
+      - '.github/workflows/game-catalog.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-catalog:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+          cache: pip
+      - name: Install dependencies
+        run: python -m pip install -r requirements-dev.txt
+      - name: Lint and focused tests
+        env:
+          PYTHONPATH: src
+        run: |
+          ruff check src tests
+          python -m unittest tests.test_game_catalog_v3 tests.test_alternative_catalog_v3 -v
+      - name: Generate canonical public catalog
+        env:
+          PYTHONPATH: src
+        run: |
+          python -m lotto_lab game-catalog-json --output /tmp/game_catalog.json
+          python -m json.tool /tmp/game_catalog.json >/dev/null
+      - name: Upload generated catalog
+        uses: actions/upload-artifact@v4
+        with:
+          name: game-catalog-json
+          path: /tmp/game_catalog.json
+          if-no-files-found: error
+          retention-days: 1
+      - name: Validate tracked web catalog matches generator
+        run: |
+          test -f assets/game_catalog.json
+          python - <<'PY'
+          import json
+
+          with open('/tmp/game_catalog.json', encoding='utf-8') as handle:
+              generated = json.load(handle)
+          with open('assets/game_catalog.json', encoding='utf-8') as handle:
+              tracked = json.load(handle)
+          assert tracked == generated, 'assets/game_catalog.json is stale; regenerate it from Python definitions'
+          PY
+      - name: Validate public catalog guardrails
+        run: |
+          python - <<'PY'
+          import json
+
+          with open('/tmp/game_catalog.json', encoding='utf-8') as handle:
+              payload = json.load(handle)
+          rows = {row['slug']: row for row in payload['games']}
+          assert payload['checkedOn'] == '2026-08-23'
+          assert len(rows) >= 20
+          assert rows['powerball']['computedTopOdds'] == 134_490_400.0
+          assert rows['oz-lotto']['computedTopOdds'] == 62_891_499.0
+          assert rows['set-for-life']['computedTopOdds'] == 38_320_568.0
+          assert rows['cash-3']['computedTopOdds'] == 1_000.0
+          assert rows['weekday-windfall']['officialAnyOdds'] is None
+          assert rows['lotto-strike']['officialAnyOdds'] is None
+          assert rows['lucky-lotteries-super']['officialAnyOdds'] is None
+          assert rows['lucky-lotteries-mega']['officialAnyOdds'] is None
+          assert rows['mater-prize-home']['raffleSnapshot']['maximumEntries'] == 22_805_334
+          assert rows['mater-cars-for-cancer']['raffleSnapshot']['maximumEntries'] == 85_117
+          assert rows['endeavour-pay-day']['raffleSnapshot']['maximumEntries'] == 200_000
+          assert rows['endeavour-pay-day']['raffleSnapshot']['closeDate'] is None
+          assert rows['yourtown-prize-home']['computedTopOdds'] is None
+          PY
