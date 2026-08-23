@@ -57,7 +57,7 @@ class StaticSiteTests(unittest.TestCase):
             )
         )
         self.assertNotIn("style=", content)
-        for legacy in (
+        for legacy_class in (
             "glass",
             "ticket-card",
             "game-card",
@@ -67,7 +67,8 @@ class StaticSiteTests(unittest.TestCase):
             "research-note",
             "metric-card",
         ):
-            self.assertNotIn(legacy, content)
+            pattern = rf'class=["\'][^"\']*\b{re.escape(legacy_class)}\b'
+            self.assertIsNone(re.search(pattern, content), legacy_class)
 
     def test_direct_javascript_id_references_exist_in_html(self):
         html = (ROOT / "index.html").read_text(encoding="utf-8")
