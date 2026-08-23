@@ -1,12 +1,12 @@
 {
-  "name": "Australian Lottery Probability Lab",
+  "name": "Lottery Lab",
   "short_name": "Lottery Lab",
-  "description": "Exact probability, portfolio research and operator-aware game mechanics for Australian lotteries.",
+  "description": "Australian lottery probability, portfolio and game-mechanics research.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#07101f",
-  "theme_color": "#07101f",
+  "background_color": "#f5f6f3",
+  "theme_color": "#f5f6f3",
   "icons": [
     {
       "src": "favicon.svg",
@@ -17,15 +17,15 @@
   ],
   "shortcuts": [
     {
-      "name": "Games & Odds Lab",
+      "name": "Games & Odds",
       "short_name": "Games",
-      "description": "Compare The Lott, Lotterywest and distinct Australian lottery mechanics.",
+      "description": "Compare Australian lottery mechanics and current sourced odds.",
       "url": "../games.html"
     },
     {
-      "name": "Multi-seed Benchmark",
-      "short_name": "Benchmark",
-      "description": "Compare Saturday Lotto coverage portfolios against QuickPick distributions.",
+      "name": "Saturday Benchmarks",
+      "short_name": "Benchmarks",
+      "description": "Open exact and multi-seed Saturday Lotto portfolio evidence.",
       "url": "../benchmark.html"
     }
   ]
