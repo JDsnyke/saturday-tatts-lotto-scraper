@@ -27,6 +27,16 @@ class AnalysisTests(unittest.TestCase):
         self.assertGreaterEqual(exact["probability"], certificates["anyPrize"]["bonferroniLowerBound"])
         self.assertLessEqual(exact["probability"], certificates["anyPrize"]["firstOrderUnionBound"])
 
+        local = stats["referenceExactLocalSearch"]
+        self.assertTrue(local["finalExactAnyPrize"]["exact"])
+        self.assertGreaterEqual(local["improvementWinningMainSets"], 0)
+        self.assertGreaterEqual(
+            local["finalExactAnyPrize"]["anyPrizeWinningMainSets"],
+            local["baselineExactAnyPrize"]["anyPrizeWinningMainSets"],
+        )
+        self.assertTrue(local["preservedDivision4Optimality"])
+        self.assertEqual(local["iterationsRequested"], 2)
+
 
 if __name__ == "__main__":
     unittest.main()
