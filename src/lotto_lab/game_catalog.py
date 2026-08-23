@@ -409,7 +409,9 @@ GAMES: dict[str, GameDefinition] = {
         mechanic="ordered-digits",
         jurisdictions=("WA",),
         schedule="Daily",
-        description="Three digits 0–9 are drawn; Exact Order, Any Order and Both Ways play types are offered.",
+        description=(
+            "Three digits 0–9 are drawn; Exact Order, Any Order and Both Ways play types are offered."
+        ),
         sources=(LOTTERYWEST_CASH3, LOTTERYWEST_RESPONSIBLE),
         ordered_positions=3,
         radix=10,
