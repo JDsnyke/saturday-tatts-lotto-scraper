@@ -46,7 +46,11 @@ def _print_game_table(rows: list[dict]) -> None:
                 row["operator"],
                 row["mechanic"],
                 "variable" if top is None else f"1 in {top:,.2f}".replace(".00", ""),
-                "variable/unverified" if any_odds is None else f"1 in {any_odds:,.2f}".replace(".00", ""),
+                (
+                    "variable/unverified"
+                    if any_odds is None
+                    else f"1 in {any_odds:,.2f}".replace(".00", "")
+                ),
             )
         )
     widths = [
@@ -60,7 +64,10 @@ def _print_game_table(rows: list[dict]) -> None:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="lotto-lab", description="Australian lottery game catalog and exact odds tools")
+    parser = argparse.ArgumentParser(
+        prog="lotto-lab",
+        description="Australian lottery game catalog and exact odds tools",
+    )
     sub = parser.add_subparsers(dest="command", required=True)
 
     games = sub.add_parser("games", help="List sourced Australian lottery game definitions")
@@ -133,7 +140,10 @@ def main(argv: list[str] | None = None) -> int:
             "anyOrderProbability": float(any_order),
             "anyOrderOdds": odds_from_fraction(any_order),
             "distinctOrderings": any_order.numerator,
-            "note": "Any Order odds depend on the number of distinct permutations of the chosen digit multiset.",
+            "note": (
+                "Any Order odds depend on the number of distinct permutations "
+                "of the chosen digit multiset."
+            ),
         }
         print(json.dumps(payload, indent=2))
         return 0
