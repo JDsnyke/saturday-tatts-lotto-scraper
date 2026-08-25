@@ -1,0 +1,54 @@
+name: Deployed browser audit
+
+on:
+  push:
+    branches: [fix/browser-audit-mobile-dark]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+      - name: Install Playwright
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Capture deployed screenshots and DOM diagnostics
+        run: node .github/scripts/browser_audit.mjs
+      - name: Print audit summary
+        run: |
+          node - <<'NODE'
+          const report = require('./browser-audit/audit.json');
+          for (const row of report) {
+            console.log(JSON.stringify({
+              page: row.page,
+              viewport: row.viewport,
+              theme: row.theme,
+              dataTheme: row.dataTheme,
+              scrollWidth: row.scrollWidth,
+              innerWidth: row.innerWidth,
+              skeletonCount: row.skeletonCount,
+              overflow: row.overflow,
+              consoleErrors: row.consoleErrors,
+              requestFailures: row.requestFailures,
+              body: row.body,
+              navbar: row.navbar,
+              hero: row.hero,
+              firstBox: row.firstBox,
+              firstSection: row.firstSection,
+            }));
+          }
+          NODE
+      - uses: actions/upload-artifact@v4
+        with:
+          name: deployed-browser-audit
+          path: browser-audit/
+          retention-days: 7
