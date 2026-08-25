@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import { chromium } from 'playwright';
 
-const base = 'https://jdsnyke.github.io/saturday-tatts-lotto-scraper/';
+const base = process.env.AUDIT_BASE || 'https://jdsnyke.github.io/saturday-tatts-lotto-scraper/';
 const pages = [
   ['saturday', ''],
   ['games', 'games.html'],
@@ -87,8 +87,11 @@ for (const [pageName, path] of pages) {
           scrollWidth: document.documentElement.scrollWidth,
           bodyScrollWidth: document.body.scrollWidth,
           body: sample('body'),
+          html: sample('html'),
           navbar: sample('.navbar'),
           hero: sample('.hero'),
+          heroBox: sample('.hero .box'),
+          heroBoxTitle: sample('.hero .box .title'),
           firstBox: sample('.box'),
           firstSection: sample('.section'),
           overflow,
