@@ -35,15 +35,15 @@
   </nav>
 
   <main>
-    <section class="hero is-link is-medium">
-      <div class="hero-body"><div class="container"><div class="columns is-vcentered is-variable is-8">
-        <div class="column is-three-fifths"><span class="tag is-link is-light mb-4">Australian game catalogue</span><h1 class="title is-1">Game rules and odds, side by side</h1><p class="subtitle is-4">Compare current Australian lottery mechanics without forcing unlike products into the same formula. Jurisdiction, operator source and variable raffle capacity stay visible.</p><div class="buttons"><a class="button is-light is-medium" href="#catalog"><span class="icon"><i data-lucide="list-filter"></i></span><span>Browse games</span></a><a class="button is-link is-inverted is-outlined is-medium" href="#calculators"><span class="icon"><i data-lucide="calculator"></i></span><span>Calculators</span></a></div></div>
+    <section class="hero">
+      <div class="hero-body py-5"><div class="container"><div class="columns is-vcentered mx-0">
+        <div class="column is-three-fifths"><span class="tag is-link is-light mb-4">Australian game catalogue</span><h1 class="title is-2">Game rules and odds, side by side</h1><p class="subtitle is-5">Compare current Australian lottery mechanics without forcing unlike products into the same formula. Jurisdiction, operator source and variable raffle capacity stay visible.</p><div class="buttons"><a class="button is-link is-medium" href="#catalog"><span class="icon"><i data-lucide="list-filter"></i></span><span>Browse games</span></a><a class="button is-light is-medium" href="#calculators"><span class="icon"><i data-lucide="calculator"></i></span><span>Calculators</span></a></div></div>
         <div class="column"><div class="box"><h2 class="title is-4">Different games, different maths</h2><div class="content"><ul><li><strong>Powerball:</strong> two independent pools</li><li><strong>Lucky Lotteries:</strong> raffle mechanics</li><li><strong>Keno:</strong> spot-size dependent</li><li><strong>Scratch games:</strong> print-run dependent</li></ul></div><div class="notification is-info is-light">Top-prize odds do not capture ticket price, prize size, payout rules, sharing, annuity terms or prize inventory.</div></div></div>
       </div></div></div>
     </section>
 
-    <section class="section" id="catalog"><div class="container">
-      <div class="mb-5"><span class="tag is-link is-light">Catalogue</span><h2 class="title is-2 mt-3">Current games and alternatives</h2><p class="subtitle is-5">Computed values follow a verified draw mechanism. Variable or reported products remain operator-sourced.</p></div>
+    <section class="section py-5" id="catalog"><div class="container">
+      <div class="mb-5"><span class="tag is-link is-light">Catalogue</span><h2 class="title is-3 mt-3">Current games and alternatives</h2><p class="subtitle is-5">Computed values follow a verified draw mechanism. Variable or reported products remain operator-sourced.</p></div>
       <div class="box"><div class="columns is-multiline">
         <div class="column"><div class="field"><label class="label" for="game-operator">Operator</label><div class="control"><div class="select is-fullwidth"><select id="game-operator"><option value="">All operators</option></select></div></div></div></div>
         <div class="column"><div class="field"><label class="label" for="game-mechanic">Mechanic</label><div class="control"><div class="select is-fullwidth"><select id="game-mechanic"><option value="">All mechanics</option></select></div></div></div></div>
@@ -59,8 +59,8 @@
       </div>
     </div></section>
 
-    <section class="section" id="calculators"><div class="container">
-      <div class="mb-5"><span class="tag is-primary is-light">Calculators</span><h2 class="title is-2 mt-3">Use the probability model that matches the game</h2><p class="subtitle is-5">Repeated draws, Keno spots and ordered digits are different experiments.</p></div>
+    <section class="section py-5" id="calculators"><div class="container">
+      <div class="mb-5"><span class="tag is-primary is-light">Calculators</span><h2 class="title is-3 mt-3">Use the probability model that matches the game</h2><p class="subtitle is-5">Repeated draws, Keno spots and ordered digits are different experiments.</p></div>
       <div class="columns is-multiline">
         <div class="column is-one-third"><article class="card"><div class="card-content"><div class="media"><div class="media-left"><span class="icon is-large"><i data-lucide="calendar-range"></i></span></div><div class="media-content"><p class="title is-5">Set for Life</p><p class="subtitle is-7">Repeated independent draws</p></div></div><div class="content"><p>A standard purchase covers seven consecutive daily draws. Cumulative probability is <code>1-(1-p)^d</code>.</p><div class="field"><label class="label" for="sfl-draws">Number of draws</label><div class="control"><input id="sfl-draws" class="input" type="number" min="1" max="365" value="7" inputmode="numeric"></div></div><hr><p class="heading">Single draw</p><p class="title is-5" id="sfl-single">—</p><p class="heading" id="sfl-label">—</p><p class="title is-5" id="sfl-cumulative">—</p><p class="help" id="sfl-probability">—</p></div></div></article></div>
         <div class="column is-one-third"><article class="card"><div class="card-content"><div class="media"><div class="media-left"><span class="icon is-large"><i data-lucide="circle-dot"></i></span></div><div class="media-content"><p class="title is-5">Keno · South Australia</p><p class="subtitle is-7">Hypergeometric Spot probability</p></div></div><div class="content"><p>For a fixed Spot selection, exact matches follow a hypergeometric distribution because 20 numbers are drawn without replacement from 80.</p><div class="field"><label class="label" for="keno-spot">Spot size</label><div class="control"><input id="keno-spot" class="input" type="number" min="1" max="10" value="10" inputmode="numeric"></div></div><hr><p class="heading" id="keno-label">—</p><p class="title is-5" id="keno-result">—</p><p class="help" id="keno-probability">—</p></div></div></article></div>
@@ -68,8 +68,8 @@
       </div>
     </div></section>
 
-    <section class="section" id="mechanics"><div class="container">
-      <div class="mb-5"><span class="tag is-warning is-light">Mechanics</span><h2 class="title is-2 mt-3">Several probability families</h2><p class="subtitle is-5">The Saturday portfolio optimiser stays specialised; the shared catalogue models each probability experiment first.</p></div>
+    <section class="section py-5" id="mechanics"><div class="container">
+      <div class="mb-5"><span class="tag is-warning is-light">Mechanics</span><h2 class="title is-3 mt-3">Several probability families</h2><p class="subtitle is-5">The Saturday portfolio optimiser stays specialised; the shared catalogue models each probability experiment first.</p></div>
       <div class="columns is-multiline">
         <div class="column is-one-quarter-desktop is-half-tablet"><div class="box"><span class="icon"><i data-lucide="circle-dot-dashed"></i></span><h3 class="title is-5 mt-3">One-pool draws</h3><p>Saturday Lotto, Weekday Windfall, Oz Lotto, Set for Life and Millionaire Medley.</p></div></div>
         <div class="column is-one-quarter-desktop is-half-tablet"><div class="box"><span class="icon"><i data-lucide="split"></i></span><h3 class="title is-5 mt-3">Two pools</h3><p>Powerball combines a seven-number main selection with a separate Powerball pool.</p></div></div>
@@ -79,7 +79,7 @@
       <article class="message is-info"><div class="message-header"><p><span class="icon"><i data-lucide="scale"></i></span> Interpretation</p></div><div class="message-body">Easier top-prize odds do not automatically mean better value. Ticket cost, prize amounts, payout rules, sharing and annuity terms also matter.</div></article>
     </div></section>
 
-    <section class="section"><div class="container"><div class="mb-5"><span class="tag is-success is-light">Sources</span><h2 class="title is-2 mt-3">Operator rules first</h2><p class="subtitle is-5">Core mechanics and published odds were rechecked against current operator pages. Unsupported lower-division rules stay uncomputed.</p></div><div class="columns"><div class="column"><div class="box"><h3 class="title is-5">The Lott</h3><p>Official Help Centre odds cross-check current Division 1 and jackpot denominators.</p></div></div><div class="column"><div class="box"><h3 class="title is-5">Lotterywest</h3><p>WA game pages independently verify national and WA-specific mechanics.</p></div></div><div class="column"><div class="box"><h3 class="title is-5">Jurisdiction</h3><p>Availability is kept explicit rather than implied nationally.</p></div></div></div></div></section>
+    <section class="section py-5"><div class="container"><div class="mb-5"><span class="tag is-success is-light">Sources</span><h2 class="title is-3 mt-3">Operator rules first</h2><p class="subtitle is-5">Core mechanics and published odds were rechecked against current operator pages. Unsupported lower-division rules stay uncomputed.</p></div><div class="columns"><div class="column"><div class="box"><h3 class="title is-5">The Lott</h3><p>Official Help Centre odds cross-check current Division 1 and jackpot denominators.</p></div></div><div class="column"><div class="box"><h3 class="title is-5">Lotterywest</h3><p>WA game pages independently verify national and WA-specific mechanics.</p></div></div><div class="column"><div class="box"><h3 class="title is-5">Jurisdiction</h3><p>Availability is kept explicit rather than implied nationally.</p></div></div></div></div></section>
   </main>
 
   <footer class="footer"><div class="content has-text-centered"><p><strong>Lottery Lab</strong> · Open-source Australian lottery probability research. Not affiliated with The Lott or Lotterywest.</p><p><a href="index.html">Saturday</a> · <a href="benchmark.html">Benchmarks</a> · <a href="https://github.com/JDsnyke/saturday-tatts-lotto-scraper">GitHub</a></p><p class="is-size-7">Lottery outcomes are random. More entries cost more money.</p></div></footer>

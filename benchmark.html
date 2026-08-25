@@ -33,17 +33,17 @@
   </nav>
 
   <main>
-    <section class="hero is-info is-medium">
-      <div class="hero-body"><div class="container"><div class="columns is-vcentered is-variable is-8">
-        <div class="column is-three-fifths"><span class="tag is-info is-light mb-4">Saturday Lotto portfolio benchmarks</span><h1 class="title is-1">Exact results before simulations</h1><p class="subtitle is-4">Exact portfolio unions, certified bounds and multi-seed comparisons. Simulation remains only where the project has not solved the same question exactly.</p><div class="buttons"><a class="button is-light is-medium" href="#certificates"><span class="icon"><i data-lucide="badge-check"></i></span><span>Exact results</span></a><a class="button is-info is-inverted is-outlined is-medium" href="#evidence"><span class="icon"><i data-lucide="flask-conical"></i></span><span>Benchmark evidence</span></a></div></div>
+    <section class="hero">
+      <div class="hero-body py-5"><div class="container"><div class="columns is-vcentered mx-0">
+        <div class="column is-three-fifths"><span class="tag is-info is-light mb-4">Saturday Lotto portfolio benchmarks</span><h1 class="title is-2">Exact results before simulations</h1><p class="subtitle is-5">Exact portfolio unions, certified bounds and multi-seed comparisons. Simulation remains only where the project has not solved the same question exactly.</p><div class="buttons"><a class="button is-info is-medium" href="#certificates"><span class="icon"><i data-lucide="badge-check"></i></span><span>Exact results</span></a><a class="button is-light is-medium" href="#evidence"><span class="icon"><i data-lucide="flask-conical"></i></span><span>Benchmark evidence</span></a></div></div>
         <div class="column"><div class="box"><span class="tag is-success is-light mb-3">Invariant</span><h2 class="title is-4">Same number of distinct games</h2><p class="title is-3">Same Division 1 odds</p><div class="content"><p><strong>Coverage:</strong> n / 8,145,060</p><p><strong>QuickPick:</strong> n / 8,145,060</p><p><strong>Can differ:</strong> lower-tier overlap</p></div><div class="notification is-info is-light">The benchmark measures portfolio structure. It does not predict the next winning numbers.</div></div></div>
       </div></div></div>
     </section>
 
-    <section class="section"><div class="container"><article class="message is-warning"><div class="message-header"><p><span class="icon"><i data-lucide="scale"></i></span> Evidence order</p></div><div class="message-body"><strong>When exact combinatorics and simulation answer the same question, use the exact result.</strong> Pair, triple and quadruple coverage are exact structural measures; simulation remains for unresolved exploratory outcomes.</div></article></div></section>
+    <section class="section py-5"><div class="container"><article class="message is-warning"><div class="message-header"><p><span class="icon"><i data-lucide="scale"></i></span> Evidence order</p></div><div class="message-body"><strong>When exact combinatorics and simulation answer the same question, use the exact result.</strong> Pair, triple and quadruple coverage are exact structural measures; simulation remains for unresolved exploratory outcomes.</div></article></div></section>
 
-    <section class="section" id="certificates"><div class="container">
-      <div class="mb-5"><span class="tag is-success is-light">Exact results</span><h2 class="title is-2 mt-3">Portfolio probability without simulation noise</h2><p class="subtitle is-5">The reference Coverage portfolio has exact any-prize probability from complement dynamic programming. Division 4-or-better is exact when its ticket events are pairwise disjoint.</p></div>
+    <section class="section py-5" id="certificates"><div class="container">
+      <div class="mb-5"><span class="tag is-success is-light">Exact results</span><h2 class="title is-3 mt-3">Portfolio probability without simulation noise</h2><p class="subtitle is-5">The reference Coverage portfolio has exact any-prize probability from complement dynamic programming. Division 4-or-better is exact when its ticket events are pairwise disjoint.</p></div>
       <div id="certificates-grid" class="columns is-multiline">
         <div class="column is-one-quarter-desktop is-half-tablet"><div class="box"><div class="level is-mobile"><div class="level-left"><p class="heading">Exact any-prize probability</p></div><div class="level-right"><span class="tag is-success is-light">Exact</span></div></div><p class="title is-4 is-skeleton" id="cert-any-exact">00.0000%</p><p class="help" id="cert-any-exact-status">Loading exact count…</p></div></div>
         <div class="column is-one-quarter-desktop is-half-tablet"><div class="box"><p class="heading">Certified lower bound</p><p class="title is-4 is-skeleton" id="cert-any-lower">00.0000%</p><p class="help" id="cert-any-upper">Loading bound…</p></div></div>
@@ -56,8 +56,8 @@
       </div>
     </div></section>
 
-    <section class="section" id="evidence"><div class="container">
-      <div class="mb-5"><span class="tag is-info is-light">Comparisons</span><h2 class="title is-2 mt-3">Coverage against alternative portfolio populations</h2><p class="subtitle is-5">The repository benchmark compares independent portfolio seeds. Local browser runs are explicitly exploratory.</p></div>
+    <section class="section py-5" id="evidence"><div class="container">
+      <div class="mb-5"><span class="tag is-info is-light">Comparisons</span><h2 class="title is-3 mt-3">Coverage against alternative portfolio populations</h2><p class="subtitle is-5">The repository benchmark compares independent portfolio seeds. Local browser runs are explicitly exploratory.</p></div>
       <article class="message is-info"><div class="message-header"><p><span class="icon"><i data-lucide="info"></i></span> Interpretation</p></div><div class="message-body">Probability-of-superiority is a benchmark statistic. It is not the probability that a strategy wins the lottery.</div></article>
 
       <div id="portfolio-benchmark" class="box">
@@ -74,11 +74,11 @@
         </div>
         <div class="buttons"><button class="button is-info" id="run-local-benchmark" type="button"><span class="icon"><i data-lucide="play"></i></span><span>Run local benchmark</span></button><button class="button is-light" id="download-local-benchmark" type="button" disabled><span class="icon"><i data-lucide="download"></i></span><span>JSON</span></button></div>
         <progress class="progress is-info is-hidden" id="benchmark-progress" value="0" max="100">0%</progress>
-        <div id="benchmark-local-result"><div class="notification is-light">Runs entirely in your browser and does not use historical number frequencies.</div></div>
+        <div id="benchmark-local-result"><div class="notification">Runs entirely in your browser and does not use historical number frequencies.</div></div>
       </div>
     </div></section>
 
-    <section class="section"><div class="container"><div class="mb-5"><span class="tag is-dark is-light">Method</span><h2 class="title is-2 mt-3">Exact mathematics first, simulation second</h2></div><div class="columns is-multiline">
+    <section class="section py-5"><div class="container"><div class="mb-5"><span class="tag is-dark is-light">Method</span><h2 class="title is-3 mt-3">Exact mathematics first, simulation second</h2></div><div class="columns is-multiline">
       <div class="column is-one-third"><div class="box"><span class="tag is-success is-light">Exact</span><h3 class="title is-5 mt-3">Any-prize portfolio union</h3><p>Complement dynamic programming counts all eligible winning-main sets.</p></div></div>
       <div class="column is-one-third"><div class="box"><span class="tag is-success is-light">Exact</span><h3 class="title is-5 mt-3">Pair intersections</h3><p>Two-ticket ≥3-main and ≥4-main event intersections are counted directly.</p></div></div>
       <div class="column is-one-third"><div class="box"><span class="tag is-success is-light">Certified</span><h3 class="title is-5 mt-3">Bonferroni lower bound</h3><p>S1 − S2 is a rigorous lower bound and a cheap optimisation signal.</p></div></div>

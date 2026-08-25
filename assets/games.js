@@ -114,7 +114,7 @@
                   <tr><th>Draw</th><td>${escapeHtml(game.schedule)}</td></tr>
                   ${snapshotRows(snapshot)}
                 </tbody></table></div>
-                ${note ? `<div class="notification is-light">${escapeHtml(note)}</div>` : ''}
+                ${note ? `<div class="notification">${escapeHtml(note)}</div>` : ''}
                 ${sourceUrl ? `<a class="button is-small is-link is-light" href="${escapeHtml(sourceUrl)}" target="_blank" rel="noreferrer"><span class="icon"><i data-lucide="external-link"></i></span><span>Official source</span></a>` : ''}
               </div>
             </div>

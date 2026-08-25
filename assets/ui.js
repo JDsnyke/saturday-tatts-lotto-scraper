@@ -13,6 +13,12 @@
     else document.documentElement.setAttribute('data-theme', value);
     localStorage.setItem(THEME_KEY, value);
 
+    const resolved = value === 'system'
+      ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+      : value;
+    const themeMeta = document.querySelector('meta[name="theme-color"]');
+    if (themeMeta) themeMeta.content = resolved === 'dark' ? '#14161a' : '#ffffff';
+
     const button = document.getElementById('theme-toggle');
     const icon = document.getElementById('theme-icon');
     if (button) {
@@ -27,6 +33,9 @@
 
   function setupTheme() {
     applyTheme(localStorage.getItem(THEME_KEY) || 'system');
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+      if ((localStorage.getItem(THEME_KEY) || 'system') === 'system') applyTheme('system');
+    });
     document.getElementById('theme-toggle')?.addEventListener('click', () => {
       const current = localStorage.getItem(THEME_KEY) || 'system';
       applyTheme(themes[(themes.indexOf(current) + 1) % themes.length]);
@@ -46,7 +55,7 @@
   }
 
   function clearSkeletons(root = document) {
-    root.querySelectorAll('.is-skeleton').forEach(element => element.classList.remove('is-skeleton'));
+    root.querySelectorAll('.is-skeleton, .has-skeleton').forEach(element => element.classList.remove('is-skeleton', 'has-skeleton'));
     root.querySelectorAll('.skeleton-block, .skeleton-lines').forEach(element => element.remove());
   }
 

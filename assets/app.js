@@ -190,7 +190,7 @@ function renderPlanner() {
   const matches = stats.probabilityModel?.mainMatchDistribution?.length
     ? stats.probabilityModel.mainMatchDistribution : exactMatchRows();
   $('#prize-table-body').innerHTML = rows.map(row => `
-    <tr><td>Division ${row.division}</td><td>${row.requirement}</td><td>${pct(Number(row.probability), 6)}</td><td>${fmtOdds(Number(row.probability))}</td></tr>
+    <tr><td>Division ${row.division}</td><td>${row.requirement}</td><td class="is-hidden-mobile">${pct(Number(row.probability), 6)}</td><td>${fmtOdds(Number(row.probability))}</td></tr>
   `).join('');
   const max = Math.max(...matches.map(row => Number(row.probability) || 0), 1e-12);
   $('#match-bars').innerHTML = `<div class="table-container"><table class="table is-fullwidth is-hoverable"><thead><tr><th>Matches</th><th>Probability</th><th>Relative frequency</th></tr></thead><tbody>${matches.map(row => `
@@ -369,8 +369,8 @@ function renderTickets(tickets) {
     $(`#${name}-coverage-meter`).value = 100 * value.efficiency;
   });
   $('#ticket-grid').innerHTML = tickets.map((ticket, i) => `
-    <div class="column is-half">
-      <article class="box">
+    <div class="column is-half py-2">
+      <article class="box p-4">
         <div class="level is-mobile"><div class="level-left"><span class="tag is-primary is-light"><span class="icon"><i data-lucide="ticket"></i></span><span>Game ${String(i + 1).padStart(2, '0')}</span></span></div></div>
         <div class="tags are-medium">${ticket.map(number => `<span class="tag is-rounded is-primary">${number}</span>`).join('')}</div>
       </article>
@@ -538,8 +538,8 @@ function renderDiagnostics() {
   const stats = state.stats;
   const values = stats.numbers || [];
   const max = Math.max(1, ...values.map(row => Number(row.mainCount) || 0));
-  $('#frequency-chart').innerHTML = `<div class="table-container"><table class="table is-fullwidth is-hoverable"><thead><tr><th>Number</th><th>Appearances</th><th>Relative count</th><th>z-score</th></tr></thead><tbody>${values.map(row => `
-    <tr><td><button class="button is-small is-light" type="button" data-frequency-number="${row.number}" aria-label="Number ${row.number}: ${row.mainCount || 0} appearances, z score ${Number(row.zScore || 0).toFixed(2)}">${row.number}</button></td><td>${nf.format(row.mainCount || 0)}</td><td><progress class="progress is-primary is-small" value="${row.mainCount || 0}" max="${max}">${row.mainCount || 0}</progress></td><td>${Number(row.zScore || 0).toFixed(2)}</td></tr>
+  $('#frequency-chart').innerHTML = `<div class="table-container"><table class="table is-fullwidth is-hoverable"><thead><tr><th>Number</th><th>Appearances</th><th class="is-hidden-mobile">Relative count</th><th>z-score</th></tr></thead><tbody>${values.map(row => `
+    <tr><td><button class="button is-small is-light" type="button" data-frequency-number="${row.number}" aria-label="Number ${row.number}: ${row.mainCount || 0} appearances, z score ${Number(row.zScore || 0).toFixed(2)}">${row.number}</button></td><td>${nf.format(row.mainCount || 0)}</td><td class="is-hidden-mobile"><progress class="progress is-primary is-small" value="${row.mainCount || 0}" max="${max}">${row.mainCount || 0}</progress></td><td>${Number(row.zScore || 0).toFixed(2)}</td></tr>
   `).join('')}</tbody></table></div>`;
   $$('[data-frequency-number]').forEach(button => {
     const announce = () => { $('#chart-live').textContent = button.getAttribute('aria-label'); };
