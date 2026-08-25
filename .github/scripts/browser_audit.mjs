@@ -123,3 +123,22 @@ for (const [pageName, path] of pages) {
 
 await browser.close();
 await fs.writeFile('browser-audit/audit.json', JSON.stringify(report, null, 2));
+
+const failures = [];
+for (const row of report) {
+  const label = `${row.page}/${row.viewport}/${row.theme}`;
+  if (row.navigationError) failures.push(`${label}: navigation failed: ${row.navigationError}`);
+  if (row.consoleErrors.length) failures.push(`${label}: ${row.consoleErrors.length} console error(s)`);
+  if (row.requestFailures.length) failures.push(`${label}: ${row.requestFailures.length} request failure(s)`);
+  if (row.skeletonCount) failures.push(`${label}: ${row.skeletonCount} visible skeleton(s) remain`);
+  if (row.scrollWidth > row.innerWidth + 1) failures.push(`${label}: horizontal overflow ${row.scrollWidth}px > ${row.innerWidth}px`);
+  if (row.dataTheme !== row.theme) failures.push(`${label}: theme mismatch (${row.dataTheme} != ${row.theme})`);
+}
+
+if (failures.length) {
+  console.error(`UI browser audit failed with ${failures.length} invariant violation(s):`);
+  failures.forEach(message => console.error(`- ${message}`));
+  process.exitCode = 1;
+} else {
+  console.log(`UI browser audit passed: ${report.length} page/viewport/theme combinations.`);
+}
