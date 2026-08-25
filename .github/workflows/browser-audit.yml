@@ -80,3 +80,5 @@ jobs:
           name: branch-browser-audit
           path: browser-audit/
           retention-days: 7
+
+# Browser acceptance gate: screenshots are retained for manual visual review in addition to DOM invariants.
