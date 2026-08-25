@@ -90,7 +90,7 @@ class GamesSiteTests(unittest.TestCase):
         self.assertIn("./assets/game_catalog.json", worker)
         self.assertIn("bulma@1.0.4/css/bulma.min.css", worker)
         self.assertIn("lucide@1.33.0/dist/umd/lucide.js", worker)
-        self.assertIn("australian-lottery-lab-bulma-v1", worker)
+        self.assertIn("australian-lottery-lab-bulma-v2", worker)
 
 
 if __name__ == "__main__":

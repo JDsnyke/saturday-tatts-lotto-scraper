@@ -162,7 +162,7 @@
     const target = $('#benchmark-reference');
     if (!target) return;
     if (!benchmark?.metrics) {
-      target.innerHTML = '<div class="notification is-light">Reference benchmark pending generated stats. Use the local benchmark below until the scheduled verified refresh publishes it.</div>';
+      target.innerHTML = '<div class="notification">Reference benchmark pending generated stats. Use the local benchmark below until the scheduled verified refresh publishes it.</div>';
       return;
     }
     const metrics = benchmark.metrics;
@@ -174,7 +174,7 @@
         ${metricRow('Any-prize rate', metrics.anyPrizeRate, 2)}
         ${metricRow('Div 4+ rate', metrics.division4OrBetterRate, 3)}
       </tbody></table></div>
-      <div class="notification is-light">${benchmark.note || ''}</div>`;
+      <div class="notification">${benchmark.note || ''}</div>`;
     window.clearSkeletons?.(target);
   }
 
@@ -228,7 +228,7 @@
     button.disabled = true;
     button.classList.add('is-loading');
     download.disabled = true;
-    $('#benchmark-local-result').innerHTML = '<div class="notification is-light is-skeleton">Generating independently seeded portfolios…</div>';
+    $('#benchmark-local-result').innerHTML = '<div class="notification is-skeleton">Generating independently seeded portfolios…</div>';
     setProgress(0.05);
     await new Promise(resolve => setTimeout(resolve, 20));
 
