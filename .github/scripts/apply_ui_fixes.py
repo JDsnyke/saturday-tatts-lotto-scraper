@@ -10,6 +10,12 @@ def replace(path: str, old: str, new: str, count: int | None = None) -> None:
     target.write_text(text, encoding="utf-8")
 
 
+def replace_optional(path: str, old: str, new: str) -> None:
+    target = Path(path)
+    text = target.read_text(encoding="utf-8")
+    target.write_text(text.replace(old, new), encoding="utf-8")
+
+
 # Shared Bulma layout fixes: neutral heroes respect both themes, smaller native
 # spacing utilities remove excessive whitespace, and section headings are less
 # oversized on mobile. No custom CSS is introduced.
@@ -17,7 +23,7 @@ for path in ("index.html", "games.html", "benchmark.html"):
     replace(path, 'class="hero-body"', 'class="hero-body py-5"', 1)
     replace(path, 'class="section"', 'class="section py-5"')
     replace(path, 'title is-2 mt-3', 'title is-3 mt-3')
-    replace(path, 'notification is-light', 'notification')
+    replace_optional(path, 'notification is-light', 'notification')
 
 replace("index.html", 'class="hero is-primary is-medium"', 'class="hero"')
 replace("index.html", 'class="columns is-variable is-8 is-vcentered"', 'class="columns is-vcentered mx-0"', 1)
@@ -35,7 +41,6 @@ replace(
     'class="button is-light is-medium" href="#tickets"',
     1,
 )
-replace("index.html", 'id="hero-odds">1 in 8,145,060', 'id="hero-odds">1 in 8,145,060', 1)
 replace("index.html", 'class="title is-2 has-skeleton" id="hero-odds"', 'class="title is-2 is-skeleton" id="hero-odds"', 1)
 replace("index.html", '<th>Probability</th><th>Odds</th>', '<th class="is-hidden-mobile">Probability</th><th>Odds</th>', 1)
 replace("index.html", 'class="tabs is-boxed"', 'class="tabs is-boxed is-small"', 1)
@@ -149,6 +154,4 @@ replace(
 # Neutral dynamic notifications should follow the Bulma scheme instead of
 # forcing a pale surface in dark mode.
 for path in ("assets/games.js", "assets/benchmark.js"):
-    target = Path(path)
-    text = target.read_text(encoding="utf-8").replace('notification is-light', 'notification')
-    target.write_text(text, encoding="utf-8")
+    replace_optional(path, 'notification is-light', 'notification')
