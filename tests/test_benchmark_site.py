@@ -17,8 +17,10 @@ class BenchmarkSiteTests(unittest.TestCase):
             "benchmark.html",
         ):
             self.assertTrue((ROOT / path).exists(), path)
-        self.assertIn("bulma@1.0.4/css/bulma.min.css", html)
-        self.assertIn("lucide@1.33.0/dist/umd/lucide.js", html)
+        self.assertIn("assets/vendor/bulma.min.css", html)
+        self.assertIn("assets/vendor/lucide.js", html)
+        self.assertNotIn("cdn.jsdelivr.net", html)
+        self.assertNotIn("unpkg.com", html)
         self.assertNotIn("assets/benchmark.css", html)
         self.assertIn("assets/ui.js", html)
         self.assertIn("assets/benchmark.js", html)
@@ -41,6 +43,12 @@ class BenchmarkSiteTests(unittest.TestCase):
         self.assertIn('id="cert-overlap"', html)
         self.assertIn('id="portfolio-benchmark"', html)
         self.assertIn('id="benchmark-progress"', html)
+
+    def test_static_benchmark_surfaces_are_shadowless_and_theme_safe(self):
+        html = (ROOT / "benchmark.html").read_text(encoding="utf-8")
+        self.assertIn("box is-shadowless", html)
+        self.assertNotIn(" is-light", html)
+        self.assertNotIn("has-shadow", html)
 
 
 if __name__ == "__main__":

@@ -9,83 +9,109 @@
   <title>Benchmarks · Lottery Lab</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="assets/site.webmanifest">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css">
-  <script defer src="https://unpkg.com/lucide@1.33.0/dist/umd/lucide.js"></script>
+  <link rel="stylesheet" href="assets/vendor/bulma.min.css">
+  <script defer src="assets/vendor/lucide.js"></script>
   <script defer src="assets/ui.js"></script>
   <script defer src="assets/benchmark.js"></script>
   <script defer src="assets/certificates.js"></script>
 </head>
 <body>
-  <nav class="navbar is-spaced has-shadow" role="navigation" aria-label="Primary navigation">
+  <nav class="navbar is-spaced" role="navigation" aria-label="Primary navigation">
     <div class="navbar-brand">
-      <a class="navbar-item" href="benchmark.html"><strong>Lottery Lab</strong>&nbsp;<span class="tag is-info is-light">Benchmarks</span></a>
+      <a class="navbar-item px-3" href="benchmark.html"><strong>Lottery Lab</strong>&nbsp;<span class="tag is-info">Benchmarks</span></a>
       <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="benchmark-navbar"><span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span></a>
     </div>
-    <div id="benchmark-navbar" class="navbar-menu">
+    <div id="benchmark-navbar" class="navbar-menu p-2">
       <div class="navbar-start">
-        <a class="navbar-item" href="index.html"><span class="icon"><i data-lucide="ticket"></i></span><span>Saturday</span></a>
-        <a class="navbar-item" href="games.html"><span class="icon"><i data-lucide="grid-2x2"></i></span><span>Games &amp; odds</span></a>
-        <a class="navbar-item is-selected" href="benchmark.html" aria-current="page"><span class="icon"><i data-lucide="chart-no-axes-combined"></i></span><span>Benchmarks</span></a>
-        <a class="navbar-item" href="#certificates"><span class="icon"><i data-lucide="badge-check"></i></span><span>Exact results</span></a>
+        <a class="navbar-item mx-1" href="index.html"><span class="icon"><i data-lucide="ticket"></i></span><span>Saturday</span></a>
+        <a class="navbar-item mx-1" href="games.html"><span class="icon"><i data-lucide="grid-2x2"></i></span><span>Games &amp; odds</span></a>
+        <a class="navbar-item mx-1 is-selected" href="benchmark.html" aria-current="page"><span class="icon"><i data-lucide="chart-no-axes-combined"></i></span><span>Benchmarks</span></a>
+        <a class="navbar-item mx-1" href="#certificates"><span class="icon"><i data-lucide="badge-check"></i></span><span>Exact results</span></a>
       </div>
-      <div class="navbar-end"><div class="navbar-item"><button id="theme-toggle" class="button is-light" type="button" aria-label="Change theme"><span class="icon"><i id="theme-icon" data-lucide="monitor"></i></span><span>Theme</span></button></div></div>
+      <div class="navbar-end"><div class="navbar-item mx-1"><button id="theme-toggle" class="button is-fullwidth" type="button" aria-label="Change theme"><span class="icon"><i id="theme-icon" data-lucide="monitor"></i></span><span>Theme</span></button></div></div>
     </div>
   </nav>
 
   <main>
     <section class="hero">
-      <div class="hero-body py-5"><div class="container"><div class="columns is-vcentered mx-0">
-        <div class="column is-three-fifths"><span class="tag is-info is-light mb-4">Saturday Lotto portfolio benchmarks</span><h1 class="title is-2">Exact results before simulations</h1><p class="subtitle is-5">Exact portfolio unions, certified bounds and multi-seed comparisons. Simulation remains only where the project has not solved the same question exactly.</p><div class="buttons"><a class="button is-info is-medium" href="#certificates"><span class="icon"><i data-lucide="badge-check"></i></span><span>Exact results</span></a><a class="button is-light is-medium" href="#evidence"><span class="icon"><i data-lucide="flask-conical"></i></span><span>Benchmark evidence</span></a></div></div>
-        <div class="column"><div class="box"><span class="tag is-success is-light mb-3">Invariant</span><h2 class="title is-4">Same number of distinct games</h2><p class="title is-3">Same Division 1 odds</p><div class="content"><p><strong>Coverage:</strong> n / 8,145,060</p><p><strong>QuickPick:</strong> n / 8,145,060</p><p><strong>Can differ:</strong> lower-tier overlap</p></div><div class="notification is-info is-light">The benchmark measures portfolio structure. It does not predict the next winning numbers.</div></div></div>
-      </div></div></div>
+      <div class="hero-body py-5">
+        <div class="container">
+          <div class="columns is-vcentered mx-0">
+            <div class="column is-three-fifths px-3">
+              <span class="tag is-info mb-4">Saturday Lotto portfolio benchmarks</span>
+              <h1 class="title is-2">Exact results before simulations</h1>
+              <p class="subtitle is-5">Exact portfolio unions, certified bounds and multi-seed comparisons. Simulation remains only where the project has not solved the same question exactly.</p>
+              <div class="buttons is-flex-wrap-wrap"><a class="button is-info is-medium" href="#certificates"><span class="icon"><i data-lucide="badge-check"></i></span><span>Exact results</span></a><a class="button is-medium is-outlined" href="#evidence"><span class="icon"><i data-lucide="flask-conical"></i></span><span>Benchmark evidence</span></a></div>
+            </div>
+            <div class="column px-3">
+              <div class="box is-shadowless">
+                <span class="tag is-success mb-3">Invariant</span>
+                <h2 class="title is-4">Same number of distinct games</h2>
+                <p class="title is-3">Same Division 1 odds</p>
+                <div class="content"><p><strong>Coverage:</strong> n / 8,145,060</p><p><strong>QuickPick:</strong> n / 8,145,060</p><p><strong>Can differ:</strong> lower-tier overlap</p></div>
+                <div class="notification mb-0">The benchmark measures portfolio structure. It does not predict the next winning numbers.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <section class="section py-5"><div class="container"><article class="message is-warning"><div class="message-header"><p><span class="icon"><i data-lucide="scale"></i></span> Evidence order</p></div><div class="message-body"><strong>When exact combinatorics and simulation answer the same question, use the exact result.</strong> Pair, triple and quadruple coverage are exact structural measures; simulation remains for unresolved exploratory outcomes.</div></article></div></section>
+    <section class="section py-5"><div class="container"><article class="message"><div class="message-header"><p><span class="icon"><i data-lucide="scale"></i></span> Evidence order</p></div><div class="message-body"><strong>When exact combinatorics and simulation answer the same question, use the exact result.</strong> Pair, triple and quadruple coverage are exact structural measures; simulation remains for unresolved exploratory outcomes.</div></article></div></section>
 
-    <section class="section py-5" id="certificates"><div class="container">
-      <div class="mb-5"><span class="tag is-success is-light">Exact results</span><h2 class="title is-3 mt-3">Portfolio probability without simulation noise</h2><p class="subtitle is-5">The reference Coverage portfolio has exact any-prize probability from complement dynamic programming. Division 4-or-better is exact when its ticket events are pairwise disjoint.</p></div>
-      <div id="certificates-grid" class="columns is-multiline">
-        <div class="column is-one-quarter-desktop is-half-tablet"><div class="box"><div class="level is-mobile"><div class="level-left"><p class="heading">Exact any-prize probability</p></div><div class="level-right"><span class="tag is-success is-light">Exact</span></div></div><p class="title is-4 is-skeleton" id="cert-any-exact">00.0000%</p><p class="help" id="cert-any-exact-status">Loading exact count…</p></div></div>
-        <div class="column is-one-quarter-desktop is-half-tablet"><div class="box"><p class="heading">Certified lower bound</p><p class="title is-4 is-skeleton" id="cert-any-lower">00.0000%</p><p class="help" id="cert-any-upper">Loading bound…</p></div></div>
-        <div class="column is-one-quarter-desktop is-half-tablet"><div class="box"><div class="level is-mobile"><div class="level-left"><p class="heading">Division 4+ probability</p></div><div class="level-right"><span class="tag is-skeleton" id="cert-d4-badge">Checking</span></div></div><p class="title is-4 is-skeleton" id="cert-d4-exact">00.0000%</p><p class="help" id="cert-d4-status">Checking certificate…</p></div></div>
-        <div class="column is-one-quarter-desktop is-half-tablet"><div class="box"><p class="heading">Maximum ticket overlap</p><p class="title is-4 is-skeleton" id="cert-overlap">0</p><p class="help">≤1 makes ≥4-main events mutually exclusive in pairs.</p></div></div>
-      </div>
-      <div class="columns">
-        <div class="column"><article class="message is-success"><div class="message-header"><p><span class="icon"><i data-lucide="binary"></i></span> Exact any-prize algorithm</p></div><div class="message-body">Count six-ball draws where every ticket stays below three matches, then take the complement. States are integer counts; no draw simulation is needed.</div></article></div>
-        <div class="column"><article class="message is-info"><div class="message-header"><p><span class="icon"><i data-lucide="shield-check"></i></span> Division 4 certificate</p></div><div class="message-body">Pairwise ticket overlap of at most one number makes ≥4-main events pairwise disjoint, reaching the sum-of-marginals upper bound.</div></article></div>
-      </div>
-    </div></section>
-
-    <section class="section py-5" id="evidence"><div class="container">
-      <div class="mb-5"><span class="tag is-info is-light">Comparisons</span><h2 class="title is-3 mt-3">Coverage against alternative portfolio populations</h2><p class="subtitle is-5">The repository benchmark compares independent portfolio seeds. Local browser runs are explicitly exploratory.</p></div>
-      <article class="message is-info"><div class="message-header"><p><span class="icon"><i data-lucide="info"></i></span> Interpretation</p></div><div class="message-body">Probability-of-superiority is a benchmark statistic. It is not the probability that a strategy wins the lottery.</div></article>
-
-      <div id="portfolio-benchmark" class="box">
-        <div class="level"><div class="level-left"><div><span class="tag is-info is-light">Multi-seed benchmark</span><h3 class="title is-4 mt-3">Coverage portfolios vs QuickPick distributions</h3><p class="subtitle is-6">Independent portfolio seeds are evaluated on the same simulated draws.</p></div></div><div class="level-right"><span class="tag">Distribution test</span></div></div>
-        <div id="benchmark-reference" aria-live="polite"><div class="skeleton-lines"><div></div><div></div><div></div><div></div></div></div>
-        <hr>
-        <h4 class="title is-5">Run a local exploratory benchmark</h4>
-        <div class="columns is-multiline">
-          <div class="column"><div class="field"><label class="label" for="bench-games">Games</label><div class="control"><input id="bench-games" class="input" type="number" min="2" max="20" value="10"></div></div></div>
-          <div class="column"><div class="field"><label class="label" for="bench-coverage">Coverage sets</label><div class="control"><input id="bench-coverage" class="input" type="number" min="2" max="24" value="8"></div></div></div>
-          <div class="column"><div class="field"><label class="label" for="bench-random">QuickPick sets</label><div class="control"><input id="bench-random" class="input" type="number" min="4" max="80" value="32"></div></div></div>
-          <div class="column"><div class="field"><label class="label" for="bench-trials">Shared draws</label><div class="control"><input id="bench-trials" class="input" type="number" min="300" max="2500" step="100" value="1000"></div></div></div>
-          <div class="column"><div class="field"><label class="label" for="bench-seed">Seed</label><div class="control"><input id="bench-seed" class="input" type="number" value="20260822"></div></div></div>
+    <section class="section py-5" id="certificates">
+      <div class="container">
+        <div class="mb-5"><span class="tag is-success">Exact results</span><h2 class="title is-3 mt-3">Portfolio probability without simulation noise</h2><p class="subtitle is-5">The reference Coverage portfolio has exact any-prize probability from complement dynamic programming. Division 4-or-better is exact when its ticket events are pairwise disjoint.</p></div>
+        <div id="certificates-grid" class="columns is-multiline">
+          <div class="column is-half-tablet is-one-quarter-desktop"><div class="box is-shadowless"><div class="level is-mobile"><div class="level-left"><p class="heading">Exact any-prize probability</p></div><div class="level-right"><span class="tag is-success">Exact</span></div></div><p class="title is-4 is-skeleton" id="cert-any-exact">00.0000%</p><p class="help" id="cert-any-exact-status">Loading exact count…</p></div></div>
+          <div class="column is-half-tablet is-one-quarter-desktop"><div class="box is-shadowless"><p class="heading">Certified lower bound</p><p class="title is-4 is-skeleton" id="cert-any-lower">00.0000%</p><p class="help" id="cert-any-upper">Loading bound…</p></div></div>
+          <div class="column is-half-tablet is-one-quarter-desktop"><div class="box is-shadowless"><div class="level is-mobile"><div class="level-left"><p class="heading">Division 4+ probability</p></div><div class="level-right"><span class="tag is-skeleton" id="cert-d4-badge">Checking</span></div></div><p class="title is-4 is-skeleton" id="cert-d4-exact">00.0000%</p><p class="help" id="cert-d4-status">Checking certificate…</p></div></div>
+          <div class="column is-half-tablet is-one-quarter-desktop"><div class="box is-shadowless"><p class="heading">Maximum ticket overlap</p><p class="title is-4 is-skeleton" id="cert-overlap">0</p><p class="help">≤1 makes ≥4-main events mutually exclusive in pairs.</p></div></div>
         </div>
-        <div class="buttons"><button class="button is-info" id="run-local-benchmark" type="button"><span class="icon"><i data-lucide="play"></i></span><span>Run local benchmark</span></button><button class="button is-light" id="download-local-benchmark" type="button" disabled><span class="icon"><i data-lucide="download"></i></span><span>JSON</span></button></div>
-        <progress class="progress is-info is-hidden" id="benchmark-progress" value="0" max="100">0%</progress>
-        <div id="benchmark-local-result"><div class="notification">Runs entirely in your browser and does not use historical number frequencies.</div></div>
+        <div class="columns">
+          <div class="column"><article class="message"><div class="message-header"><p><span class="icon"><i data-lucide="binary"></i></span> Exact any-prize algorithm</p></div><div class="message-body">Count six-ball draws where every ticket stays below three matches, then take the complement. States are integer counts; no draw simulation is needed.</div></article></div>
+          <div class="column"><article class="message"><div class="message-header"><p><span class="icon"><i data-lucide="shield-check"></i></span> Division 4 certificate</p></div><div class="message-body">Pairwise ticket overlap of at most one number makes ≥4-main events pairwise disjoint, reaching the sum-of-marginals upper bound.</div></article></div>
+        </div>
       </div>
-    </div></section>
+    </section>
 
-    <section class="section py-5"><div class="container"><div class="mb-5"><span class="tag is-dark is-light">Method</span><h2 class="title is-3 mt-3">Exact mathematics first, simulation second</h2></div><div class="columns is-multiline">
-      <div class="column is-one-third"><div class="box"><span class="tag is-success is-light">Exact</span><h3 class="title is-5 mt-3">Any-prize portfolio union</h3><p>Complement dynamic programming counts all eligible winning-main sets.</p></div></div>
-      <div class="column is-one-third"><div class="box"><span class="tag is-success is-light">Exact</span><h3 class="title is-5 mt-3">Pair intersections</h3><p>Two-ticket ≥3-main and ≥4-main event intersections are counted directly.</p></div></div>
-      <div class="column is-one-third"><div class="box"><span class="tag is-success is-light">Certified</span><h3 class="title is-5 mt-3">Bonferroni lower bound</h3><p>S1 − S2 is a rigorous lower bound and a cheap optimisation signal.</p></div></div>
-      <div class="column is-one-third"><div class="box"><span class="tag is-primary is-light">Optimal</span><h3 class="title is-5 mt-3">Division 4+ certificate</h3><p>Pairwise-disjoint ≥4-main events reach the universal upper bound.</p></div></div>
-      <div class="column is-one-third"><div class="box"><span class="tag is-info is-light">Simulated</span><h3 class="title is-5 mt-3">Shared draws</h3><p>Monte Carlo remains for exploratory metrics that are not solved exactly.</p></div></div>
-      <div class="column is-one-third"><div class="box"><span class="tag is-danger is-light">Rejected</span><h3 class="title is-5 mt-3">No sampled-training optimiser</h3><p>A sampled-training prototype overfit and failed to generalise, so it is not shipped.</p></div></div>
-    </div></div></section>
+    <section class="section py-5" id="evidence">
+      <div class="container">
+        <div class="mb-5"><span class="tag is-info">Comparisons</span><h2 class="title is-3 mt-3">Coverage against alternative portfolio populations</h2><p class="subtitle is-5">The repository benchmark compares independent portfolio seeds. Local browser runs are explicitly exploratory.</p></div>
+        <article class="message"><div class="message-header"><p><span class="icon"><i data-lucide="info"></i></span> Interpretation</p></div><div class="message-body">Probability-of-superiority is a benchmark statistic. It is not the probability that a strategy wins the lottery.</div></article>
+
+        <div id="portfolio-benchmark" class="box is-shadowless">
+          <div class="level"><div class="level-left"><div><span class="tag is-info">Multi-seed benchmark</span><h3 class="title is-4 mt-3">Coverage portfolios vs QuickPick distributions</h3><p class="subtitle is-6">Independent portfolio seeds are evaluated on the same simulated draws.</p></div></div><div class="level-right"><span class="tag">Distribution test</span></div></div>
+          <div id="benchmark-reference" aria-live="polite"><div class="skeleton-lines"><div></div><div></div><div></div><div></div></div></div>
+          <hr>
+          <h4 class="title is-5">Run a local exploratory benchmark</h4>
+          <div class="columns is-multiline">
+            <div class="column is-half-tablet is-one-fifth-desktop"><div class="field"><label class="label" for="bench-games">Games</label><div class="control"><input id="bench-games" class="input" type="number" min="2" max="20" value="10"></div></div></div>
+            <div class="column is-half-tablet is-one-fifth-desktop"><div class="field"><label class="label" for="bench-coverage">Coverage sets</label><div class="control"><input id="bench-coverage" class="input" type="number" min="2" max="24" value="8"></div></div></div>
+            <div class="column is-half-tablet is-one-fifth-desktop"><div class="field"><label class="label" for="bench-random">QuickPick sets</label><div class="control"><input id="bench-random" class="input" type="number" min="4" max="80" value="32"></div></div></div>
+            <div class="column is-half-tablet is-one-fifth-desktop"><div class="field"><label class="label" for="bench-trials">Shared draws</label><div class="control"><input id="bench-trials" class="input" type="number" min="300" max="2500" step="100" value="1000"></div></div></div>
+            <div class="column is-half-tablet is-one-fifth-desktop"><div class="field"><label class="label" for="bench-seed">Seed</label><div class="control"><input id="bench-seed" class="input" type="number" value="20260822"></div></div></div>
+          </div>
+          <div class="buttons is-flex-wrap-wrap"><button class="button is-info" id="run-local-benchmark" type="button"><span class="icon"><i data-lucide="play"></i></span><span>Run local benchmark</span></button><button class="button is-outlined" id="download-local-benchmark" type="button" disabled><span class="icon"><i data-lucide="download"></i></span><span>JSON</span></button></div>
+          <progress class="progress is-info is-hidden" id="benchmark-progress" value="0" max="100">0%</progress>
+          <div id="benchmark-local-result"><div class="notification">Runs entirely in your browser and does not use historical number frequencies.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section py-5">
+      <div class="container">
+        <div class="mb-5"><span class="tag">Method</span><h2 class="title is-3 mt-3">Exact mathematics first, simulation second</h2></div>
+        <div class="columns is-multiline">
+          <div class="column is-half-tablet is-one-third-desktop"><div class="box is-shadowless"><span class="tag is-success">Exact</span><h3 class="title is-5 mt-3">Any-prize portfolio union</h3><p>Complement dynamic programming counts all eligible winning-main sets.</p></div></div>
+          <div class="column is-half-tablet is-one-third-desktop"><div class="box is-shadowless"><span class="tag is-success">Exact</span><h3 class="title is-5 mt-3">Pair intersections</h3><p>Two-ticket ≥3-main and ≥4-main event intersections are counted directly.</p></div></div>
+          <div class="column is-half-tablet is-one-third-desktop"><div class="box is-shadowless"><span class="tag is-success">Certified</span><h3 class="title is-5 mt-3">Bonferroni lower bound</h3><p>S1 − S2 is a rigorous lower bound and a cheap optimisation signal.</p></div></div>
+          <div class="column is-half-tablet is-one-third-desktop"><div class="box is-shadowless"><span class="tag is-primary">Optimal</span><h3 class="title is-5 mt-3">Division 4+ certificate</h3><p>Pairwise-disjoint ≥4-main events reach the universal upper bound.</p></div></div>
+          <div class="column is-half-tablet is-one-third-desktop"><div class="box is-shadowless"><span class="tag is-info">Simulated</span><h3 class="title is-5 mt-3">Shared draws</h3><p>Monte Carlo remains for exploratory metrics that are not solved exactly.</p></div></div>
+          <div class="column is-half-tablet is-one-third-desktop"><div class="box is-shadowless"><span class="tag is-danger">Rejected</span><h3 class="title is-5 mt-3">No sampled-training optimiser</h3><p>A sampled-training prototype overfit and failed to generalise, so it is not shipped.</p></div></div>
+        </div>
+      </div>
+    </section>
   </main>
 
   <footer class="footer"><div class="content has-text-centered"><p><strong>Lottery Lab</strong> · Open-source Saturday Lotto portfolio research. Not affiliated with The Lott.</p><p><a href="index.html">Saturday</a> · <a href="games.html">Games &amp; odds</a> · <a href="https://github.com/JDsnyke/saturday-tatts-lotto-scraper">GitHub</a></p><p class="is-size-7">More entries increase spend as well as probability. Portfolio optimisation does not turn lottery play into an investment.</p></div></footer>

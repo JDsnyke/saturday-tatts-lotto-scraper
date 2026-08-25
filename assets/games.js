@@ -4,11 +4,7 @@
 
   const nf = new Intl.NumberFormat('en-AU', { maximumFractionDigits: 2 });
   const pct = new Intl.NumberFormat('en-AU', { style: 'percent', maximumFractionDigits: 8 });
-  const money = new Intl.NumberFormat('en-AU', {
-    style: 'currency',
-    currency: 'AUD',
-    maximumFractionDigits: 0,
-  });
+  const money = new Intl.NumberFormat('en-AU', { style: 'currency', currency: 'AUD', maximumFractionDigits: 0 });
   const mechanicNames = {
     'one-pool': 'Combination draw',
     'two-pool': 'Two-pool draw',
@@ -49,17 +45,13 @@
   function snapshotRows(snapshot) {
     if (!snapshot) return '';
     const rows = [];
-    if (snapshot.ticketPriceFrom != null) {
-      rows.push(`<tr><th>Ticket from</th><td>${escapeHtml(money.format(snapshot.ticketPriceFrom))}</td></tr>`);
-    }
+    if (snapshot.ticketPriceFrom != null) rows.push(`<tr><th>Ticket from</th><td>${escapeHtml(money.format(snapshot.ticketPriceFrom))}</td></tr>`);
     if (snapshot.minimumPossibleEntries != null && snapshot.maximumEntries != null) {
       rows.push(`<tr><th>Entry range</th><td>${nf.format(snapshot.minimumPossibleEntries)}–${nf.format(snapshot.maximumEntries)}</td></tr>`);
     } else if (snapshot.maximumEntries != null) {
       rows.push(`<tr><th>Capacity</th><td>Up to ${nf.format(snapshot.maximumEntries)}</td></tr>`);
     }
-    if (snapshot.drawDate && snapshot.drawDate !== 'varies') {
-      rows.push(`<tr><th>Snapshot draw</th><td>${escapeHtml(snapshot.drawDate)}</td></tr>`);
-    }
+    if (snapshot.drawDate && snapshot.drawDate !== 'varies') rows.push(`<tr><th>Snapshot draw</th><td>${escapeHtml(snapshot.drawDate)}</td></tr>`);
     return rows.join('');
   }
 
@@ -80,9 +72,7 @@
         const bOdds = b.computedTopOdds ?? b.officialTopOdds ?? Infinity;
         return aOdds - bOdds;
       });
-    } else {
-      filtered = [...filtered].sort((a, b) => a.name.localeCompare(b.name));
-    }
+    } else filtered = [...filtered].sort((a, b) => a.name.localeCompare(b.name));
 
     document.getElementById('game-count').textContent = `${filtered.length} option${filtered.length === 1 ? '' : 's'}`;
     document.getElementById('game-grid').innerHTML = filtered.map(game => {
@@ -94,19 +84,19 @@
       const sourceUrl = snapshot?.sourceUrl || game.sourceUrl;
       const icon = mechanicIcons[game.mechanic] || 'circle-help';
       return `
-        <div class="column is-half" data-game="${escapeHtml(game.slug)}">
-          <article class="card">
+        <div class="column is-half px-2" data-game="${escapeHtml(game.slug)}">
+          <article class="card is-shadowless">
             <div class="card-content">
               <div class="media">
                 <div class="media-left"><span class="icon is-large"><i data-lucide="${icon}"></i></span></div>
                 <div class="media-content"><p class="title is-5">${escapeHtml(game.name)}</p><p class="subtitle is-7">${escapeHtml(game.operator)}</p></div>
-                <div class="media-right"><span class="tag ${isComputed ? 'is-success' : 'is-warning'} is-light">${isComputed ? 'Computed' : 'Variable / reported'}</span></div>
+                <div class="media-right"><span class="tag ${isComputed ? 'is-success' : 'is-warning'}">${isComputed ? 'Computed' : 'Variable / reported'}</span></div>
               </div>
               <div class="content">
                 <p>${escapeHtml(game.description)}</p>
-                <div class="columns is-mobile">
-                  <div class="column"><p class="heading">Top / Division 1</p><p class="title is-6">${formatOdds(topOdds)}</p></div>
-                  <div class="column"><p class="heading">Any prize</p><p class="title is-6">${formatOdds(anyOdds)}</p></div>
+                <div class="columns is-mobile is-multiline mx-0">
+                  <div class="column is-half px-2"><p class="heading">Top / Division 1</p><p class="title is-6">${formatOdds(topOdds)}</p></div>
+                  <div class="column is-half px-2"><p class="heading">Any prize</p><p class="title is-6">${formatOdds(anyOdds)}</p></div>
                 </div>
                 <div class="table-container"><table class="table is-fullwidth is-narrow"><tbody>
                   <tr><th>Mechanic</th><td>${escapeHtml(mechanicNames[game.mechanic] || game.mechanic)}</td></tr>
@@ -115,7 +105,7 @@
                   ${snapshotRows(snapshot)}
                 </tbody></table></div>
                 ${note ? `<div class="notification">${escapeHtml(note)}</div>` : ''}
-                ${sourceUrl ? `<a class="button is-small is-link is-light" href="${escapeHtml(sourceUrl)}" target="_blank" rel="noreferrer"><span class="icon"><i data-lucide="external-link"></i></span><span>Official source</span></a>` : ''}
+                ${sourceUrl ? `<a class="button is-small is-link is-outlined" href="${escapeHtml(sourceUrl)}" target="_blank" rel="noreferrer"><span class="icon"><i data-lucide="external-link"></i></span><span>Official source</span></a>` : ''}
               </div>
             </div>
           </article>
@@ -163,11 +153,9 @@
 
   function populateFilters() {
     const operatorSelect = document.getElementById('game-operator');
-    [...new Set(games.map(game => game.operator))].sort()
-      .forEach(operator => operatorSelect.add(new Option(operator, operator)));
+    [...new Set(games.map(game => game.operator))].sort().forEach(operator => operatorSelect.add(new Option(operator, operator)));
     const mechanicSelect = document.getElementById('game-mechanic');
-    [...new Set(games.map(game => game.mechanic))].sort()
-      .forEach(mechanic => mechanicSelect.add(new Option(mechanicNames[mechanic] || mechanic, mechanic)));
+    [...new Set(games.map(game => game.mechanic))].sort().forEach(mechanic => mechanicSelect.add(new Option(mechanicNames[mechanic] || mechanic, mechanic)));
   }
 
   async function loadCatalog() {
@@ -195,9 +183,7 @@
     }
   }
 
-  ['game-operator', 'game-mechanic', 'game-jurisdiction', 'game-sort'].forEach(id =>
-    document.getElementById(id).addEventListener('change', renderGames)
-  );
+  ['game-operator', 'game-mechanic', 'game-jurisdiction', 'game-sort'].forEach(id => document.getElementById(id).addEventListener('change', renderGames));
   document.getElementById('sfl-draws').addEventListener('input', renderSetForLife);
   document.getElementById('keno-spot').addEventListener('input', renderKeno);
   document.getElementById('cash3-digits').addEventListener('input', renderCash3);

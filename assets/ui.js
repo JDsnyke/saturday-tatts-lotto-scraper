@@ -1,45 +1,89 @@
 (() => {
   const THEME_KEY = 'lotto-theme';
   const themes = ['system', 'light', 'dark'];
+  const media = window.matchMedia('(prefers-color-scheme: dark)');
+  let resolvedTheme = 'light';
 
   function refreshIcons() {
-    if (!window.lucide?.createIcons) return;
-    window.lucide.createIcons();
+    harmonizeTheme(document);
+    if (window.lucide?.createIcons) window.lucide.createIcons();
+  }
+
+  function harmonizeTheme(root = document) {
+    const scope = root instanceof Element ? root : document;
+    const lightVariants = [];
+    const outlinedButtons = [];
+    const surfaces = [];
+    const selectedNavItems = [];
+
+    if (root instanceof Element) {
+      if (root.classList.contains('is-light') || root.dataset.bulmaLightVariant === 'true') lightVariants.push(root);
+      if (root.classList.contains('is-outlined') || root.dataset.bulmaOutlinedVariant === 'true') outlinedButtons.push(root);
+      if (root.classList.contains('box') || root.classList.contains('card')) surfaces.push(root);
+      if (root.classList.contains('navbar-item') && root.classList.contains('is-selected')) selectedNavItems.push(root);
+    }
+
+    scope.querySelectorAll?.('.is-light, [data-bulma-light-variant="true"]').forEach(element => lightVariants.push(element));
+    scope.querySelectorAll?.('.button.is-outlined, .button[data-bulma-outlined-variant="true"]').forEach(element => outlinedButtons.push(element));
+    scope.querySelectorAll?.('.box, .card').forEach(element => surfaces.push(element));
+    scope.querySelectorAll?.('.navbar-item.is-selected').forEach(element => selectedNavItems.push(element));
+
+    [...new Set(lightVariants)].forEach(element => {
+      element.dataset.bulmaLightVariant = 'true';
+      element.classList.toggle('is-light', resolvedTheme !== 'dark');
+    });
+
+    [...new Set(outlinedButtons)].forEach(element => {
+      element.dataset.bulmaOutlinedVariant = 'true';
+      element.classList.toggle('is-outlined', resolvedTheme !== 'dark');
+    });
+
+    [...new Set(surfaces)].forEach(element => element.classList.add('is-shadowless'));
+
+    [...new Set(selectedNavItems)].forEach(element => {
+      element.classList.remove('is-selected');
+      element.classList.add('has-text-weight-semibold');
+    });
   }
 
   function applyTheme(theme) {
-    const value = themes.includes(theme) ? theme : 'system';
-    if (value === 'system') document.documentElement.removeAttribute('data-theme');
-    else document.documentElement.setAttribute('data-theme', value);
-    localStorage.setItem(THEME_KEY, value);
+    const preference = themes.includes(theme) ? theme : 'system';
+    resolvedTheme = preference === 'system' ? (media.matches ? 'dark' : 'light') : preference;
+    document.documentElement.setAttribute('data-theme', resolvedTheme);
+    document.documentElement.setAttribute('data-theme-preference', preference);
+    localStorage.setItem(THEME_KEY, preference);
 
-    const resolved = value === 'system'
-      ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
-      : value;
     const themeMeta = document.querySelector('meta[name="theme-color"]');
-    if (themeMeta) themeMeta.content = resolved === 'dark' ? '#14161a' : '#ffffff';
+    if (themeMeta) themeMeta.content = resolvedTheme === 'dark' ? '#14161a' : '#ffffff';
 
     const button = document.getElementById('theme-toggle');
     const icon = document.getElementById('theme-icon');
     if (button) {
-      button.setAttribute('aria-label', `Theme: ${value}. Activate to change theme.`);
-      button.title = `Theme: ${value}`;
+      const label = preference === 'system' ? `System (${resolvedTheme})` : preference[0].toUpperCase() + preference.slice(1);
+      button.setAttribute('aria-label', `Theme: ${label}. Activate to change theme.`);
+      button.title = `Theme: ${label}`;
     }
-    if (icon) {
-      icon.setAttribute('data-lucide', value === 'dark' ? 'moon' : value === 'light' ? 'sun' : 'monitor');
-    }
-    refreshIcons();
+    if (icon) icon.setAttribute('data-lucide', preference === 'dark' ? 'moon' : preference === 'light' ? 'sun' : 'monitor');
+    harmonizeTheme(document);
+    if (window.lucide?.createIcons) window.lucide.createIcons();
   }
 
   function setupTheme() {
     applyTheme(localStorage.getItem(THEME_KEY) || 'system');
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+    media.addEventListener('change', () => {
       if ((localStorage.getItem(THEME_KEY) || 'system') === 'system') applyTheme('system');
     });
     document.getElementById('theme-toggle')?.addEventListener('click', () => {
       const current = localStorage.getItem(THEME_KEY) || 'system';
       applyTheme(themes[(themes.indexOf(current) + 1) % themes.length]);
     });
+
+    const observer = new MutationObserver(records => {
+      records.forEach(record => record.addedNodes.forEach(node => {
+        if (node instanceof Element) harmonizeTheme(node);
+      }));
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
   }
 
   function setupNavbars() {
@@ -59,12 +103,26 @@
     root.querySelectorAll('.skeleton-block, .skeleton-lines').forEach(element => element.remove());
   }
 
+  function setupServiceWorker() {
+    if (!('serviceWorker' in navigator)) return;
+    window.addEventListener('load', async () => {
+      try {
+        const registration = await navigator.serviceWorker.register('./service-worker.js');
+        await registration.update();
+      } catch (error) {
+        console.warn('Service worker registration failed', error);
+      }
+    });
+  }
+
   window.refreshIcons = refreshIcons;
   window.clearSkeletons = clearSkeletons;
+  window.applyLotteryTheme = applyTheme;
 
   function setup() {
     setupTheme();
     setupNavbars();
+    setupServiceWorker();
     refreshIcons();
   }
 

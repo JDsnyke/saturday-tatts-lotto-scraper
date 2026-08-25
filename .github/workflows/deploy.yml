@@ -9,10 +9,15 @@ on:
       - 'games.html'
       - 'service-worker.js'
       - 'assets/**'
+      - 'src/lotto_lab/**'
+      - 'winning_numbers.csv'
+      - 'supplementary_numbers.csv'
+      - 'requirements.txt'
+      - 'package.json'
       - 'README.md'
       - 'ROADMAP.md'
       - 'GITHUB_PAGES.md'
-      - '.nojekyll'
+      - '.github/scripts/prepare_site.sh'
       - '.github/workflows/deploy.yml'
   workflow_dispatch:
 
@@ -31,43 +36,70 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v6
-      - name: Validate static site payload
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+          cache: pip
+      - name: Install pinned site and runtime dependencies
         run: |
-          test -f index.html
-          test -f benchmark.html
-          test -f games.html
-          test -f service-worker.js
-          test -f assets/ui.js
-          test -f assets/app.js
-          test -f assets/benchmark.js
-          test -f assets/certificates.js
-          test -f assets/games.js
-          test -f assets/game_catalog.json
-          test -f assets/lotto_stats.json
-          test ! -f assets/app.css
-          test ! -f assets/games.css
-          test ! -f assets/benchmark.css
-          grep -q 'bulma@1.0.4/css/bulma.min.css' index.html
-          grep -q 'bulma@1.0.4/css/bulma.min.css' games.html
-          grep -q 'bulma@1.0.4/css/bulma.min.css' benchmark.html
-          grep -q 'lucide@1.33.0/dist/umd/lucide.js' index.html
-          grep -q 'lucide@1.33.0/dist/umd/lucide.js' games.html
-          grep -q 'lucide@1.33.0/dist/umd/lucide.js' benchmark.html
-          ! grep -R -n 'style=' index.html games.html benchmark.html assets/ui.js assets/app.js assets/games.js assets/benchmark.js assets/certificates.js
-          node --check assets/ui.js
-          node --check assets/app.js
-          node --check assets/benchmark.js
-          node --check assets/certificates.js
-          node --check assets/games.js
-          node --check service-worker.js
-          python -m json.tool assets/game_catalog.json >/dev/null
-          python -m json.tool assets/lotto_stats.json >/dev/null
+          npm install --ignore-scripts --no-audit --no-fund
+          python -m pip install -r requirements.txt
+      - name: Regenerate canonical publication data
+        env:
+          PYTHONPATH: src
+        run: python -m lotto_lab stats
+      - name: Build self-contained site payload
+        run: bash .github/scripts/prepare_site.sh
+      - name: Validate publication payload
+        run: |
+          test -f _site/index.html
+          test -f _site/benchmark.html
+          test -f _site/games.html
+          test -f _site/service-worker.js
+          test -f _site/assets/ui.js
+          test -f _site/assets/app.js
+          test -f _site/assets/benchmark.js
+          test -f _site/assets/certificates.js
+          test -f _site/assets/games.js
+          test -s _site/assets/vendor/bulma.min.css
+          test -s _site/assets/vendor/lucide.js
+          test ! -f _site/assets/app.css
+          test ! -f _site/assets/games.css
+          test ! -f _site/assets/benchmark.css
+          grep -q 'assets/vendor/bulma.min.css' _site/index.html
+          grep -q 'assets/vendor/bulma.min.css' _site/games.html
+          grep -q 'assets/vendor/bulma.min.css' _site/benchmark.html
+          grep -q 'assets/vendor/lucide.js' _site/index.html
+          grep -q 'assets/vendor/lucide.js' _site/games.html
+          grep -q 'assets/vendor/lucide.js' _site/benchmark.html
+          ! grep -R -n 'style=' _site/index.html _site/games.html _site/benchmark.html _site/assets/ui.js _site/assets/app.js _site/assets/games.js _site/assets/benchmark.js _site/assets/certificates.js
+          node --check _site/assets/ui.js
+          node --check _site/assets/app.js
+          node --check _site/assets/benchmark.js
+          node --check _site/assets/certificates.js
+          node --check _site/assets/games.js
+          node --check _site/service-worker.js
+          python -m json.tool _site/assets/game_catalog.json >/dev/null
+          python -m json.tool _site/assets/lotto_stats.json >/dev/null
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          stats = json.loads(Path('_site/assets/lotto_stats.json').read_text(encoding='utf-8'))
+          assert stats.get('schemaVersion') == 3, 'Pages must publish canonical schemaVersion 3 stats'
+          assert stats.get('dataset', {}).get('drawCount', 0) > 0
+          assert stats.get('draws'), 'Pages must publish draw history, not a legacy summary-only asset'
+          PY
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5
         with:
-          path: '.'
+          path: '_site'
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v5

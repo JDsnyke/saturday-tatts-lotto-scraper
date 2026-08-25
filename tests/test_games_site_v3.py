@@ -12,13 +12,16 @@ class GamesSiteTests(unittest.TestCase):
             "assets/ui.js",
             "assets/games.js",
             "assets/game_catalog.json",
+            "package.json",
         ):
             self.assertTrue((ROOT / relative).exists(), relative)
 
-    def test_games_page_references_library_assets_and_calculators(self):
+    def test_games_page_references_local_library_assets_and_calculators(self):
         page = (ROOT / "games.html").read_text(encoding="utf-8")
-        self.assertIn("bulma@1.0.4/css/bulma.min.css", page)
-        self.assertIn("lucide@1.33.0/dist/umd/lucide.js", page)
+        self.assertIn("assets/vendor/bulma.min.css", page)
+        self.assertIn("assets/vendor/lucide.js", page)
+        self.assertNotIn("cdn.jsdelivr.net", page)
+        self.assertNotIn("unpkg.com", page)
         self.assertIn("assets/ui.js", page)
         self.assertIn("assets/games.js", page)
         self.assertNotIn("assets/games.css", page)
@@ -64,6 +67,12 @@ class GamesSiteTests(unittest.TestCase):
         ):
             self.assertIn(slug, slugs)
 
+    def test_dynamic_cards_are_shadowless_and_not_light_forced(self):
+        script = (ROOT / "assets/games.js").read_text(encoding="utf-8")
+        self.assertIn('card is-shadowless', script)
+        self.assertNotIn("is-success' : 'is-warning'} is-light", script)
+        self.assertNotIn('button is-small is-link is-light', script)
+
     def test_catalog_public_guardrails(self):
         payload = json.loads((ROOT / "assets/game_catalog.json").read_text(encoding="utf-8"))
         rows = {row["slug"]: row for row in payload["games"]}
@@ -73,12 +82,9 @@ class GamesSiteTests(unittest.TestCase):
         self.assertIsNone(rows["weekday-windfall"]["officialAnyOdds"])
         self.assertIsNone(rows["lucky-lotteries-super"]["officialAnyOdds"])
         self.assertIsNone(rows["yourtown-prize-home"]["computedTopOdds"])
-        self.assertEqual(
-            rows["mater-prize-home"]["raffleSnapshot"]["maximumEntries"],
-            22_805_334,
-        )
+        self.assertEqual(rows["mater-prize-home"]["raffleSnapshot"]["maximumEntries"], 22_805_334)
 
-    def test_pwa_exposes_games_lab_and_library_dependencies(self):
+    def test_pwa_exposes_games_lab_and_local_library_dependencies(self):
         manifest = json.loads((ROOT / "assets/site.webmanifest").read_text(encoding="utf-8"))
         shortcut_urls = {shortcut["url"] for shortcut in manifest["shortcuts"]}
         self.assertIn("../games.html", shortcut_urls)
@@ -88,9 +94,11 @@ class GamesSiteTests(unittest.TestCase):
         self.assertIn("./assets/ui.js", worker)
         self.assertIn("./assets/games.js", worker)
         self.assertIn("./assets/game_catalog.json", worker)
-        self.assertIn("bulma@1.0.4/css/bulma.min.css", worker)
-        self.assertIn("lucide@1.33.0/dist/umd/lucide.js", worker)
-        self.assertIn("australian-lottery-lab-bulma-v2", worker)
+        self.assertIn("./assets/vendor/bulma.min.css", worker)
+        self.assertIn("./assets/vendor/lucide.js", worker)
+        self.assertIn("australian-lottery-lab-bulma-v3", worker)
+        self.assertNotIn("cdn.jsdelivr.net", worker)
+        self.assertNotIn("unpkg.com", worker)
 
 
 if __name__ == "__main__":
