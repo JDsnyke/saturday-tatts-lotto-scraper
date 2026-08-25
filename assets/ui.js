@@ -1,6 +1,5 @@
 (() => {
   const THEME_KEY = 'lotto-theme';
-  const RELOAD_KEY = 'lotto-sw-reloaded';
   const themes = ['system', 'light', 'dark'];
   const media = window.matchMedia('(prefers-color-scheme: dark)');
   let resolvedTheme = 'light';
@@ -12,19 +11,39 @@
 
   function harmonizeTheme(root = document) {
     const scope = root instanceof Element ? root : document;
-    const candidates = [];
+    const lightVariants = [];
+    const outlinedButtons = [];
     const surfaces = [];
+    const selectedNavItems = [];
+
     if (root instanceof Element) {
-      if (root.classList.contains('is-light') || root.dataset.bulmaLightVariant === 'true') candidates.push(root);
+      if (root.classList.contains('is-light') || root.dataset.bulmaLightVariant === 'true') lightVariants.push(root);
+      if (root.classList.contains('is-outlined') || root.dataset.bulmaOutlinedVariant === 'true') outlinedButtons.push(root);
       if (root.classList.contains('box') || root.classList.contains('card')) surfaces.push(root);
+      if (root.classList.contains('navbar-item') && root.classList.contains('is-selected')) selectedNavItems.push(root);
     }
-    scope.querySelectorAll?.('.is-light, [data-bulma-light-variant="true"]').forEach(element => candidates.push(element));
+
+    scope.querySelectorAll?.('.is-light, [data-bulma-light-variant="true"]').forEach(element => lightVariants.push(element));
+    scope.querySelectorAll?.('.button.is-outlined, .button[data-bulma-outlined-variant="true"]').forEach(element => outlinedButtons.push(element));
     scope.querySelectorAll?.('.box, .card').forEach(element => surfaces.push(element));
-    [...new Set(candidates)].forEach(element => {
+    scope.querySelectorAll?.('.navbar-item.is-selected').forEach(element => selectedNavItems.push(element));
+
+    [...new Set(lightVariants)].forEach(element => {
       element.dataset.bulmaLightVariant = 'true';
       element.classList.toggle('is-light', resolvedTheme !== 'dark');
     });
+
+    [...new Set(outlinedButtons)].forEach(element => {
+      element.dataset.bulmaOutlinedVariant = 'true';
+      element.classList.toggle('is-outlined', resolvedTheme !== 'dark');
+    });
+
     [...new Set(surfaces)].forEach(element => element.classList.add('is-shadowless'));
+
+    [...new Set(selectedNavItems)].forEach(element => {
+      element.classList.remove('is-selected');
+      element.classList.add('has-text-weight-semibold');
+    });
   }
 
   function applyTheme(theme) {
@@ -86,11 +105,6 @@
 
   function setupServiceWorker() {
     if (!('serviceWorker' in navigator)) return;
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-      if (sessionStorage.getItem(RELOAD_KEY) === 'true') return;
-      sessionStorage.setItem(RELOAD_KEY, 'true');
-      location.reload();
-    });
     window.addEventListener('load', async () => {
       try {
         const registration = await navigator.serviceWorker.register('./service-worker.js');
