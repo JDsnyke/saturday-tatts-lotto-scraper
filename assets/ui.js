@@ -13,14 +13,18 @@
   function harmonizeTheme(root = document) {
     const scope = root instanceof Element ? root : document;
     const candidates = [];
-    if (root instanceof Element && (root.classList.contains('is-light') || root.dataset.bulmaLightVariant === 'true')) {
-      candidates.push(root);
+    const surfaces = [];
+    if (root instanceof Element) {
+      if (root.classList.contains('is-light') || root.dataset.bulmaLightVariant === 'true') candidates.push(root);
+      if (root.classList.contains('box') || root.classList.contains('card')) surfaces.push(root);
     }
     scope.querySelectorAll?.('.is-light, [data-bulma-light-variant="true"]').forEach(element => candidates.push(element));
+    scope.querySelectorAll?.('.box, .card').forEach(element => surfaces.push(element));
     [...new Set(candidates)].forEach(element => {
       element.dataset.bulmaLightVariant = 'true';
       element.classList.toggle('is-light', resolvedTheme !== 'dark');
     });
+    [...new Set(surfaces)].forEach(element => element.classList.add('is-shadowless'));
   }
 
   function applyTheme(theme) {
