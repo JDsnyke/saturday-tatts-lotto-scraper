@@ -1,0 +1,13 @@
+{
+  "name": "australian-lottery-lab-site",
+  "private": true,
+  "version": "3.0.0",
+  "description": "Static web dependencies for Lottery Lab",
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "bulma": "1.0.4",
+    "lucide": "1.33.0"
+  }
+}
