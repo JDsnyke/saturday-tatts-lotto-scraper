@@ -1,11 +1,11 @@
-const CACHE_NAME = 'australian-lottery-lab-bulma-v2';
-const BULMA_URL = 'https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css';
-const LUCIDE_URL = 'https://unpkg.com/lucide@1.33.0/dist/umd/lucide.js';
+const CACHE_NAME = 'australian-lottery-lab-bulma-v3';
 const STATIC_ASSETS = [
   './',
   './index.html',
   './benchmark.html',
   './games.html',
+  './assets/vendor/bulma.min.css',
+  './assets/vendor/lucide.js',
   './assets/ui.js',
   './assets/app.js',
   './assets/benchmark.js',
@@ -16,8 +16,6 @@ const STATIC_ASSETS = [
   './assets/lotto_stats.json',
   './assets/data_provenance.json',
   './assets/game_catalog.json',
-  BULMA_URL,
-  LUCIDE_URL,
 ];
 
 self.addEventListener('install', event => {
@@ -39,11 +37,9 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
-  const isLocal = url.origin === self.location.origin;
-  const isLibrary = event.request.url === BULMA_URL || event.request.url === LUCIDE_URL;
-  if (!isLocal && !isLibrary) return;
+  if (url.origin !== self.location.origin) return;
 
-  const isData = isLocal && (
+  const isData = (
     url.pathname.endsWith('/assets/lotto_stats.json') ||
     url.pathname.endsWith('/assets/data_provenance.json') ||
     url.pathname.endsWith('/assets/game_catalog.json')
@@ -51,21 +47,27 @@ self.addEventListener('fetch', event => {
 
   if (isData) {
     event.respondWith(
-      fetch(event.request)
+      fetch(event.request, { cache: 'no-store' })
         .then(response => {
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
           const copy = response.clone();
           caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
           return response;
         })
-        .catch(() => caches.match(event.request))
+        .catch(async () => {
+          const cached = await caches.match(event.request);
+          return cached || Response.error();
+        })
     );
     return;
   }
 
   event.respondWith(
     caches.match(event.request).then(cached => cached || fetch(event.request).then(response => {
-      const copy = response.clone();
-      caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
+      if (response.ok) {
+        const copy = response.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
+      }
       return response;
     }))
   );
