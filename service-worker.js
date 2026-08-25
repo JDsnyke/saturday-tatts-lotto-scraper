@@ -1,4 +1,4 @@
-const CACHE_NAME = 'australian-lottery-lab-bulma-v1';
+const CACHE_NAME = 'australian-lottery-lab-bulma-v2';
 const BULMA_URL = 'https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css';
 const LUCIDE_URL = 'https://unpkg.com/lucide@1.33.0/dist/umd/lucide.js';
 const STATIC_ASSETS = [
